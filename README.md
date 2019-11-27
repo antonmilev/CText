@@ -2,15 +2,18 @@
 # C++ Advanced text processing library
 
 ## About
-I have started to rewrite on Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are implemented on higer level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundereds of optimized text routines. This library can be used to quickly solve various text processing problems, preprocessing for different NLP tasks or just to practise Modern C++.
+I have started to rewrite on Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are implemented on higher level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundereds of optimized text routines. The library can be used to quickly solve various text processing problems, preprocessing for different NLP tasks or just to practise Modern C++. 
+
+Please feel free to contact me at (baj.mile@abv.bg) for any questions, requests or even critics.
 
 ## Features
 
 * **Modern C++ Template library**: You only need to include one header, very simple to use.
 * **Unicode Support**: - you can have both UNICODE and ANSI in the project.
-* **Hudreds of optimized text processing methods**: - Many standard and non-standard text processing operations are covered. I have a long TODO list with much more to add. Please feel free to contact me for any requests, proposals or even critics.
+* **Hudreds of optimized text processing methods**: - Many standard and non-standard text processing operations are covered. I have a long TODO list with much more to add. 
 * **Clean and easy to understand code**: - You can use CText to quickly start more complicated text processing applications and abstracting from the too many lower level details and optimizations.
 * **Portable**:  CText is stand-alone and don't depends from any others packages. I have built and test it with VS2017/VS2019 and GCC 7.4 but it can be easily ported to other platforms.
+* **Stand alone**:  CText do not depends on any other libraries, the only requirments are C++11 and STL
 * **Scalable**:  All text routines are easily to be extended further for all supported char types and platforms. 
 
 ## Build the CText Unit Test and Demo projects
@@ -25,6 +28,8 @@ I have started to rewrite on Modern C++ some text processing routines and this i
 <br>This will build a console application that runs the Unit Tests.
 
 ## Examples
+
+For all examples how to use CText please see the Unit Test project.
 
 ### Sort lines in a text file
 
@@ -252,12 +257,69 @@ his 1
 or 1
 ```
 
+### Conversion routines
+```cpp
+CText s = _T("1,2,3,4,5,6,7,8,9");
+vector<int> v;
+bool bOk;
+s.toArray<int>(v, _T(','), bOk);
+``` 
+
+Output:
+```
+{1,2,3,4,5,6,7,8,9}
+```
+
+```cpp
+CText s = _T("1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9");
+vector<double> v;
+bool bOk;
+s.toArray<double>(v, _T(','), bOk);
+```
+
+Output:
+```
+{1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9}
+```
+
+Parse numerical matrix:
+```cpp
+bool bOk;
+std::vector<std::vector<int>> m;
+CText s = _T("1 2 3\n4 5 6\n7 8 9");
+s.toMatrix<int>(m, _T(' '), bOk);
+```
+
+Output:
+```
+{
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9},
+};
+```
+
+### Highlight words
+
+Following will make bold all words starting with "Col", "Spa","Isa", ending to "an"), "as" or containing "pe" or "sea":
+
+```cpp
+vector<CText> start = {_T("Col"), _T("Spa"), _T("Isa")};
+vector<CText> end = {_T("an"), _T("as")};
+vector<CText> contain = {_T("pe"), _T("sea")};
+str.wordsEnclose(_T("<b>"), _T("</b>"), &start, &end, &contain);
+```   
+     
+Portugal had been the main <b>European</b> power interested in pursuing trade routes <b>overseas</b>. Their next-door neighbors, Castile (predecessor of <b>Spain</b>) had been somewhat slower to begin exploring the Atlantic <b>because</b> of the bigger land area it had to re-conquer (the Reconquista) from the Moors. It <b>was</b> not until the late 15th century, following the dynastic union of the Crowns of Castile and Aragon and the completion of the Reconquista, that the unified crowns of what would become <b>Spain</b> (although countries still legally existing) emerged and became fully committed to looking for new trade routes and colonies <b>overseas</b>. In 1492 the joint rulers conquered the Moorish kingdom of Granada, which had been providing Castile with <b>African</b> goods through tribute. <b>Columbus</b> had previously failed to convince King John II of Portugal to fund his exploration of a western route, but the new king and queen of the re-conquered <b>Spain</b> decided to fund <b>Columbus's</b> expedition in hopes of bypassing Portugal's lock on Africa and the <b>Indian</b> <b>Ocean</b>, reaching Asia by traveling west
+<b>Columbus</b> <b>was</b> granted <b>an</b> audience with them; on May 1, 1489, he <b>presented</b> his plans to Queen <b>Isabella</b>, who referred them to a committee. They pronounced the idea impractical, and <b>advised</b> the monarchs not to support the <b>proposed</b> venture
+
+
 ## TODO List
-* **More methods for words,lines and sentences processing**:  There are a lot more methods that may be added to support diferent NLP tasks.
+* **More methods for words,lines,sentences and complex expressions processing**:  There are a lot more methods that can be added to support diferent NLP tasks.
 * **Further improve containers abstraction**: CText needs more convertion routines to/from STL and other containers and generic data structures.
 * **Regular Expressions**: - Partial or full support to regular expressions.
 * **Other char types**: - Character types like char_32 can be also supported
-* **Mini Text Editor**: - This is a text editor based on CText that I want to port on Modern C++.
+* **Mini Text Editor**: - This is a text editor based on CText that I plan to port on Modern C++.
 
 
 
