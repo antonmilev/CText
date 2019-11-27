@@ -2,9 +2,9 @@
 # C++ Advanced text processing library
 
 ## About
-I have started to rewrite on Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are implemented on higher level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundereds of optimized text routines. The library can be used to quickly solve various text processing problems, preprocessing for different NLP tasks or just to practise Modern C++. 
+I have started to rewrite on Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are available on higher level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundereds of optimized text routines. The library can be used to quickly solve various text processing problems, preprocessing for different NLP and ML tasks or just to practise Modern C++. 
 
-Please feel free to contact me at (baj.mile@abv.bg) for any questions, requests or even critics.
+Please feel free to contact me for any questions, requests or even critics.
 
 ## Features
 
@@ -131,7 +131,7 @@ Output:
 ```  
 
 ```cpp
-   s = _T("one and two or three or five");
+   s = _T("one and two or three and five");
    s.removeAny({_T("or"), _T("and")});
    s.reduceChain(' ');
    cout << s << endl;
@@ -315,7 +315,7 @@ Portugal had been the main <b>European</b> power interested in pursuing trade ro
 
 
 ## TODO List
-* **More methods for words,lines,sentences and complex expressions processing**:  There are a lot more methods that can be added to support diferent NLP tasks.
+* **More methods for words,lines,sentences and complex expressions processing**:  There are a lot more methods that can be added to support diferent NLP and lexical tasks.
 * **Further improve containers abstraction**: CText needs more convertion routines to/from STL and other containers and generic data structures.
 * **Regular Expressions**: - Partial or full support to regular expressions.
 * **Other char types**: - Character types like char_32 can be also supported
