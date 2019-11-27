@@ -19,9 +19,11 @@ Please feel free to contact me for any questions, requests or even critics.
 ## Build the CText Unit Test and Demo projects
 
 <br>To build the UnitTest project and the demos with CMake and Visual Studio:
-<br>Load CMakeLists.txt from File->Open->CMake.., after generates cache is completed, choose CMake->Build All
+<br> open terminal in the folder \Apps and type
+<br>cmake .
+<br>Alternatively, you can load in VS2017 or later \Apps\CMakeLists.txt from File->Open->CMake.., after generates cache is completed, choose CMake->Build All
 
-<br>To compile with GCC:
+<br>To compile with GCC in Debug or Rlease:
 <br>cmake -D CMAKE_BUILD_TYPE=Release .
 <br>cmake -D CMAKE_BUILD_TYPE=Debug .
 <br>
