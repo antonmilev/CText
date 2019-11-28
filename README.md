@@ -2,7 +2,7 @@
 # C++ Advanced text processing library
 
 ## About
-I have started to rewrite on Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are available on higher level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundereds of optimized text routines. The library can be used to quickly solve various text processing problems, preprocessing for different NLP and ML tasks or just to practise Modern C++. 
+I have started to rewrite on Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are available on higher level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundreds of optimized text routines. The library can be used to quickly solve various pre-processing problems for different NLP and ML tasks or just to practice Modern C++. 
 
 Please feel free to contact me for any questions, requests or even critics.
 
@@ -10,9 +10,9 @@ Please feel free to contact me for any questions, requests or even critics.
 
 * **Modern C++ Template library**: You only need to include one header, very simple to use.
 * **Unicode Support**: - you can have both UNICODE and ANSI in the project.
-* **Hudreds of optimized text processing methods**: - Many standard and non-standard text processing operations are covered. I have a long TODO list with much more to add. 
+* **Hundreds of optimized text processing methods**: - Many standard and non-standard text processing operations are covered. I have a long TODO list with much more to add. 
 * **Clean and easy to understand code**: - You can use CText to quickly start more complicated text processing applications and abstracting from the too many lower level details and optimizations.
-* **Portable**:  CText is stand-alone and don't depends from any others packages. I have built and test it with VS2017/VS2019 and GCC 7.4 but it can be easily ported to other platforms.
+* **Portable**:  I am using CText with VS2017/VS2019 and GCC 7.4 but it easily can be ported to other platforms.
 * **Stand alone**:  CText do not depends on any other libraries, the only requirments are C++11 and STL
 * **Scalable**:  All text routines are easily to be extended further for all supported char types and platforms. 
 
@@ -317,12 +317,13 @@ Portugal had been the main <b>European</b> power interested in pursuing trade ro
 
 
 ## TODO List
-* **More methods for words,lines,sentences and complex expressions processing**:  There are a lot more methods that can be added to support diferent NLP and lexical tasks.
+* **More methods for words,lines,sentences and complex expressions**:  There are lots more methods that can be added to support diferent NLP and lexical tasks.
 * **Further improve containers abstraction**: CText needs more convertion routines to/from STL and other containers and generic data structures.
 * **Regular Expressions**: - Partial or full support to regular expressions.
 * **Other char types**: - Character types like char_32 can be also supported
 * **Mini Text Editor**: - This is a text editor based on CText that I plan to port on Modern C++.
-
+* **Export to Python**: - I want to export CText library to Python-3
+* **Performance Test**: - Add performance tests comparing with STL string.
 
 
 
