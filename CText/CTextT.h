@@ -374,7 +374,7 @@ public:
     //operator std::basic_string<T>()  { return m_str; }
     T at(size_t pos) const; // same as [] but throws out_of_range excepton
     T& at(size_t pos);
-    operator bool() const = delete;
+    //operator bool() const = delete;
 
     const CTextT& operator+=(const T* str);
     const CTextT& operator+=(const CTextT& string);
