@@ -1979,7 +1979,7 @@ int test_convert()
             if(s != _T("The quick fox"))
                 goto error;
 
-            CText s3(" jumps");
+            CText s3(_T(" jumps"));
             s << s3;
 
             if(s != _T("The quick fox jumps"))
@@ -2528,7 +2528,7 @@ int test_file()
                 CText path = getcwd(0, 0);
                 path += _T("/test_UTF8.txt");
                 CText s;
-                if(!s.readFile(path))
+                if(!s.readFile(path.str()))
                     goto error;
                 if(s != _T("Привет"))
                     goto error;
@@ -2543,7 +2543,7 @@ int test_file()
                 CText path = getcwd(0, 0);
                 path += _T("/test_UTF16LE.txt");
                 CText s;
-                if(!s.readFile(path))
+                if(!s.readFile(path.str()))
                     goto error;
                 if(s != _T("Привет"))
                     goto error;
@@ -2558,7 +2558,7 @@ int test_file()
                 CText path = getcwd(0, 0);
                 path += _T("/test_UTF16BE.txt");
                 CText s;
-                s.readFile(path);
+                s.readFile(path.str());
                 if(s != _T("Привет"))
                     goto error;
             }
@@ -2599,8 +2599,8 @@ int test_file()
                 CText s(_T("Привет"));
                 CText path = getcwd(0, 0);
                 path += _T("/test2_UTF16LE.txt");
-                s.writeFile(path, CText::ENCODING_UTF16LE);
-                s.readFile(path);
+                s.writeFile(path.str(), CText::ENCODING_UTF16LE);
+                s.readFile(path.str());
                 if(s != _T("Привет"))
                     goto error;
             }
