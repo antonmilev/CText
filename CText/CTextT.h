@@ -257,6 +257,7 @@ public:
     void         randomAlphaNumeric(size_t len); // generate text containing random alphanumeric upper and lower characters 
     void         randomNumber(size_t len);// generate text containing a random integer with the given length
     bool         readFile(const T* path); // read a whole text file into our string
+    bool         readLinesFromFile(const T* path, size_t lineStart, size_t lineEnd); // read only number of lines, can be used for very large files
     size_t       reduceChain(T c);  //reduces chains of some character to a single instances, for example: replace multiple spaces by one space
     CTextT&      reduceChainAny(const T* cList);
     void         reduceToNumber();  //strip text from non-numbers
@@ -320,7 +321,7 @@ public:
     CTextT       substringRight(size_t from) const; // return new string with all characters starting at a zero-based index and continuing to the end
     CTextT       substringLeft(size_t count) const;  // returns new string with count characters from left
   unsigned int   toBinaryNumber(bool& bOk); //if the string contains a binary number, convert it   
-    bool         toChars(std::basic_string<char>& s);  // conversion to UTF8 
+    CTextT<char> toChars();  // conversion to UTF8 (ANSI)
     double       toDouble(bool& bOk) const;
     int          toInteger(bool& bOk) const;
    unsigned int  toUInteger(bool& bOk) const;
@@ -328,7 +329,7 @@ public:
    ContN size_t  toMatrix(std::vector<C>& container, T sep, bool& bOk, const T* sepLine = EOL) const;  // parse to matrix
     CTextT&      toLower(); // conversion to lowercase (in place)  
     CTextT&      toUpper(); // conversion to uppercase (in place)
-    bool         toWChars(std::basic_string<wchar_t>& s);  // conversion to Unicode
+ CTextT<wchar_t> toWChars();  // conversion to Unicode
     CTextT&      trim(const T* cList = Separators);
     CTextT&      trimLeft(const T c); //// remove continuous occurrence of ch starting from left
     CTextT&      trimLeft(const T* cList = Separators);  // remove from left continuous occurrence of all characters from the provided list
@@ -354,11 +355,9 @@ public:
     static bool       IsPalindrome(const T* s, bool bCase = true, size_t len = std::string::npos);
     static bool       ReadFile(const T* filePath, CTextT& s);
     static bool       ReadLinesFromFile(const T* path, CTextT& res, size_t lineStart, size_t lineEnd);
-    static size_t     SizeOf(const T* s) { return Strlen(s); }
-    ContC static size_t  SizeOf(C& s) { return s.size(); }
     static  void      Swap(CTextT& a, CTextT& b);  // exchanges the values of two strings
-    static bool       ToChars(const T* s, std::basic_string<char>& res);
-    static bool       ToWChars(const T* s, std::basic_string<wchar_t>& res);
+  static CTextT<char> ToChars(const T* s);
+static CTextT<wchar_t> ToWChars(const T* s);
     static bool       WriteFile(const T* filePath, CTextT& s, EncodingType encoding = ENCODING_UTF8);
 
     // static string routines

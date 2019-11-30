@@ -24,6 +24,7 @@ template<> const char* CTextT<char>::Literals = "\"\'";
 
 typedef CTextT<char> CTextA;
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 size_t  CTextA::Vsnprintf(char* str, size_t n, const char * fmt, va_list args)
 {
@@ -34,7 +35,7 @@ size_t  CTextA::Vsnprintf(char* str, size_t n, const char * fmt, va_list args)
 #endif
 };
 
-
+//-----------------------------------------------------------------------------------------------------------
 template<>
 bool CTextA::FromChars(const char* s, CTextA& res)
 {
@@ -42,14 +43,14 @@ bool CTextA::FromChars(const char* s, CTextA& res)
     return true;
 }
 
-
+//-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextA::ToChars(const char* s, std::basic_string<char>& res)
+CTextA CTextA::ToChars(const char* s)
 {
-    res = s;
-    return true;
+    return CTextA(s);
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 bool CTextA::FromWChars(const wchar_t* s, CTextA& res)
 {
@@ -60,16 +61,19 @@ bool CTextA::FromWChars(const wchar_t* s, CTextA& res)
     return true;
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextA::ToWChars(const char* s, std::basic_string<wchar_t>& res)
+CTextT<wchar_t> CTextA::ToWChars(const char* s)
 {
+    CTextT<wchar_t> res;
     if(!s || !*s)
-        return false;
+        return res;
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
     res = myconv.from_bytes(s);
-    return true;
+    return res;
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 bool CTextA::ReadFile(const char* filePath, CTextA& res)
 {
@@ -123,6 +127,7 @@ bool CTextA::ReadFile(const char* filePath, CTextA& res)
     return true;
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 bool CTextA::ReadLinesFromFile(const char* path, CTextA& res, size_t lineStart, size_t lineEnd)
 {
@@ -151,6 +156,7 @@ bool CTextA::ReadLinesFromFile(const char* path, CTextA& res, size_t lineStart, 
     return num;
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 bool CTextA::WriteFile(const char* filePath, CTextA& s, EncodingType encoding)
 {
@@ -196,7 +202,6 @@ bool CTextA::WriteFile(const char* filePath, CTextA& s, EncodingType encoding)
     }
 
     file.close();
-
     return true;
 }
 

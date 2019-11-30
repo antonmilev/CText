@@ -3460,26 +3460,24 @@ bool CTextT<T>::fromWChars(const wchar_t* s)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::toChars(std::basic_string<char>& s)
+CTextT<char> CTextT<T>::toChars()
 {
+    CTextT<char> res;
     if(isEmpty())
-    {
-        s.clear();
-        return false;
-    }
-    return ToChars(str(), s);
+        return res;
+    
+    return ToChars(str());
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::toWChars(std::basic_string<wchar_t>& s)
+CTextT<wchar_t> CTextT<T>::toWChars()
 {
+    std::basic_string<wchar_t> res;
     if(isEmpty())
-    {
-        s.clear();
-        return false;
-    }
-    return ToWChars(str(), s);
+        return res;
+    
+    return ToWChars(str());
 }
 
 
@@ -4282,4 +4280,11 @@ size_t  CTextT<T>::linesCount(const T* sep) const
         return 0;
 
     return count(sep);
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::readLinesFromFile(const T* path, size_t lineStart, size_t lineEnd)
+{
+    return ReadLinesFromFile(path, *this, lineStart, lineEnd);
 }

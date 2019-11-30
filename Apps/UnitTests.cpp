@@ -2424,15 +2424,14 @@ int test_unicode()
 
         {
             CText s(_T("Hello World"));
-            string s2;
-            s.toChars(s2);
+            CTextT<char> s2 = s.toChars();
             if(s2 != "Hello World")
                 goto error;
 #ifdef _UNICODE
             if(CText::IsWide())
             {
                 s = _T("Привет");
-                s.toChars(s2);
+                s2 = s.toChars();
                 if(s2 != u8"Привет")
                     goto error;
             }
@@ -2441,8 +2440,7 @@ int test_unicode()
 
         {
             CText s(_T("Hello World"));
-            wstring s2;
-            s.toWChars(s2);
+            CTextT<wchar_t> s2 = s.toWChars();
             if(s2 != L"Hello World")
                 goto error;
         }

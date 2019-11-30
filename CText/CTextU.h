@@ -25,6 +25,7 @@ template<> const wchar_t* CTextT<wchar_t>::Literals = L"\"\'";
 
 typedef CTextT<wchar_t> CTextU;
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 size_t CTextU::Vsnprintf(wchar_t * str, size_t n, const wchar_t * fmt, va_list args)
 {
@@ -35,6 +36,7 @@ size_t CTextU::Vsnprintf(wchar_t * str, size_t n, const wchar_t * fmt, va_list a
 #endif
 };
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 bool CTextU::FromChars(const char* s, CTextU& res)
 {  
@@ -51,16 +53,19 @@ bool CTextU::FromChars(const char* s, CTextU& res)
     return true;
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextU::ToChars(const wchar_t* s, std::basic_string<char>& res)
+CTextT<char> CTextU::ToChars(const wchar_t* s)
 {
+    CTextT<char> res;    
     if(!s || !*s)
-        return false;
+        return res;
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
     res = myconv.to_bytes(s);
-    return true;
+    return res;
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 bool CTextU::FromWChars(const wchar_t* s, CTextU& res)
 {
@@ -68,13 +73,14 @@ bool CTextU::FromWChars(const wchar_t* s, CTextU& res)
     return true;
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextU::ToWChars(const wchar_t* s, std::basic_string<wchar_t>& res)
+CTextT<wchar_t> CTextU::ToWChars(const wchar_t* s)
 {
-    res = s;
-    return true;
+    return CTextU(s);
 }
 
+//-----------------------------------------------------------------------------------------------------------
 template<>
 static bool CTextU::ReadFile(const wchar_t* filePath, CTextU& res)
 {
