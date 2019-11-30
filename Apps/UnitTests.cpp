@@ -1970,6 +1970,37 @@ int test_convert()
             if(!bOk || m != m_target)
                 goto error;
         }
+
+
+        {
+            CText s;
+            CText::tstring s2(_T("fox"));
+            s << _T("The ") << _T("quick ") << s2;
+            if(s != _T("The quick fox"))
+                goto error;
+
+            CText s3(" jumps");
+            s << s3;
+
+            if(s != _T("The quick fox jumps"))
+                goto error;
+
+        }
+
+        {
+            CText s;
+            s << 5 << 6 << '0' << 'A' << 'Z';
+            if(s != _T("560AZ"))
+                goto error;
+        }
+
+        {
+            CText s;
+            s << 5.1111 ;
+            if(s != _T("5.1111"))
+                goto error;
+        }
+
         printResult("test_convert()", true);
         return 0;
 

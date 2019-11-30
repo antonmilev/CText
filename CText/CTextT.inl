@@ -145,6 +145,41 @@ const CTextT<T>& CTextT<T>::operator+=(T ch)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
+CTextT<T>& CTextT<T>::operator<<(const T* s)
+{
+    append(s);
+    return *this;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+CTextT<T>& CTextT<T>::operator<<(const T c)
+{
+    append(c);
+    return *this;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+CTextT<T>& CTextT<T>::operator<<(const std::basic_string<T>& s)
+{
+    append(s.c_str());
+    return *this;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+template <typename Num>
+CTextT<T>& CTextT<T>::operator<<(Num i)
+{
+    std::basic_stringstream<T> ss;
+    ss << i;
+    fromInteger(i, true);
+    return *this;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
 void CTextT<T>::clear(bool bRelease)
 {
     if(isEmpty())

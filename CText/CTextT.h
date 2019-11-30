@@ -97,8 +97,12 @@ public:
     const CTextT& operator+=(const CTextT& string);
     const CTextT& operator+=(T ch);
 
-    explicit operator const T*() const { return str(); }  // cast operator
+    CTextT& operator<<(const T* s);
+    CTextT& operator<<(const std::basic_string<T>& s);
+    CTextT& operator<<(const T c);
+    DefN CTextT& operator<<(Num i);
 
+    explicit operator const T*() const { return str(); }  // cast operator
     T operator[](size_t pos) const;  //returns character at given position (coomented to avoid operators connflict)
     T& operator[](size_t pos); // returns modifiable reference to the character at the given position
     T at(size_t pos) const; // same as [] but throws out_of_range excepton
