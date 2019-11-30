@@ -41,7 +41,6 @@ template <typename T>
 class CTextT
 {
 public:
-public:
     CTextT();
     CTextT(const std::basic_string<T>& s);
     CTextT(std::basic_string<T>&& s);
