@@ -34,6 +34,7 @@ size_t  CTextA::Vsnprintf(char* str, size_t n, const char * fmt, va_list args)
 #endif
 };
 
+
 template<>
 bool CTextA::FromChars(const char* s, CTextA& res)
 {
@@ -72,11 +73,11 @@ bool CTextA::ToWChars(const char* s, std::basic_string<wchar_t>& res)
 template<>
 bool CTextA::ReadFile(const char* filePath, CTextA& res)
 {
-    std::ifstream ifs(filePath, std::ios::binary);
-    EncodingType encoding = ENCODING_ASCII;
+    std::ifstream ifs(filePath, std::ios::binary);   
     if(!ifs.is_open() || ifs.eof())// Unable to read file
         return false;
 
+    EncodingType encoding = ENCODING_ASCII;
     int ch1 = ifs.get();
     int ch2 = ifs.get();
 
@@ -120,6 +121,34 @@ bool CTextA::ReadFile(const char* filePath, CTextA& res)
     }
 
     return true;
+}
+
+template<>
+bool CTextA::ReadLinesFromFile(const char* path, CTextA& res, size_t lineStart, size_t lineEnd)
+{
+    res.clear();
+    size_t num = 0;
+    std::string tmpString;
+    std::ifstream txtFile(path);
+    if(txtFile.is_open())
+    {
+        while(txtFile.good() && num < lineStart)
+        {
+            num++;
+            std::getline(txtFile, tmpString);
+        }
+
+        while(txtFile.good() && num < lineEnd)
+        {
+            num++;
+            std::getline(txtFile, tmpString);
+            res += tmpString;
+            res += EOL;
+        }
+        txtFile.close();
+    }
+
+    return num;
 }
 
 template<>
@@ -170,3 +199,4 @@ bool CTextA::WriteFile(const char* filePath, CTextA& s, EncodingType encoding)
 
     return true;
 }
+

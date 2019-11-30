@@ -19,7 +19,7 @@ using namespace std;
 int test_init()   // test constructors and assign operators
 {
     try
-    { 
+    {
         {
             CText s;
             if(s.length() != 0 || !s.isEmpty() || !s.capacity())
@@ -83,7 +83,7 @@ int test_init()   // test constructors and assign operators
         }
 
         {
-            CText s = { _T("AA"), _T("BB"), _T("CC") };
+            CText s = {_T("AA"), _T("BB"), _T("CC")};
             if(s != _T("AABBCC"))
                 goto error;
         }
@@ -92,7 +92,7 @@ int test_init()   // test constructors and assign operators
             CText a(_T("AA"));
             CText b(_T("BB"));
             CText c(_T("CC"));
-            CText s = {a, b, c};
+            CText s = {a.str(), b.str(), c.str()};
             if(s != _T("AABBCC"))
                 goto error;
         }
@@ -128,101 +128,33 @@ int test_init()   // test constructors and assign operators
             if(a != _T("text"))
                 goto error;
 
-           CText::tstring b (_T("text2"));
-           CText c = b;
-           if(c != _T("text2"))
-               goto error;
+            CText::tstring b(_T("text2"));
+            CText c = b;
+            if(c != _T("text2"))
+                goto error;
 
-           // explicit conversions are allowed
-           CText::tstring s = (const CText::Char*)c;
-           if(s != _T("text2"))
-               goto error;
-           s = a;
+            // explicit conversions are allowed
+            CText::tstring s = (const CText::Char*)c;
+            if(s != _T("text2"))
+                goto error;
 
-           c = a;
-           if(c != _T("text"))
-               goto error;
+            s = a.str();
+
+            c = a;
+            if(c != _T("text"))
+                goto error;
         }
-        
-        printResult("test_init()",true);
+
+        printResult("test_init()", true);
         return 0;
 
     error:
-        printResult("test_init()",false);
+        printResult("test_init()", false);
         return 1;
     }
     catch(...)
     {
-        printResult("test_init() [exception]",false);
-        return 1;
-    }
-}
-    
-int test_static()  // test several static string routines
-{
-    try
-    {
-        {
-            const TCHAR* str = _T("some text");
-            TCHAR dst[50];
-
-            CText::Strncpy(dst,str,4);
-
-            if(CText::Strcmp(dst,_T("some")) != 0)
-                goto error;
-
-            str = _T("some");
-            CText::Strncpy(dst,str,4);
-
-            if(CText::Strcmp(dst,_T("some")) != 0)
-                goto error;
-        }
-
-        {
-            TCHAR str1[] = _T("Sample string");
-            TCHAR str2[40];
-            TCHAR str3[40];
-            CText::Strcpy(str2,str1);
-            CText::Strcpy(str3,_T("copy successful"));
-
-            if(CText::Strcmp(str2,_T("Sample string")) != 0)
-                goto error;
-
-            if(CText::Strcmp(str3,_T("copy successful")) != 0)
-                goto error;
-        }
-
-
-        {
-            TCHAR s1[40] = _T("some");
-            CText::Strcat(s1,_T("thing"));
-            if(CText::Strcmp(s1,_T("something")) != 0)
-                goto error;
-            CText::Strncat(s1, _T(" something"), 5);
-            if(CText::Strcmp(s1, _T("something some")) != 0)
-                goto error;
-        }
-
-        {
-            TCHAR str1[20];
-            TCHAR str2[20];
-            CText::Strcpy(str1,_T("To be "));
-            CText::Strcpy(str2,_T("or not to be"));
-            CText::Strncat(str1,str2,6);
-            if(CText::Strcmp(str1,_T("To be or not")) != 0)
-                goto error;
-        }
-
-        printResult("test_static()",true);
-        return 0;
-
-    error:
-        printResult("test_static()",false);
-        return 1;
-    }
-    catch(...)
-    {
-        printResult("test_static() [exception]",false);
+        printResult("test_init() [exception]", false);
         return 1;
     }
 }
@@ -270,14 +202,15 @@ int test_add()
 
         {
             CText a(_T("one")), b(_T("two"));
-            CText c = CText::Add(a,b);
+            CText c = CText::Add(a, b);
             if(c != _T("onetwo"))
                 goto error;
         }
 
         {
             CText s;
-            s.append({CText(_T("11")), CText(_T("22")), _T("33")});
+            CText a(_T("11")), b(_T("22"));
+            s.append({a.str(), b.str(), _T("33")});
             if(s != _T("112233"))
                 goto error;
         }
@@ -326,13 +259,13 @@ int test_add()
         }
 
         {
-            CText c = CText::Add(CText(_T("one")),_T("two"));
+            CText c = CText::Add(CText(_T("one")), _T("two"));
             if(c != _T("onetwo"))
                 goto error;
         }
 
         {
-            CText c = CText::Add(CText(_T("123")),_T('4'));
+            CText c = CText::Add(CText(_T("123")), _T('4'));
             if(c != _T("1234"))
                 goto error;
         }
@@ -388,132 +321,181 @@ int test_add()
                 if(s != digits)
                     goto error;
 
-                if(s.length() != 10 )
+                if(s.length() != 10)
                     goto error;
             }
         }
 
 
         {
-            CText val = CText::Add(CText(_T("one")),_T("second"));
+            CText val = CText::Add(CText(_T("one")), _T("second"));
             if(val != _T("onesecond"))
                 goto error;
-
-            if(val.appendUnique(_T('o')))
-                goto error;
-
-            if(!val.appendUnique(_T('u')) || val != _T("onesecondu"))
-                goto error;
-
-            if(val.appendUnique(_T("sec")))
-                goto error;
-
-            if(!val.appendUnique(_T("third")) || val != _T("oneseconduthird"))
-                goto error;
-
         }
 
-        printResult("test_add()",true);
+        printResult("test_add()", true);
         return 0;
 
     error:
-        printResult("test_add()",false);
+        printResult("test_add()", false);
         return 1;
     }
     catch(...)
     {
-        printResult("test_add() [exception]",false);
+        printResult("test_add() [exception]", false);
         return 1;
     }
 }
 
+int test_static()  // test several static string routines
+{
+    try
+    {
+        {
+            const CText::Char* str = _T("some text");
+            CText::Char dst[50];
+
+            CText::Strncpy(dst, str, 4);
+
+            if(CText::Strcmp(dst, _T("some")) != 0)
+                goto error;
+
+            str = _T("some");
+            CText::Strncpy(dst, str, 4);
+
+            if(CText::Strcmp(dst, _T("some")) != 0)
+                goto error;
+        }
+
+        {
+            CText::Char str1[] = _T("Sample string");
+            CText::Char str2[40];
+            CText::Char str3[40];
+            CText::Strcpy(str2, str1);
+            CText::Strcpy(str3, _T("copy successful"));
+
+            if(CText::Strcmp(str2, _T("Sample string")) != 0)
+                goto error;
+
+            if(CText::Strcmp(str3, _T("copy successful")) != 0)
+                goto error;
+        }
+
+
+        {
+            CText::Char s1[40] = _T("some");
+            CText::Strcat(s1, _T("thing"));
+            if(CText::Strcmp(s1, _T("something")) != 0)
+                goto error;
+            CText::Strncat(s1, _T(" something"), 5);
+            if(CText::Strcmp(s1, _T("something some")) != 0)
+                goto error;
+        }
+
+        {
+            CText::Char str1[20];
+            CText::Char str2[20];
+            CText::Strcpy(str1, _T("To be "));
+            CText::Strcpy(str2, _T("or not to be"));
+            CText::Strncat(str1, str2, 6);
+            if(CText::Strcmp(str1, _T("To be or not")) != 0)
+                goto error;
+        }
+
+        printResult("test_static()", true);
+        return 0;
+
+    error:
+        printResult("test_static()", false);
+        return 1;
+    }
+    catch(...)
+    {
+        printResult("test_static() [exception]", false);
+        return 1;
+    }
+}
 int test_find()
 {
     try
     {
         {
-            CText text = _T("The quick brown fox jumps over the lazy dog");
-            if(text.startsWith('T') == false)
+            CText s = _T("The quick brown fox jumps over the lazy dog");
+            if(!s.startsWith('T'))
                 goto error;
-            if(text.startsWith(_T("The")) == false)
-                goto error;
-            if(text.startsWithAny(_T("abcd"), 4) == true)
-                goto error;
-            if(text.startsWithAny(_T("pqrs"), 4) == false)
-                goto error;
-            if(text.startsWithAny(_T("PQRS"), 4, false) == false)
-                goto error;
-            if(text.startsWithAny(_T("qtrs")))
-                goto error;
-            if(!text.startsWithAny(_T("QTRS"), false))
-                goto error;
-            if(text.startsWith({_T('p'), _T('q'), _T('r'), _T('s')}))
-                goto error;
-            if(!text.startsWith({_T('s'), _T('H'), _T('T'), _T('r')}))
-                goto error;  
-            if(text.endsWith(_T('g')) == false)
-                goto error;
-            if(text.endsWith(_T('G')) == true)
-                goto error;
-            if(text.last() != 'g')
-                goto error;
-            if(!text.endsWith(_T('G'), 0, false))
-                goto error;
-            if(!text.endsWithAny(_T("pqgs")))
-                goto error;
-            if(text.endsWith({_T('s'), _T('H'), _T('T'), _T('r')}))
-                goto error;
-            if(!text.endsWith({_T('d'), _T('g')}))
-                goto error;
-            if(!text.endsWith({_T('g'), _T('d')}))
-                goto error;  
-            if(!text.endsWith(_T("dog")))
-                goto error;
-            if(!text.endsWith(_T("lazy"), 4))
-                goto error;
-            if(text.endsWith(_T("Lazy"), 4))
-                goto error;
-            if(!text.endsWith(_T("Lazy"), 4, false))
-                goto error;
-            if(!text.startsWith(_T("THE"), 0, false))
-                goto error;
-            if(text.startsWith(_T("THE"), 0, true))
-                goto error;
-            if(!text.startsWith(_T("QUICK"), 4, false))
-                goto error;
-            if(!CText::StartsWith(text, _T("T")))
-                goto error;
-            if(!CText::StartsWith(text, _T("The")))
+            if(!s.startsWith(_T("The")))
                 goto error;
 
-            // check only the first 2 characters from text
-            if(CText::StartsWith(text, _T("The"), true, 2) == true)
+            if(!s.startsWith('q', 4, true))
+                goto error;
+            if(!s.startsWith(_T("Q"), 4, false))
                 goto error;
 
-            if(CText::StartsWith(text, _T("Th"), true, 2) == false)
+            if(s.startsWith({_T('p'), _T('q'), _T('r'), _T('s')}))
+                goto error;
+            if(!s.startsWith({_T('s'), _T('H'), _T('T'), _T('r')}))
                 goto error;
 
-            text = _T("The");
-            if(CText::StartsWith(text, _T("The quick")))
+            if(!s.startsWith(_T("THE"), 0, false))
+                goto error;
+            if(s.startsWith(_T("THE"), 0, true))
+                goto error;
+            if(!s.startsWith(_T("QUICK"), 4, false))
+                goto error;
+            if(!CText::StartsWith(s.str(), _T("T")))
+                goto error;
+            if(!CText::StartsWith(s.str(), _T("The")))
                 goto error;
 
-            text = _T("good is one");
-            if(!CText::EndsWith(text, _T("one")))
+            CText a(_T("A"));
+            if(s.startsWith(a))
                 goto error;
-
-            if(CText::EndsWith(text, _T("One")))
+            a = _T("THE");
+            if(!s.startsWith(a, 0, false))
                 goto error;
         }
 
-        {    
+        {
             CText s = _T("The quick brown fox jumps over the lazy dog");
-            const CText::Char* words[] = {_T("fox"), _T("dog"), _T("the") };
-            if(s.startsWithAny(words, 2) == true)
+            if(s.startsWithAny(_T("abcd"), 4))
                 goto error;
-            if(s.startsWithAny(words, 2, 0, false))
+            if(!s.startsWithAny(_T("pqrs"), 4))
                 goto error;
-            if(!s.startsWithAny(words, 3, 0, false))
-                    goto error;
+            if(!s.startsWithAny(_T("PQRS"), 4, false))
+                goto error;
+            if(s.startsWithAny(_T("qtrs")))
+                goto error;
+            if(!s.startsWithAny(_T("QTRS"), false))
+                goto error;
+
+            CText chars(_T("abcd"));
+            if(s.startsWithAny(chars, 4))
+                goto error;
+
+            // check only the first 2 characters from text
+            if(CText::StartsWith(s.str(), _T("The"), true, 2) == true)
+                goto error;
+
+            if(CText::StartsWith(s.str(), _T("Th"), true, 2) == false)
+                goto error;
+
+            s = _T("The");
+            if(CText::StartsWith(s.str(), _T("The quick")))
+                goto error;
+        }
+
+        {
+            CText s = _T("The quick brown fox jumps over the lazy dog");
+            array<const CText::Char*,3> words = {_T("fox"), _T("dog"), _T("the")};
+
+            if(s.startsWithAny(words))
+                goto error;
+            if(!s.startsWithAny(words, 16))
+                goto error;
+            if(s.startsWithAny(words, 0, true))
+                goto error;
+            if(!s.startsWithAny(words, 0, false))
+                goto error;
 
             vector< CText::Char > vec2 = {_T('f'), _T('d'), _T('t')};
             if(s.startsWithAny(vec2))
@@ -526,13 +508,58 @@ int test_find()
                 goto error;
             if(!s.startsWithAny(vec, 0, false))
                 goto error;
+
+            std::vector<CText> words2 = {_T("fox"), _T("dog")};
+            if(s.startsWithAny(words2))
+                goto error;
+
+        }
+
+
+        {
+            CText s = _T("The quick brown fox jumps over the lazy dog");
+            if(!s.endsWith(_T('g')))
+                goto error;
+            if(s.endsWith(_T('G')))
+                goto error;
+            if(s.last() != 'g')
+                goto error;
+            if(!s.endsWith(_T('G'), 0, false))
+                goto error;
+
+            if(!s.endsWithAny(_T("pqgs")))
+                goto error;
+            if(s.endsWith({_T('s'), _T('H'), _T('T'), _T('r')}))
+                goto error;
+            if(!s.endsWith({_T('d'), _T('g')}))
+                goto error;
+            if(!s.endsWith({_T('g'), _T('d')}))
+                goto error;
+            if(!s.endsWith(_T("dog")))
+                goto error;
+            if(!s.endsWith(_T("lazy"), 4))
+                goto error;
+            if(s.endsWith(_T("Lazy"), 4))
+                goto error;
+            if(!s.endsWith(_T("Lazy"), 4, false))
+                goto error;
+
+            s = _T("good is one");
+            if(!CText::EndsWith(s.str(), _T("one")))
+                goto error;
+
+            if(CText::EndsWith(s.str(), _T("One")))
+                goto error;
         }
 
         {
             CText s = _T("The quick brown fox jumps over the lazy dog");
             vector< const CText::Char* > vec = {_T("fog"), _T("cog"), _T("man")};
             vector< CText::Char > vec2 = {_T('f'), _T('d'), _T('t')};
+            vector< CText > vec3 = {_T("fog"), _T("cog"), _T("man")};
             if(s.endsWithAny(vec))
+                goto error;
+            if(s.endsWithAny(vec3))
                 goto error;
             vec.push_back(_T("dog"));
             if(!s.endsWithAny(vec))
@@ -545,23 +572,11 @@ int test_find()
             s = _T("The quick brown fox jumps over the lazy doG");
             if(s.endsWithAny(vec2))
                 goto error;
-            if(!s.endsWithAny(vec2,0,false))  // test without case
+            if(!s.endsWithAny(vec2, 0, false))  // test without case
                 goto error;
             if(s.endsWithAny(vec))
                 goto error;
-            if(!s.endsWithAny(vec,0,false))
-                goto error;
-        }
-
-        {
-            CText s = _T("The quick brown fox jumps over the lazy dog");
-            vector<CText> start = {_T("do"), _T("la"), _T("se")};
-            vector<CText> end = {_T("n"), _T("s")};
-            vector<CText> contain = {_T("ve"), _T("se")};
-            vector<CText> result;
-            s.collectSubstrings(result, &start, &end, &contain);
-            s.compose(result, CText::SPACE);  // convert back to string
-            if(s != _T("brown jumps over lazy dog"))
+            if(!s.endsWithAny(vec, 0, false))
                 goto error;
         }
 
@@ -591,80 +606,12 @@ int test_find()
 
             if(subStr != _T("fox jumps over the lazy dog."))
                 goto error;
-            
+
             subStr = str.find(_T('D'));
 
             if(!subStr.isEmpty())
                 goto error;
-
-
-   
-
-
-
         }
-
-
- /*           
-          
-
-        // test ?
-        {
-            CText text = _T("money");
-            if(!CText::StartsWith(text,_T("m?n"),true,0,'?'))
-                goto error;
-
-            text = _T("mine");
-            if(!CText::StartsWith(text,_T("m?n"),true,0,'?'))
-                goto error;
-
-            text = _T("miss");
-            if(CText::StartsWith(text,_T("m?n"),true,0,'?'))
-                goto error;
-
-            text = _T("Money");
-            if(!CText::StartsWith(text,_T("m?n"),false,0,'?'))
-                goto error;
-
-            if(CText::StartsWith(text,_T("m??n"),false,0,'?'))
-                goto error;
-
-            text = _T("moon");
-            if(!CText::StartsWith(text,_T("m??n"),false,0,'?'))
-                goto error;
-
-            text = _T("moon and sun");
-            if(!CText::StartsWith(text,_T("m??n"),false,0,'?'))
-                goto error;
-        }
-
-        // ends with
-        {
-            CText text = _T("good is one");
-            if(!CText::EndsWith(text,_T("one")))
-                goto error;
-
-            if(CText::EndsWith(text,_T("One")))
-                goto error;
-
-            if(!CText::EndsWith(text,_T("One"),-1,0,false))
-                goto error;
-
-            if(!CText::EndsWith(text,_T("a|b|c|e"),-1,0,false,_T('|')))
-                goto error;
-        }
-
-        {
-            CText text = _T("1Something");
-
-            if(text.startsWithLatin() || !text.startsWithDigit())
-                return false;
-
-            text = _T("Something");
-            if(!text.startsWithLatin() || text.startsWithDigit())
-                return false;
-
-        }*/
 
         {
             CText s = _T("abcd");
@@ -674,9 +621,6 @@ int test_find()
             if(!s.contain(_T('A'), false))
                 goto error;
 
-            if(s.containOnly(_T('a')) || s.containOnly(_T('c')))
-                goto error;
-            
             if(!s.contain(_T('d'), 0, 10))
                 goto error;
 
@@ -691,10 +635,6 @@ int test_find()
             if(s.containAny({_T('a'), _T('b')}))
                 goto error;
             if(!s.containAny({_T('d'), _T('e')}))
-                goto error;
-
-            s = _T("aaaaaa");
-            if(!s.containOnly(_T('a')))
                 goto error;
 
             s = _T("alabala");
@@ -717,24 +657,28 @@ int test_find()
                 goto error;
 
             vector<const CText::Char*> vec3 = {_T("cat"), _T("mouse"), _T("Dog")};
+            vector<CText> vec4 = {_T("cat"), _T("mouse"), _T("Dog")};
             if(s.containAny(vec3))
+                goto error;
+
+            if(s.containAny(vec4))
                 goto error;
 
             if(!s.containAny(vec3, false))
                 goto error;
-            
-            const TCHAR* words[] = {_T("or"), _T("and")};
+
+            array<const TCHAR*,2> words = {_T("or"), _T("and")};
             if(s.containAny(words, false))
-                 goto error;
+                goto error;
         }
 
         {
-            const CText::Char* wordsToFind[] = {_T("fox"), _T("dog")};
+            array<const CText::Char*,2> wordsToFind = {_T("fox"), _T("dog")};
             CText s = _T("The quick brown fox jumps over the lazy dog");
 
             vector< pair <size_t, size_t> > v;
 
-            size_t nWords = s.findPositions(wordsToFind, sizeof(wordsToFind) / sizeof(const CText::Char*), v);
+            size_t nWords = s.findPositions(wordsToFind, v);
 
             if(nWords != 2)
                 goto error;
@@ -752,17 +696,17 @@ int test_find()
                 goto error;
         }
 
-        printResult("test_find()",true);
+        printResult("test_find()", true);
         return 0;
 
     error:
-        printResult("test_find()",false);
+        printResult("test_find()", false);
         return 1;
     }
 
     catch(...)
     {
-        printResult("test_find() [exception]",false);
+        printResult("test_find() [exception]", false);
         return 1;
     }
 }
@@ -789,7 +733,7 @@ int test_compare()
                 goto error;
 
             // test case-incensitive compare
-            if(a.compare(b, false) != 0)
+            if(a.compare(b.str(), false) != 0)
                 goto error;
 
             if((a != b) == false)
@@ -799,7 +743,7 @@ int test_compare()
                 goto error;
 
             if(a < _T("W") || _T("W") > a)
-                goto error; 
+                goto error;
 
             // test with empty strings
             a.clear();
@@ -808,7 +752,7 @@ int test_compare()
             if(a >= b)
                 goto error;
 
-            if(a.compare(b) >= 0)  // < 0
+            if(a.compare(b.str()) >= 0)  // < 0
                 goto error;
 
             if(a.compare(nullptr) != 0)  // < 0
@@ -831,9 +775,9 @@ int test_compare()
         {
             CText c1 = _T("open");
             CText c2 = _T("OPEN");
-            if(!c1.isEqual(c2, false))
+            if(!c1.isEqual(c2.str(), false))
                 goto error;
-            if(c1.isEqual(c2, true))
+            if(c1.isEqual(c2.str(), true))
                 goto error;
             c1.clear();
             if(!c1.isEqual(nullptr)) //nullptr is empty string
@@ -876,9 +820,9 @@ int test_modify()
             printResult("test_modify()", true);
             return 0;
 
-         }
+        }
 
-         {
+        {
             CText s = _T("1234");
 
             if(s.at(0) != _T('1') || s.at(1) != _T('2') || s.at(2) != _T('3') || s.at(3) != _T('4'))
@@ -895,42 +839,42 @@ int test_modify()
             printResult("test_modify()", true);
             return 0;
         }
-         
-         // test out of bound exception
-         {
-             CText s = _T("1234");
-             try
-             {
-                 if(s.at(4) == 0)
-                     goto error;
 
-                 goto error;
-             }
-             catch(std::out_of_range)
-             {
-                 // it is Ok
-             }
-             catch(...)
-             {
-                 goto error;
-             }
+        // test out of bound exception
+        {
+            CText s = _T("1234");
+            try
+            {
+                if(s.at(4) == 0)
+                    goto error;
 
-             try
-             {
-                 if(s.at(4) = _T('5'))
-                     goto error;
+                goto error;
+            }
+            catch(std::out_of_range)
+            {
+                // it is Ok
+            }
+            catch(...)
+            {
+                goto error;
+            }
 
-                 goto error;
-             }
-             catch(std::out_of_range)
-             {
-                 // it is Ok
-             }
-             catch(...)
-             {
-                 goto error;
-             }
-         }
+            try
+            {
+                if(s.at(4) = _T('5'))
+                    goto error;
+
+                goto error;
+            }
+            catch(std::out_of_range)
+            {
+                // it is Ok
+            }
+            catch(...)
+            {
+                goto error;
+            }
+        }
 
     error:
         printResult("test_modify()", false);
@@ -945,7 +889,7 @@ int test_modify()
 }
 
 
-int test_transform ()
+int test_transform()
 {
     try
     {
@@ -958,8 +902,8 @@ int test_transform ()
 
         {
             CText s = _T("this is a simple text");
-            const CText::Char* words[] = {_T("this"), _T("text")};
-            s.reverseAny(words, 2);
+            array<const CText::Char*,2> words = {_T("this"), _T("text")};
+            s.reverseAny(words);
             if(s != _T("siht is a simple txet"))
                 goto error;
         }
@@ -994,7 +938,7 @@ int test_transform ()
             if(textU.isUpper() || textL.isLower())
                 goto error;
 
-            if(!textU.substring(0,4).isUpper() || !textL.substring(0, 4).isLower())
+            if(!textU.substring(0, 4).isUpper() || !textL.substring(0, 4).isLower())
                 goto error;
 
             if(!textU.isUpper(false) || !textL.isLower(false))
@@ -1014,20 +958,6 @@ int test_transform ()
             CText s = _T("hjvgiluhbniphjni");
             s.sort();
             if(s != _T("bghhhiiijjlnnpuv"))
-                goto error;
-        }
-
-        {
-            CText s = _T("The quick brown fox jumps over the lazy dog");
-            s.wordsSort();
-            if(s != _T("The brown dog fox jumps lazy over quick the"))
-                goto error;
-        }
-
-        {
-            CText s = _T("The quick brown fox jumps over the lazy dog");
-            s.wordsReverse();
-            if(s != _T("ehT kciuq nworb xof spmuj revo eht yzal god"))
                 goto error;
         }
 
@@ -1062,10 +992,10 @@ int test_transform ()
         }
 
         {
-            CText s,s2;
+            CText s, s2;
             s.randomNumber(10);
             s2.appendRange(_T('0'), _T('9'));
-            if(!s.containOnly(s2) || s.length() != 10)
+            if(!s.containOnly(s2.str()) || s.length() != 10)
                 goto error;
 
             s.randomNumber(6);
@@ -1075,7 +1005,7 @@ int test_transform ()
                 goto error;
 
             s.random(_T("0123456789"), 8);
-            if(!s.containOnly(s2) || s.length() != 8)
+            if(!s.containOnly(s2.str()) || s.length() != 8)
                 goto error;
 
             i = s.toInteger(bOk);
@@ -1085,13 +1015,13 @@ int test_transform ()
             CText s3;
             s3.appendRange(_T('a'), _T('z'));
             s.randomAlpha(20);
-            if(!s.containOnly(s3, false) || s.length() != 20)
+            if(!s.containOnly(s3.str(), false) || s.length() != 20)
                 goto error;
 
             CText s4;
             s4.appendRange(_T('a'), _T('z')).appendRange(_T('0'), _T('9'));
             s.randomAlphaNumeric(30);
-            if(!s.containOnly(s4, false) || s.length() != 30)
+            if(!s.containOnly(s4.str(), false) || s.length() != 30)
                 goto error;
 
             CText a = _T("abc");
@@ -1107,7 +1037,7 @@ int test_transform ()
             CText s;
             bool bOk;
             s = _T("100001");
-            unsigned long i = s.toBinaryNumber(bOk);
+            unsigned int i = s.toBinaryNumber(bOk);
             if(!bOk || i != 33)
                 goto error;
         }
@@ -1123,6 +1053,58 @@ int test_transform ()
     catch(...)
     {
         printResult("test_transform() [exception]", false);
+        return 1;
+    }
+}
+
+int test_words()
+{
+    try
+    {
+        {
+
+            {
+                CText s = _T("The quick brown fox jumps over the lazy dog");
+                s.wordsSort();
+                if(s != _T("The brown dog fox jumps lazy over quick the"))
+                    goto error;
+            }
+
+            {
+                CText s = _T("The quick brown fox jumps over the lazy dog");
+                s.wordsReverse();
+                if(s != _T("ehT kciuq nworb xof spmuj revo eht yzal god"))
+                    goto error;
+            }
+
+            {
+                CText s = _T("The quick brown fox jumps over the lazy dog");
+                s.wordsCapitalize();
+                if(s != _T("The Quick Brown Fox Jumps Over The Lazy Dog"))
+                    goto error;
+            }
+
+            {
+                CText s = _T("The quick brown fox jumps over the lazy dog");
+                s.wordsEnclose(_T("<"), _T(">"));
+
+                if(s != _T("<The> <quick> <brown> <fox> <jumps> <over> <the> <lazy> <dog>"))
+                    goto error;
+            }
+
+        }
+
+        printResult("test_words()", true);
+        return 0;
+
+    error:
+        printResult("test_words()", false);
+        return 1;
+
+    }
+    catch(...)
+    {
+        printResult("test_words() [exception]", false);
         return 1;
     }
 }
@@ -1177,7 +1159,7 @@ int test_count()
             s = _T("    the quick brown fox  .-,   jumps   ,,,,  over - the lazy dog!");
             if(s.countChainsAny(_T(" .,-!")) != 10)
                 goto error;
-            
+
             if(s.countWords(_T(" .,-!")) != 9)
                 goto error;
         }
@@ -1194,16 +1176,10 @@ int test_count()
                 goto error;
         }
 
-        {
-            CText s = _T("The quick brown fox jumps over the lazy dog");
-            s.wordsCapitalize();
-            if(s !=_T("The Quick Brown Fox Jumps Over The Lazy Dog"))
-                goto error;
-        }
 
         {
             vector<CText::tstring> vec;
-            CText s =_T("1Text 56 containig [12] several; 222 numbers:100");
+            CText s = _T("1Text 56 containig [12] several; 222 numbers:100");
             CText list;
             list.appendRange(_T('0'), _T('9'));
             if(s.collect(vec, list.str()) != 5)
@@ -1223,7 +1199,7 @@ int test_count()
             if(CText::GeneratePermutations(v, a) != 6)
                 goto error;
 
-            std::vector<CText::tstring> v_target = {_T("ABC"),_T("ACB"),_T("BAC"),_T("BCA"),_T("CBA"), _T("CAB")};
+            std::vector<CText::tstring> v_target = {_T("ABC"), _T("ACB"), _T("BAC"), _T("BCA"), _T("CBA"), _T("CAB")};
             if(v != v_target)
                 goto error;
         }
@@ -1552,8 +1528,8 @@ int test_remove()
 
         {
             CText s = _T("one and two or three or five");
-            const CText::Char* words[] = {_T("or"), _T("and")};
-            s.removeAny(words, 2);
+            array<const CText::Char*,2> words = {_T("or"), _T("and")};
+            s.removeAny(words);
             s.reduceChain(' ');
             if(s != _T("one two three five"))
                 goto error;
@@ -1578,7 +1554,7 @@ int test_remove()
             s.reduceChain(' ');
             if(s != _T("Text containing separated by "))
                 goto error;
-    
+
             s = _T("Can \"Remove\" 'Literals' from a text");
             s.removeBlocks(_T("'\""), _T("\'\""));
             s.reduceChain(' ');
@@ -1647,10 +1623,10 @@ int test_substring()
         {
             CText s = _T("first and second or third and four");
 
-            const CText::Char* words[] = {_T("or"), _T("and")};
+            array<const CText::Char*,2> words = {_T("or"), _T("and")};
 
             size_t pos;
-            size_t idx = s.indexOfAny(words, 2, 0, true, &pos);
+            size_t idx = s.indexOfAny(words, 0, true, &pos);
 
             if(idx != 6 || pos != 1)
                 goto error;
@@ -1769,18 +1745,18 @@ int test_convert()
         }
 
         {
-        CText s;
-        double d = 1234567890.78787878787878;
-        s.fromDouble(d);
-        if(s != _T("1234567890.787879"))
-            goto error;
-        s.fromDouble(d, 2);
-        if(s != _T("1234567890.79"))
-            goto error;
-        bool bOk;
-        double d2 = s.toDouble(bOk);
-        if(d2 != 1234567890.79)
-            goto error;
+            CText s;
+            double d = 1234567890.78787878787878;
+            s.fromDouble(d);
+            if(s != _T("1234567890.787879"))
+                goto error;
+            s.fromDouble(d, 2);
+            if(s != _T("1234567890.79"))
+                goto error;
+            bool bOk;
+            double d2 = s.toDouble(bOk);
+            if(d2 != 1234567890.79)
+                goto error;
         }
 
 
@@ -1970,8 +1946,8 @@ int test_convert()
             std::vector<std::vector<int>> m_target =
             {
                 {1, 2, 3},
-                {4, 5, 6},
-                {7, 8, 9},
+            {4, 5, 6},
+            {7, 8, 9},
             };
             CText s = _T("1 2 3\n4 5 6\n7 8 9");
             s.toMatrix<int>(m, _T(' '), bOk);
@@ -1986,8 +1962,8 @@ int test_convert()
             std::vector<std::vector<float>> m_target =
             {
                 {1.0, 2.0, 3.0},
-                {4.0, 5.0, 6.0},
-                {7.0, 8.0, 9.0},
+            {4.0, 5.0, 6.0},
+            {7.0, 8.0, 9.0},
             };
             CText s = _T("1.0 2.0 3.0\n4.0 5.0 6.0\n7.0 8.0 9.0");
             s.toMatrix<float>(m, _T(' '), bOk);
@@ -2034,6 +2010,10 @@ int test_replace()
             if(s != _T("The 12345 fox"))
                 goto error;
 
+            CText s2 = _T("12345");
+            s = _T("The quick fox");
+            s.replace(4, 5, s2.str());
+
             s = _T("Text with word quick word replace word");
             s.replace(_T("word"), _T("longer"));
             if(s != _T("Text with longer quick longer replace longer"))
@@ -2053,8 +2033,8 @@ int test_replace()
 
         {
             CText s = _T("The quick brown fox jumps over the lazy dog");
-            const CText::Char* words[] = {_T("quick"), _T("fox"), _T("dog")};
-            s.replaceAny(words, 3, _T("****"));
+            array<const CText::Char*,3> words = {_T("quick"), _T("fox"), _T("dog")};
+            s.replaceAny(words, _T("****"));
             if(s != _T("The **** brown **** jumps over the lazy ****"))
                 goto error;
 
@@ -2065,7 +2045,7 @@ int test_replace()
                 goto error;
 
             s = _T("The quick brown fox jumps over the lazy dog");
-            s.replaceAny(words, 3, _T('-'));
+            s.replaceAny(words, _T('-'));
             if(s != _T("The ----- brown --- jumps over the lazy ---"))
                 goto error;
 
@@ -2076,10 +2056,10 @@ int test_replace()
         }
 
         {
-            const CText::Char* words1[] = {_T("fox"), _T("dog")};
-            const CText::Char* words2[] = {_T("dog"), _T("fox")};
+            array<const CText::Char*, 2> words1 = {_T("fox"), _T("dog")};
+            array<const CText::Char*, 2> words2 = {_T("dog"), _T("fox")};
             CText s = _T("The quick brown fox jumps over the lazy dog");
-            s.replaceAny(words1, 2, words2);
+            s.replaceAny(words1, words2);
             if(s != _T("The quick brown dog jumps over the lazy fox"))
                 goto error;
         }
@@ -2101,6 +2081,7 @@ int test_replace()
             if(s != _T("The quick brown dog jumps over the lazy fox"))
                 goto error;
         }
+
         {
             CText s = _T("The quick brown fox jumps over the lazy dog");
             s.replaceAny({_T("fox"), _T("dog")}, {_T("dog"), _T("fox")});
@@ -2139,13 +2120,13 @@ int test_split()
             CText s1, s2, s3;
 
             if(!text.splitAt(4, s1, s2))
-                goto error;   
+                goto error;
 
             if(s1 != _T("Text") || s2 != _T(" Splited by a character test"))
                 goto error;
 
             if(!text.splitAt(0, s1, s2))
-                goto error;       
+                goto error;
 
             if(s1 != _T("") || s2 != _T("Text Splited by a character test"))
                 goto error;
@@ -2273,7 +2254,6 @@ int test_insert()
                 goto error;
         }
 
-
         {
             CText s = _T("Test");
             s.enclose(_T('('), _T(')'));
@@ -2297,17 +2277,9 @@ int test_insert()
             s = _T("Test");
             s.quote();
             if(s != _T("\"Test\""))
-                goto error; 
+                goto error;
             s.unquote();
             if(s != _T("Test"))
-                goto error;
-        }
-
-        {
-            CText s = _T("The quick brown fox jumps over the lazy dog");
-            s.wordsEnclose(_T("<"), _T(">"));
-
-            if(s != _T("<The> <quick> <brown> <fox> <jumps> <over> <the> <lazy> <dog>"))
                 goto error;
         }
 
@@ -2371,7 +2343,7 @@ int test_collect()
             if(words != words_target)
                 goto error;
             s = _T("The,quick,brown,fox,jumps,over,the,lazy,dog");
-            if(s.split(words,false,_T(",")) != 9)
+            if(s.split(words, false, _T(",")) != 9)
                 goto error;
             if(words != words_target)
                 goto error;
@@ -2420,7 +2392,7 @@ int test_unicode()
         }
 
         {
-            CText s (_T("Hello World"));
+            CText s(_T("Hello World"));
             string s2;
             s.toChars(s2);
             if(s2 != "Hello World")
@@ -2458,18 +2430,62 @@ int test_unicode()
     }
 }
 
+int test_edit_distances()
+{
+    try
+    {
+        {
+            if(CText::Levenshtein(_T("GUMBO"), _T("GAMBOL")) != 2)
+                goto error;
+
+            if(CText::Levenshtein(_T("gas"), _T("mass")) != 2)
+                goto error;
+
+            if(CText::Levenshtein(_T("ghost"), _T("host")) != 1)
+                goto error;
+
+            if(CText::Levenshtein(_T("gamble"), _T("gang")) != 4)
+                goto error;
+        }
+
+        {
+            if(CText::HammingDistance(_T("ball"), _T("rainball")) != -1)
+                goto error;  //
+
+            if(CText::HammingDistance(_T("ball"), _T("call")) != 1)
+                goto error;  //
+
+            if(CText::HammingDistance(_T("horror"), _T("mirror")) != 2)
+                goto error;  //
+        }
+
+        printResult("test_edit_distances()", true);
+        return 0;
+
+    error:
+        printResult("test_edit_distances()", false);
+        return 1;
+    }
+    catch(...)
+    {
+        printResult("test_edit_distances() [exception]", false);
+        return 1;
+    }
+}
+
+
 int test_file()
 {
     try
     {
         // test read from ASCI text file
         {
-            CText path = getcwd(0,0);
+            CText path = getcwd(0, 0);
             path += _T("/test.txt");
             CText s;
-            if(!s.readFile(path))
+            if(!s.readFile(path.str()))
                 goto error;
-            
+
             if(s != _T("Hello World"))
                 goto error;
         }
@@ -2524,9 +2540,9 @@ int test_file()
                 CText s(_T("Hello World"));
                 CText path = getcwd(0, 0);
                 path += _T("/test2.txt");
-                s.writeFile(path, CText::ENCODING_ASCII);
+                s.writeFile(path.str(), CText::ENCODING_ASCII);
                 CText s2;
-                if(!s2.readFile(path))
+                if(!s2.readFile(path.str()))
                     goto error;
                 if(s != s)
                     goto error;
@@ -2538,9 +2554,9 @@ int test_file()
             CText s(_T("Hello World"));
             CText path = getcwd(0, 0);
             path += _T("/test2_UTF8.txt");
-            s.writeFile(path, CText::ENCODING_UTF8);
+            s.writeFile(path.str(), CText::ENCODING_UTF8);
             CText s2;
-            s2.readFile(path);
+            s2.readFile(path.str());
             if(s != s)
                 goto error;
         }
@@ -2565,9 +2581,9 @@ int test_file()
                 CText s(_T("Hello World"));
                 CText path = getcwd(0, 0);
                 path += _T("/test2_UTF16LE_2.txt");
-                s.writeFile(path, CText::ENCODING_UTF16LE);
-                s.readFile(path);
-                
+                s.writeFile(path.str(), CText::ENCODING_UTF16LE);
+                s.readFile(path.str());
+
                 if(s != _T("Hello World"))
                     goto error;
             }
@@ -2579,8 +2595,8 @@ int test_file()
                 CText s(_T("Hello World"));
                 CText path = getcwd(0, 0);
                 path += _T("/test2_UTF16BE_2.txt");
-                s.writeFile(path, CText::ENCODING_UTF16BE);
-                s.readFile(path);
+                s.writeFile(path.str(), CText::ENCODING_UTF16BE);
+                s.readFile(path.str());
                 if(s != _T("Hello World"))
                     goto error;
             }
@@ -2598,59 +2614,18 @@ int test_file()
         return 1;
     }
 }
-int test_edit_distances()
-{
-    try
-    {
-        {
-            if(CText::Levenshtein(_T("GUMBO"), _T("GAMBOL")) != 2)
-                goto error;  
-
-            if(CText::Levenshtein(_T("gas"), _T("mass")) != 2)
-                goto error;
-
-            if(CText::Levenshtein(_T("ghost"), _T("host")) != 1)
-                goto error;
-
-            if(CText::Levenshtein(_T("gamble"), _T("gang")) != 4)
-                goto error;
-        }
-
-        {
-            if(CText::HammingDistance(_T("ball"), _T("rainball")) != -1)
-                goto error;  //
-
-            if(CText::HammingDistance(_T("ball"), _T("call")) != 1)
-                goto error;  //
-
-            if(CText::HammingDistance(_T("horror"), _T("mirror")) != 2)
-                goto error;  //
-        }
-
-        printResult("test_edit_distances()", true);
-        return 0;
-
-    error:
-        printResult("test_edit_distances()", false);
-        return 1;
-    }
-    catch(...)
-    {
-        printResult("test_edit_distances() [exception]", false);
-        return 1;
-    }
-}
 
 int unitTest()
 {
     int errors = 0;
     errors += test_init();
-    errors += test_static();
     errors += test_add();
+    errors += test_static();
     errors += test_find();
     errors += test_compare();
     errors += test_modify();
     errors += test_transform();
+    errors += test_words();
     errors += test_count();
     errors += test_remove();
     errors += test_substring();
@@ -2661,9 +2636,12 @@ int unitTest()
     errors += test_blocks();
     errors += test_collect();
     errors += test_unicode();
-    errors += test_file();
     errors += test_edit_distances();
+    errors += test_file();
 
-    printf("\nErrors: %d\n",errors);
     return errors;
 }
+
+
+
+
