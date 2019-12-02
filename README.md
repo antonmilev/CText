@@ -28,7 +28,9 @@ Please feel free to contact me for any questions, requests or even critics.
 <br>cmake -D CMAKE_BUILD_TYPE=Debug .
 <br>
 <br>This will build a console application that runs the Unit Tests.
-
+<br>
+<br> Also there is a VS2017 solution (CText.sln) with all projects.
+<br>
 ## Examples
 
 For all examples how to use CText please see the Unit Test project.
