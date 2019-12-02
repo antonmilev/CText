@@ -29,7 +29,7 @@ Please feel free to contact me for any questions, requests or even critics.
 <br>
 <br>This will build a console application that runs the Unit Tests.
 <br>
-<br> Also there is a VS2017 solution (CText.sln) with all projects.
+<br> Also there is a Visual Studio solution (CText.sln) with all projects. Run UnitTests project first to see if all tests pass.
 <br>
 ## Examples
 
