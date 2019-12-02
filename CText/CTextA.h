@@ -33,7 +33,7 @@ size_t  CTextA::Vsnprintf(char* str, size_t n, const char * fmt, va_list args)
 #else
     return vsnprintf(str, n, fmt, args);
 #endif
-};
+}
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
@@ -125,35 +125,6 @@ bool CTextA::ReadFile(const char* filePath, CTextA& res)
     }
 
     return true;
-}
-
-//-----------------------------------------------------------------------------------------------------------
-template<>
-bool CTextA::ReadLinesFromFile(const char* path, CTextA& res, size_t lineStart, size_t lineEnd)
-{
-    res.clear();
-    size_t num = 0;
-    std::string tmpString;
-    std::ifstream txtFile(path);
-    if(txtFile.is_open())
-    {
-        while(txtFile.good() && num < lineStart)
-        {
-            num++;
-            std::getline(txtFile, tmpString);
-        }
-
-        while(txtFile.good() && num < lineEnd)
-        {
-            num++;
-            std::getline(txtFile, tmpString);
-            res += tmpString;
-            res += EOL;
-        }
-        txtFile.close();
-    }
-
-    return num;
 }
 
 //-----------------------------------------------------------------------------------------------------------

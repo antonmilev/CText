@@ -20,6 +20,12 @@ include_directories("${PROJECT_BINARY_DIR}")
  
 add_executable(UnitTests UnitTests.cpp Main.cpp terminal.cpp)
 
+#if(MSVC)
+#  target_compile_options(UnitTests PRIVATE /W4 /WX)
+#else()
+#  target_compile_options(UnitTests PRIVATE -Wall -Wextra -pedantic -Werror)
+#endif()
+
 add_subdirectory (Demos/CollectSentences)
 add_subdirectory (Demos/PaddRightLines)
 add_subdirectory (Demos/SortLines)

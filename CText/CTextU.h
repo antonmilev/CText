@@ -34,7 +34,7 @@ size_t CTextU::Vsnprintf(wchar_t * str, size_t n, const wchar_t * fmt, va_list a
 #else
     return vsnwprintf(str, n, fmt, args);
 #endif
-};
+}
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
@@ -183,14 +183,5 @@ static bool CTextU::WriteFile(const wchar_t* filePath, CTextU& s, EncodingType e
     file.close();
 
     return true;
-}
-
-
-
-template<>
-bool CTextU::ReadLinesFromFile(const wchar_t* path, CTextU& res, size_t lineStart, size_t lineEnd)
-{
-    //#error Not implemented for unicode!
-    return 0;
 }
 

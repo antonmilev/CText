@@ -505,7 +505,7 @@ T CTextT<T>::lower(T c)
 template <typename T>
 T CTextT<T>::upper(T c)
 {
-    return ::toupper(c);
+    return (T)(::toupper(c));
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -634,7 +634,7 @@ int CTextT<T>::Strcmp(const T* p1, const T* p2, bool bCase)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::StartsWith(const T* text, const T* str, bool bCase, int max_len, size_t* offset)
+bool CTextT<T>::StartsWith(const T* text, const T* str, bool bCase, size_t max_len, size_t* offset)
 {
     if(!*text || !*str)
         return false;
@@ -649,7 +649,7 @@ bool CTextT<T>::StartsWith(const T* text, const T* str, bool bCase, int max_len,
         str++;
 
         // check if the maximal number of characters is reached
-        if(max_len > 0 && text - text_start >= max_len)
+        if(max_len > 0 && (size_t)(text - text_start) >= max_len)
             break;
     }
 
@@ -685,7 +685,7 @@ bool CTextT<T>::startsWith(const S& s, size_t from, bool bCase) const
     if(isEmpty() || EmptyOrNull((const T*)s) || from >= length())
         return false;
 
-    return StartsWith(str(from), (const T*)s, bCase, -1);
+    return StartsWith(str(from), (const T*)s, bCase, std::string::npos);
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -1022,7 +1022,7 @@ size_t CTextT<T>::LastIndexOf(const T* str, size_t len, T c, bool bCase)
     while(p >= str)
     {
         if(bCase ? *p == c : upper(*p) == c)
-            return ((int)(p - str));
+            return ((size_t)(p - str));
         p--;
     }
 
@@ -1049,7 +1049,7 @@ size_t CTextT<T>::LastIndexOf(const T* str, size_t len, const T* s, bool bCase)
     }
 
     // return -1 if not found, distance from beginning otherwise
-    return -1;
+    return std::string::npos;
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -1091,10 +1091,10 @@ size_t CTextT<T>::indexOfAny(const T* cList, size_t from, bool bCase) const
 template <typename T>
 size_t CTextT<T>::indexOf(T c, size_t from, bool bCase) const
 {
-    if(isEmpty())
+    if(isEmpty() || from >= length()) 
         return std::string::npos;
 
-    return IndexOf(str(from), length(), c, bCase);
+    return (from + IndexOf(str(from), c, bCase));
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -1119,7 +1119,7 @@ size_t CTextT<T>::indexOf(const T* s, size_t from, bool bCase) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-size_t CTextT<T>::IndexOf(const T* str, size_t len, T c, bool bCase)
+size_t CTextT<T>::IndexOf(const T* str, T c, bool bCase)
 {
     if(EmptyOrNull(str))
         return std::string::npos;
@@ -1128,7 +1128,7 @@ size_t CTextT<T>::IndexOf(const T* str, size_t len, T c, bool bCase)
     const T* s = StrFindCh(str, c, bCase);
 
     // return -1 if not found and index otherwise
-    return (s == 0) ? -1 : (int)(s - str);
+    return (s == 0) ? -1 : (size_t)(s - str);
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -1146,7 +1146,7 @@ size_t CTextT<T>::indexOfNot(T c, bool bCase) const
     while(*s)
     {
         if(bCase ? *s != c : upper(*s) != c)
-            return ((int)(s - str()));
+            return ((size_t)(s - str()));
         s++;
     }
 
@@ -1166,7 +1166,7 @@ size_t  CTextT<T>::lastIndexOfAny(const T* cList, bool bCase) const
     while(s >= str())
     {
         if(IsOneOf(*s, cList, bCase))
-            return ((int)(s - str()));
+            return ((size_t)(s - str()));
 
         s--;
     }
@@ -1189,7 +1189,7 @@ size_t CTextT<T>::lastIndexOfNot(T c, bool bCase) const
     while(s >= str())
     {
         if(bCase ? *s != c : upper(*s) != c)
-            return ((int)(s - str()));
+            return ((size_t)(s - str()));
         s--;
     }
 
@@ -1360,7 +1360,7 @@ size_t CTextT<T>::remove(std::initializer_list<T> list)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::removeAny(const T* cList, bool bCase)
+size_t CTextT<T>::removeAny(const T* cList, bool bCase)
 {
     if(isEmpty() || EmptyOrNull(cList))
         return 0;
@@ -1368,7 +1368,7 @@ int CTextT<T>::removeAny(const T* cList, bool bCase)
     auto from = m_str.begin();
     auto to = m_str.begin();
 
-    int n = 0;
+    size_t n = 0;
     while(from != m_str.end())
     {
         T ch = *from;
@@ -1967,7 +1967,7 @@ int CTextT<T>::compare(const T* s, bool bCase) const
 {
     // do not use m_str.compare(s)
     return Strcmp(str(), s, bCase);
-};
+}
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
@@ -2104,7 +2104,7 @@ CTextT<T>& CTextT<T>::shuffle()
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-CTextT<T>& CTextT<T>::rotateLeft(int n)
+CTextT<T>& CTextT<T>::rotateLeft(size_t n)
 {
     if(isEmpty() || !n)
         return *this;
@@ -2116,7 +2116,7 @@ CTextT<T>& CTextT<T>::rotateLeft(int n)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-CTextT<T>& CTextT<T>::rotateRight(int n)
+CTextT<T>& CTextT<T>::rotateRight(size_t n)
 {
     if(isEmpty() || !n)
         return *this;
@@ -2590,7 +2590,6 @@ size_t CTextT<T>::toMatrix(std::vector<C>& container, T sep, bool& bOk, const T*
     return n;
 }
 
-
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 bool CTextT<T>::resize(size_t newLen, T c)
@@ -2605,10 +2604,10 @@ void CTextT<T>::randomNumber(size_t len)
 {
     clear();
     resize(len);
-    m_str[0] = '1' + rand() % 9;  // must not begin with 0
+    m_str[0] = T('1') + rand() % 9;  // must not begin with 0
 
-    for(int k = 1; k < len; k++)
-        m_str[k] = '0' + rand() % 10;
+    for(size_t k = 1; k < len; k++)
+        m_str[k] = T('0') + rand() % 10;
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -2691,7 +2690,7 @@ size_t CTextT<T>::GeneratePermutations(C& container, CTextT<T>& a)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::countChars(std::map<T, int>& container, bool bCase) const
+size_t CTextT<T>::countChars(std::map<T, int>& container, bool bCase) const
 {
     container.clear();
     for(T c : m_str)
@@ -2727,7 +2726,6 @@ void CTextT<T>::Swap(CTextT& a, CTextT& b)
 template <typename T>
 CTextT<T>& CTextT<T>::wordsSort(const T* sep, const T* sepNew) // words sort in ascending order
 {
-    int pos = 0;
     std::vector<CTextT> words;
     split(words, false, sep);  //TODO - add case
     std::sort(words.begin(), words.end(), [](const CTextT& a, const CTextT& b) { return a < b; });
@@ -3102,7 +3100,7 @@ size_t CTextT<T>::countAny(const T* cList) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-size_t  CTextT<T>::count(const T* s) const
+size_t CTextT<T>::count(const T* s) const
 {
     if(EmptyOrNull(s))
         return 0;
@@ -3115,7 +3113,7 @@ size_t  CTextT<T>::count(const T* s) const
     size_t pos = 0;
     size_t num = 0;
 
-    while((pos = indexOf(s, pos)) != -1)
+    while((pos = indexOf(s, pos)) != std::string::npos)
     {
         pos += len;
         num++;
@@ -3125,15 +3123,14 @@ size_t  CTextT<T>::count(const T* s) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::countChains(T c) const
+size_t CTextT<T>::countChains(T c) const
 {
     if(isEmpty() || !c || length() < 2)
         return 0;
 
     auto from = m_str.begin() + 1;
 
-    T chFrom = 0;
-    int n = 0;
+    size_t n = 0;
     bool first = true;
 
     while(from != m_str.end())
@@ -3155,15 +3152,13 @@ int CTextT<T>::countChains(T c) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::countChainsAny(const T* cList) const
+size_t CTextT<T>::countChainsAny(const T* cList) const
 {
     if(isEmpty() || EmptyOrNull(cList) || length() < 2)
         return 0;
 
     auto from = m_str.begin() + 1;
-
-    T chFrom = 0;
-    int n = 0;
+    size_t n = 0;
     bool first = true;
 
     while(from != m_str.end())
@@ -3185,17 +3180,17 @@ int CTextT<T>::countChainsAny(const T* cList) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::countWords(const T* sep) const
+size_t CTextT<T>::countWords(const T* sep) const
 {
     return countSubstrings(sep);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::countSubstrings(const T* sep) const
+size_t CTextT<T>::countSubstrings(const T* sep) const
 {
     size_t pos = 0;
-    int n = 0;
+    size_t n = 0;
     CTextT<T> word;
     while(nextExcluding(pos, word, false, sep))
         n++;
@@ -3226,13 +3221,13 @@ size_t CTextT<T>::countWordFrequencies(C& container, bool bCase, const T* sep) c
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::wordsCapitalize(const T* sep)
+size_t CTextT<T>::wordsCapitalize(const T* sep)
 {
     if(isEmpty())
         return 0;
     size_t posNext = 0, posBegin, posEnd;
     CTextT<T> word;
-    int n = 0;
+    size_t n = 0;
     while(nextExcluding(posNext, word, false, sep, &posBegin, &posEnd))
     {
         m_str[posBegin] = upper(m_str[posBegin]);
@@ -3438,8 +3433,6 @@ bool CTextT<T>::fromHex(Num i, bool hasBase, bool upper)
     if(hasBase) ss << T('0') << T('x');
     if(upper) ss << std::uppercase;
     ss << std::setfill(T('0')) << std::setw(sizeof(Num) * 2) << std::hex << ((sizeof(Num) == 1) ? i : (int)i);
-
-
     m_str = ss.str();
     return !ss.fail();
 }
@@ -3686,13 +3679,13 @@ CTextT<T>&  CTextT<T>::replace(size_t from, size_t count, T c)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::replaceAny(const T* cList, T cNew, bool bCase)
+size_t CTextT<T>::replaceAny(const T* cList, T cNew, bool bCase)
 {
     if(isEmpty() || EmptyOrNull(cList))
         return 0;
 
     auto from = m_str.begin();
-    int nCount = 0;
+    size_t nCount = 0;
     while(from != m_str.end())
     {
         // replace instances of the specified character only
@@ -4092,10 +4085,10 @@ CTextT<T>& CTextT<T>::enclose(const T* begin, const T* end, bool checkEnds)  //T
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::unenclose(T begin, T end)
+size_t CTextT<T>::unenclose(T begin, T end)
 {
-    int left = 0;
-    int right = 0;
+    size_t left = 0;
+    size_t right = 0;
 
     while(startsWith(begin, left))
         left++;
@@ -4118,7 +4111,7 @@ CTextT<T>& CTextT<T>::quote()
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::unquote()
+size_t CTextT<T>::unquote()
 {
     return unenclose(Literal, Literal);
 }
@@ -4238,7 +4231,6 @@ size_t CTextT<T>::HammingDistance(const T *s1, const T *s2)
 template <typename T>
 size_t CTextT<T>::linesTrim(const T* cList, const T* sep, const T* sepNew)
 {
-    int pos = 0;
     std::vector<CTextT> lines;
     collectLines(lines, false, sep);
     for(CTextT& s : lines)
@@ -4251,7 +4243,6 @@ size_t CTextT<T>::linesTrim(const T* cList, const T* sep, const T* sepNew)
 template <typename T>
 size_t CTextT<T>::linesPaddRight(T c, size_t len, const T* sep, const T* sepNew)
 {
-    int pos = 0;
     std::vector<CTextT> lines;
     collectLines(lines, false, sep);
     for(CTextT& s : lines)
@@ -4264,7 +4255,6 @@ size_t CTextT<T>::linesPaddRight(T c, size_t len, const T* sep, const T* sepNew)
 template <typename T>
 size_t  CTextT<T>::linesSort(const T* sep, const T* sepNew)
 {
-    int pos = 0;
     std::vector<CTextT> lines;
     collectLines(lines, false, sep);
     std::sort(lines.begin(), lines.end(), [](const CTextT& a, const CTextT& b) { return a < b; });

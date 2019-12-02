@@ -29,7 +29,10 @@
 #include <locale>
 #include <unordered_map>
 
+#ifdef _WIN32
 #pragma warning(disable : 4996)
+#endif 
+
 #define ContS template<typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T*>::value || std::is_constructible<Val, const T*>::value >  >
 #define ContC template<typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_same<Val, T>::value || std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T* >::value || std::is_constructible<Val, const T*>::value  >  >
 #define ContN template<typename Num, typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_convertible<Val, Num>::value && (std::is_integral<Num>::value || std::is_floating_point<Num>::value) >  >
@@ -162,11 +165,11 @@ public:
     size_t       count(T c) const;  //returns the count of occurences of the given character
     size_t       count(const T* s) const;  //returns the count of occurences of the given substring
     size_t       countAny(const T* cList) const;  //returns the count of occurences of any of the characters in the list
-    int          countChains(T c) const;  // return count of blocks containing only character c (chains)
-    int          countChainsAny(const T* cList) const;  // return count of blocks containing only of the characters in the list
-    int          countChars(std::map<T, int>& container, bool bCase = true) const; // fill the map container with character counts
-    int          countSubstrings(const T* sep) const; // return number of found substrings divided by sep
-    int          countWords(const T* sep = SeparatorsWord) const; // return number of the found words divided by sep
+    size_t       countChains(T c) const;  // return count of blocks containing only character c (chains)
+    size_t       countChainsAny(const T* cList) const;  // return count of blocks containing only of the characters in the list
+    size_t       countChars(std::map<T, int>& container, bool bCase = true) const; // fill the map container with character counts
+    size_t       countSubstrings(const T* sep) const; // return number of found substrings divided by sep
+    size_t       countWords(const T* sep = SeparatorsWord) const; // return number of the found words divided by sep
     MapI size_t  countWordFrequencies(C& container, bool bCase = true, const T* sep = SeparatorsWord) const; // fill the container with the words frequency counts
     bool         cutAfterFirst(T c, bool include = false);//leaves everyting left from c, c is not included
     bool         cutAfterFirst(const T* s, bool include = false); // same as above but perfomed over zero-teminated string, s is not included
@@ -188,7 +191,7 @@ public:
     DefS bool    endsWith(const S& s, size_t from = 0, bool bCase = true) const;
     bool         endsWith(std::initializer_list<T> cList);
     bool         endsWithAny(const T* cList, bool bCase = true) const;
-    ContC bool   endsWithAny(const C& container, size_t from = 0, bool bCase = true, size_t* idx = 0) const;
+    ContC bool   endsWithAny(const C& container, size_t from = 0, bool bCase = true, size_t* idx = nullptr) const;
     size_t       erase(size_t from, size_t count = 1);  // delete count characters starting at zero-based index
     const T*     find(const T c, bool bCase = true) const;// return a pointer to the first occurence of the character, or 0 pointer if not found
     const T*     find(const T *s, bool bCase = true) const; // return a pointer to the first occurence of the string, or 0 pointer if not found
@@ -264,7 +267,7 @@ public:
     size_t       remove(T c, size_t from = 0); // delete all occurrences of the character stsrting from the zero-bsased index
     size_t       remove(const T* s, bool bCase = true); // delete all occurences of the sub-string s, returns the number of the removed strings s (or 0 if nothing is removed)
     size_t       remove(std::initializer_list<T> cList);
-    int          removeAny(const T* cList, bool bCase = true);  //delete all of provided in the list characters
+    size_t       removeAny(const T* cList, bool bCase = true);  //delete all of provided in the list characters
    ContS CTextT& removeAny(const C& container, bool bCase = true); //remove any from the provided in the list strings
    CTextT&       removeAny(std::initializer_list<const T*> list, bool bCase = true); 
     CTextT&      removeAt(const RangeVector& pos); //remove from the positions at the provided index arrays
@@ -274,7 +277,7 @@ public:
     size_t       replace(const T* what, const T* with, bool bCase = true);// replace all occurrences of substring "what" with substring "with", empty "with" removes all instances of "what", return number of replaced substrings
     CTextT&      replace(size_t from, size_t count, T c); // replace range with sizngle character
     CTextT&      replace(size_t from, size_t count, const T* s);  // replace range with the content of the string (in incrementing order)
-    int          replaceAny(const T* cOld, T cNew, bool bCase = true); //replace any of the old characters with the new
+    size_t       replaceAny(const T* cOld, T cNew, bool bCase = true); //replace any of the old characters with the new
    ContS CTextT& replaceAny(const C& what, const T c, bool bCase = true);
    ContS CTextT& replaceAny(const C& what, const C& with, bool bCase = true);
    ContS CTextT& replaceAny(const C& what, const T* s, bool bCase = true);
@@ -292,8 +295,8 @@ public:
     CTextT<T>&   reverseAt(const RangeVector& pos);  //reverse inplace, in one pass all provided ranges
     const T*     reverseFind(const T* s, bool bCase = true) const;
     CTextT       right(size_t count) const; // return new string with count characters from the end of our string   
-    CTextT&      rotateLeft(int n); // rotate tne string to the left
-    CTextT&      rotateRight(int n); // rotate tne string to the right
+    CTextT&      rotateLeft(size_t n); // rotate tne string to the left
+    CTextT&      rotateRight(size_t n); // rotate tne string to the right
     CTextT&      shuffle();
     CTextT&      sort(); // per character sort in ascending order
     CTextT       spanIncluding(const T* cList) const;   //  characters from beginning that are also in passed string
@@ -335,9 +338,9 @@ public:
     CTextT&      trimLeft(const T* cList = Separators);  // remove from left continuous occurrence of all characters from the provided list
     CTextT&      trimRight(const T c); //// remove continuous occurrence of character c, starting from right
     CTextT&      trimRight(const T* cList = Separators); // remove from right continuous occurrence of all characters from the provided list  
-    int          unenclose(T begin, T end); //opposite of enclose
-    int          unquote();  //removes literal sign if ends with it
-    int          wordsCapitalize(const T* sep = Separators);  // make all words in a text start with upper character
+    size_t       unenclose(T begin, T end); //opposite of enclose
+    size_t       unquote();  //removes literal sign if ends with it
+    size_t       wordsCapitalize(const T* sep = Separators);  // make all words in a text start with upper character
     CTextT&      wordsEnclose(const T* sBegin, const T* sEnd, const T* sep = SeparatorsWord);
   ContC CTextT&  wordsEnclose(const T* sBegin, const T* sEnd, const C* start = nullptr, const C* end = nullptr, const C* has = nullptr, const T* sep = SeparatorsWord); //enclose all words using provided block begin and end strings and the given condition
     CTextT&      wordsReverse(const T* sep = Separators);
@@ -354,7 +357,6 @@ public:
     ContC static size_t  GeneratePermutations(C& container, CTextT& s);
     static bool       IsPalindrome(const T* s, bool bCase = true, size_t len = std::string::npos);
     static bool       ReadFile(const T* filePath, CTextT& s);
-    static bool       ReadLinesFromFile(const T* path, CTextT& res, size_t lineStart, size_t lineEnd);
     static  void      Swap(CTextT& a, CTextT& b);  // exchanges the values of two strings
   static CTextT<char> ToChars(const T* s);
 static CTextT<wchar_t> ToWChars(const T* s);
@@ -363,19 +365,19 @@ static CTextT<wchar_t> ToWChars(const T* s);
     // static string routines
     static bool     EmptyOrNull(const T* s) { return (s == 0 || *s == 0); }
     static bool     EndsWith(const T* text, const T* str, bool bCase = true, size_t len = std::string::npos);
-    static size_t   IndexOf(const T* s, size_t len, T c, bool bCase = false);
+    static size_t   IndexOf(const T* s, T c, bool bCase = false);
     static bool     IsAlpha(const T* s);
     static bool     IsBinary(const T* s);
     static bool     IsLower(const T* s, bool strict = false);
     static bool     IsHexNumber(const T* s);
     static bool     IsNumber(const T* s, bool allowSign = true);
-    static bool     IsOneOf(T c, const T* list, bool bCase = true, size_t* idx = 0); //return true if c occurs in the provided 0-terminated characters list, otherwise returns false, idx - optional position in the list
+    static bool     IsOneOf(T c, const T* list, bool bCase = true, size_t* idx = nullptr); //return true if c occurs in the provided 0-terminated characters list, otherwise returns false, idx - optional position in the list
     static bool     IsUpper(const T* s, bool strict = true);
     static size_t   LastIndexOf(const T* str, size_t len, T c, bool bCase = true);
     static size_t   LastIndexOf(const T* str, size_t len, const T* s, bool bCase = true);
     static size_t   Levenshtein(const T *s1, const T *s2);  //calculate Levenshtein distance
     static size_t   HammingDistance(const T *s1, const T *s2);
-    static bool     StartsWith(const T* str, const T* s, bool bCase = true, int max_len = -1, size_t* idx = 0); //return true if string str starts with the string s,  max_len - max number of chars to check, if idx is different than 0 will provide the length of the text in str which is in the beggining
+    static bool     StartsWith(const T* str, const T* s, bool bCase = true, size_t max_len = std::string::npos, size_t* idx = nullptr); //return true if string str starts with the string s,  max_len - max number of chars to check, if idx is different than 0 will provide the length of the text in str which is in the beggining
     static size_t   Strlen(const T* str); //safe strlen, return -1 if str is 0
     static T*       Strcpy(T* dst, const T* src); // (strcpy)
     static T*       Strncpy(T *dst, const T *src, int n); // (strncpy)

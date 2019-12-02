@@ -14,6 +14,10 @@
 #include "terminal.h"
 #include "tchar_utils.h"
 
+#ifdef _WIN32
+#pragma warning(disable : 4702)
+#endif
+
 using namespace std;
 
 int test_init()   // test constructors and assign operators
@@ -861,7 +865,7 @@ int test_modify()
 
             try
             {
-                if(s.at(4) = _T('5'))
+                if(s.at(4) == _T('5'))
                     goto error;
 
                 goto error;
@@ -1000,7 +1004,7 @@ int test_transform()
 
             s.randomNumber(6);
             bool bOk;
-            int i = s.toInteger(bOk);
+            s.toInteger(bOk);
             if(!bOk || s.length() != 6)
                 goto error;
 
@@ -1008,7 +1012,7 @@ int test_transform()
             if(!s.containOnly(s2.str()) || s.length() != 8)
                 goto error;
 
-            i = s.toInteger(bOk);
+            s.toInteger(bOk);
             if(!bOk || s.length() != 8)
                 goto error;
 
@@ -2478,7 +2482,7 @@ int test_edit_distances()
         }
 
         {
-            if(CText::HammingDistance(_T("ball"), _T("rainball")) != -1)
+            if(CText::HammingDistance(_T("ball"), _T("rainball")) != std::string::npos)
                 goto error;  //
 
             if(CText::HammingDistance(_T("ball"), _T("call")) != 1)
