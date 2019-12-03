@@ -347,20 +347,23 @@ public:
     CTextT&      wordsSort(const T* sep = Separators, const T* sepNew = SPACE); // words sort in ascending order
     bool         writeFile(const T* filePath, EncodingType encoding = ENCODING_UTF8); // write our string to a text file with the given encoding
 
-        // static routines
+    // static routines
     static CTextT<T>  Add(const CTextT&, const CTextT&);  // returns the concatenation of the both strings
     static CTextT<T>  Add(const CTextT&, const T*);
     static CTextT<T>  Add(const CTextT&, T c);
     static bool       ArePermutation(const CTextT& a, const CTextT& b);
-    static bool       FromChars(const char* s, CTextT& res);
-    static bool       FromWChars(const wchar_t* s, CTextT& res);
-    ContC static size_t  GeneratePermutations(C& container, CTextT& s);
+ ContC static size_t  GeneratePermutations(C& container, CTextT& s);
     static bool       IsPalindrome(const T* s, bool bCase = true, size_t len = std::string::npos);
-    static bool       ReadFile(const T* filePath, CTextT& s);
     static  void      Swap(CTextT& a, CTextT& b);  // exchanges the values of two strings
-  static CTextT<char> ToChars(const T* s);
-static CTextT<wchar_t> ToWChars(const T* s);
-    static bool       WriteFile(const T* filePath, CTextT& s, EncodingType encoding = ENCODING_UTF8);
+
+    // static functions overloads 
+    inline static bool       FromChars(const char* s, CTextT& res);
+    inline static bool       FromWChars(const wchar_t* s, CTextT& res);
+    inline static bool       ReadFile(const T* filePath, CTextT& s);
+  inline static CTextT<char> ToChars(const T* s);
+inline static CTextT<wchar_t>ToWChars(const T* s);
+    inline static bool       WriteFile(const T* filePath, CTextT& s, EncodingType encoding = ENCODING_UTF8);
+    inline static size_t     Vsnprintf(T* s, size_t n, const T * fmt, va_list args);  //encapsulate vsnprintf, return number of characters written
 
     // static string routines
     static bool     EmptyOrNull(const T* s) { return (s == 0 || *s == 0); }
@@ -395,8 +398,7 @@ static CTextT<wchar_t> ToWChars(const T* s);
     static void     Strrev(T* begin, T* end);  //reverse inplace, ABC -> CBA
     static void     Swab(const T* src, T* dst, size_t len);
     static CTextT   Substring(const T* s, size_t from, size_t nCount = 0); // return count characters starting at zero-based offset, return new string
-    static size_t   Vsnprintf(T* s, size_t n, const T * fmt, va_list args);  //encapsulate vsnprintf, return number of characters written
-
+  
     static bool IsAlpha(T c);
     static bool IsAlphanumeric(T c);
     static bool IsDigit(T c);
