@@ -82,7 +82,8 @@ CTextT<wchar_t> CTextU::ToWChars(const wchar_t* s)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-static bool CTextU::ReadFile(const wchar_t* filePath, CTextU& res)
+template <typename CharT, typename X>
+static bool CTextU::ReadFile(const CharT* filePath, CTextU& res)
 {
     std::ifstream ifs(filePath, std::ios::binary);
     EncodingType encoding = ENCODING_ASCII;
@@ -134,7 +135,8 @@ static bool CTextU::ReadFile(const wchar_t* filePath, CTextU& res)
 }
 
 template<>
-static bool CTextU::WriteFile(const wchar_t* filePath, CTextU& s, EncodingType encoding)
+template <typename CharT, typename X>
+static bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType encoding)
 {
     std::ofstream file(filePath);
 

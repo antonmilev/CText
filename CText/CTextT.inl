@@ -4171,16 +4171,18 @@ bool CTextT<T>::checkBalance(const T* sepBegin, const T* sepEnd)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::writeFile(const T* filePath, EncodingType encoding)
+template <typename CharT, typename X>
+bool CTextT<T>::writeFile(const CharT* filePath, EncodingType encoding)
 {
-    return WriteFile(filePath, *this, encoding);
+    return WriteFile<CharT, X>(filePath, *this, encoding);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::readFile(const T* path)
+template <typename CharT, typename X>
+bool CTextT<T>::readFile(const CharT* path)
 {
-    return ReadFile(path, *this);
+    return ReadFile<CharT, X>(path, *this);
 }
 
 //-----------------------------------------------------------------------------------------------------------

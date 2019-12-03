@@ -75,7 +75,8 @@ CTextT<wchar_t> CTextA::ToWChars(const char* s)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextA::ReadFile(const char* filePath, CTextA& res)
+template <typename CharT, typename X>
+bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
 {
     std::ifstream ifs(filePath, std::ios::binary);   
     if(!ifs.is_open() || ifs.eof())// Unable to read file
@@ -129,7 +130,8 @@ bool CTextA::ReadFile(const char* filePath, CTextA& res)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextA::WriteFile(const char* filePath, CTextA& s, EncodingType encoding)
+template <typename CharT, typename X>
+bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType encoding)
 {
     std::ofstream file(filePath);
 

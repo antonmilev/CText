@@ -39,6 +39,8 @@
 #define MapI template<typename C, typename Value = typename C::value_type, typename X = std::enable_if_t < std::is_convertible<Value, std::pair<int,CTextT<T>>>::value  > >
 #define DefN template <typename Num> 
 #define DefS template <typename S, typename X = std::enable_if_t < std::is_convertible<std::remove_const_t<std::remove_reference_t<S>>, const T* >::value || std::is_constructible<std::remove_const_t<std::remove_reference_t<S>>, const T*>::value >>
+#define DefT template <typename CharT, typename X = std::enable_if_t< std::is_same<CharT, char>::value || std::is_same<CharT, wchar_t>::value  >>
+
 
 template <typename T>
 class CTextT
@@ -259,7 +261,7 @@ public:
     void         randomAlpha(size_t len); // generate text containing random alpha upper and lower characters 
     void         randomAlphaNumeric(size_t len); // generate text containing random alphanumeric upper and lower characters 
     void         randomNumber(size_t len);// generate text containing a random integer with the given length
-    bool         readFile(const T* path); // read a whole text file into our string
+    DefT bool    readFile(const CharT* path); // read a whole text file into our string, note: filepath can be Unicode or ANSI even if CText is defined as char template (CTextA)
     bool         readLinesFromFile(const T* path, size_t lineStart, size_t lineEnd); // read only number of lines, can be used for very large files
     size_t       reduceChain(T c);  //reduces chains of some character to a single instances, for example: replace multiple spaces by one space
     CTextT&      reduceChainAny(const T* cList);
@@ -345,7 +347,7 @@ public:
   ContC CTextT&  wordsEnclose(const T* sBegin, const T* sEnd, const C* start = nullptr, const C* end = nullptr, const C* has = nullptr, const T* sep = SeparatorsWord); //enclose all words using provided block begin and end strings and the given condition
     CTextT&      wordsReverse(const T* sep = Separators);
     CTextT&      wordsSort(const T* sep = Separators, const T* sepNew = SPACE); // words sort in ascending order
-    bool         writeFile(const T* filePath, EncodingType encoding = ENCODING_UTF8); // write our string to a text file with the given encoding
+    DefT bool    writeFile(const CharT* filePath, EncodingType encoding = ENCODING_UTF8); // write our string to a text file with the given encoding
 
     // static routines
     static CTextT<T>  Add(const CTextT&, const CTextT&);  // returns the concatenation of the both strings
@@ -359,10 +361,10 @@ public:
     // static functions overloads 
     inline static bool       FromChars(const char* s, CTextT& res);
     inline static bool       FromWChars(const wchar_t* s, CTextT& res);
-    inline static bool       ReadFile(const T* filePath, CTextT& s);
+  DefT inline static bool    ReadFile(const CharT* filePath, CTextT& s);
   inline static CTextT<char> ToChars(const T* s);
 inline static CTextT<wchar_t>ToWChars(const T* s);
-    inline static bool       WriteFile(const T* filePath, CTextT& s, EncodingType encoding = ENCODING_UTF8);
+  DefT inline static bool    WriteFile(const CharT* filePath, CTextT& s, EncodingType encoding = ENCODING_UTF8);
     inline static size_t     Vsnprintf(T* s, size_t n, const T * fmt, va_list args);  //encapsulate vsnprintf, return number of characters written
 
     // static string routines
