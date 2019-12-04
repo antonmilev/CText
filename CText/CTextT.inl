@@ -2727,7 +2727,7 @@ CTextT<T>& CTextT<T>::wordsSort(const T* sep, const T* sepNew) // words sort in 
     std::vector<CTextT> words;
     split(words, false, sep);  //TODO - add case
     std::sort(words.begin(), words.end(), [](const CTextT& a, const CTextT& b) { return a < b; });
-    compose(words, sepNew);
+    fromArray(words, sepNew);
     return *this;
 }
 
@@ -2924,7 +2924,7 @@ bool CTextT<T>::splitAtLast(const T* s, CTextT& first, CTextT& second, bool excl
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 template<typename C, typename Val, typename X>
-void CTextT<T>::compose(const C& container, const T* sep)
+void CTextT<T>::fromArray(const C& container, const T* sep)
 {
     clear();
     bool first = false;
@@ -2940,7 +2940,7 @@ void CTextT<T>::compose(const C& container, const T* sep)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-void CTextT<T>::compose(std::map<T, int>& container, const T* sep, const T* sepLine)
+void CTextT<T>::fromMap(std::map<T, int>& container, const T* sep, const T* sepLine)
 {
     clear();
     bool first = false;
@@ -2961,7 +2961,7 @@ void CTextT<T>::compose(std::map<T, int>& container, const T* sep, const T* sepL
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 template<typename C, typename Value, typename X  >
-void CTextT<T>::compose(const C& container, const T* sep, const T* sepLine)
+void CTextT<T>::fromMap(const C& container, const T* sep, const T* sepLine)
 {
     clear();
     bool first = false;
@@ -4235,7 +4235,7 @@ size_t CTextT<T>::linesTrim(const T* cList, const T* sep, const T* sepNew)
     collectLines(lines, false, sep);
     for(CTextT& s : lines)
         s.trim(cList);
-    compose(lines, sepNew);
+    fromArray(lines, sepNew);
     return lines.size();
 }
 
@@ -4247,7 +4247,7 @@ size_t CTextT<T>::linesPaddRight(T c, size_t len, const T* sep, const T* sepNew)
     collectLines(lines, false, sep);
     for(CTextT& s : lines)
         s.paddRight(c, len);
-    compose(lines, sepNew);
+    fromArray(lines, sepNew);
     return lines.size();
 }
 
@@ -4258,7 +4258,7 @@ size_t  CTextT<T>::linesSort(const T* sep, const T* sepNew)
     std::vector<CTextT> lines;
     collectLines(lines, false, sep);
     std::sort(lines.begin(), lines.end(), [](const CTextT& a, const CTextT& b) { return a < b; });
-    compose(lines, sepNew);
+    fromArray(lines, sepNew);
     return lines.size();
 }
 

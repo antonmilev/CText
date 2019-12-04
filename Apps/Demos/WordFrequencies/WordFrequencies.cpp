@@ -23,7 +23,7 @@ int main()
 
     str.countWordFrequencies(freq, true);
 
-    str.compose(freq);
+    str.fromMap(freq);
 
     str.writeFile(pathOut.str(), CText::ENCODING_ASCII);
     return 0;

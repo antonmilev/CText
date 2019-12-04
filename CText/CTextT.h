@@ -154,9 +154,6 @@ public:
     ContS size_t collectSentences(C& container, const T* sep = SeparatorsSentence, const T* sepWords = Separators) const;
     ContS size_t collectWords(C& container, const T* sep = Separators) const;  // fill container with all found words
     int          compare(const T* s, bool bCase = true) const; // return - 0 equal. -1 p1 < p2, or 1 - p1 > p2
-    ContC void   compose(const C& container, const T* sep = EOL); // compose back the string using the gicen separator
-    MapI  void   compose(const C& container, const T* sep = SPACE, const T* sepLine = EOL);
-    void         compose(std::map<T, int>& container, const T* sep = SPACE, const T* sepLine = EOL);
     bool         contain(T c, bool bCase = true) const;  // returns true if our string contains character c
     bool         contain(const T* s, bool bCase = true) const; // returns true if our string contains another string  
     bool         containAny(std::initializer_list<T> cList); // returns true if our string contains any of the characters of the list
@@ -204,10 +201,13 @@ public:
     bool         format(const T* format, ...);
     DefN bool    fromBinary(Num i);  // create binary string from the number
     DefN bool    fromInteger(Num i, bool append = false);
-    DefN bool    fromHex(Num i, bool hasBase = true, bool upper = false);
+    DefN bool    fromHex(Num i, bool hasBase = true, bool upper = false);    
     bool         fromDouble(double d, int precision = 6, bool fixed = true, bool append = false);
     bool         fromChars(const char* s);  // init with single-char ANSI string, make string -> wstring convert if necessary
     bool         fromWChars(const wchar_t* s);  // init with UNICODE string, make wstring -> string convert if necessary
+    ContC void   fromArray(const C& container, const T* sep = EOL); // compose back the string using the gicen separator
+    MapI  void   fromMap(const C& container, const T* sep = SPACE, const T* sepLine = EOL);
+    void         fromMap(std::map<T, int>& container, const T* sep = SPACE, const T* sepLine = EOL);
     size_t       indexOf(T c, size_t from = 0, bool bCase = true) const;    // finds the index of the first character starting at zero-based index and going right, return ch index or -1 if not found
     size_t       indexOf(const T* s, size_t from = 0, bool bCase = true) const; // finds the index of the first instance of the substring starting at zero-based index, return substring index or -1 if not found
     size_t       indexOfAny(const T* cList, size_t from = 0, bool bCase = true) const;

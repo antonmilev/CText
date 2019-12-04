@@ -2386,7 +2386,7 @@ int test_collect()
                 goto error;
             if(words != words_target)
                 goto error;
-            s.compose(words, _T("|"));
+            s.fromArray(words, _T("|"));
             if(s != _T("The|quick|brown|fox|jumps|over|the|lazy|dog"))
                 goto error;
 

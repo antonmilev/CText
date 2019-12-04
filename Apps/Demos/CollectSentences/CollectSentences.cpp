@@ -22,7 +22,7 @@ int main()
 
     str.collectSentences(sentences);
 
-    str.compose(sentences, _T("\n\n") );
+    str.fromArray(sentences, _T("\n\n") );
 
     str.writeFile(pathOut.str(), CText::ENCODING_UTF8);
 
