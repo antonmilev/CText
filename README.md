@@ -69,6 +69,16 @@ int main()
 ### Replace words
 ```cpp
     CText s = _T("The quick brown fox jumps over the lazy dog");
+    s.replace(_T("brown"), _T("red"));
+    cout << s << endl;
+```
+Output:
+```
+   The quick red fox jumps over the lazy dog 
+```  
+
+```cpp
+    CText s = _T("The quick brown fox jumps over the lazy dog");
     const CText::Char* words[] = {_T("quick"), _T("fox"), _T("dog")};
     s.replaceAny(words, 3, _T('-'));
     cout << s << endl;
