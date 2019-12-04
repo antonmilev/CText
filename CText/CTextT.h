@@ -325,7 +325,8 @@ public:
     CTextT       substringRight(size_t from) const; // return new string with all characters starting at a zero-based index and continuing to the end
     CTextT       substringLeft(size_t count) const;  // returns new string with count characters from left
   unsigned int   toBinaryNumber(bool& bOk); //if the string contains a binary number, convert it   
-    CTextT<char> toChars();  // conversion to UTF8 (ANSI)
+  unsigned int   toHexNumber(bool& bOk);  //if the string contains a hex number convert it , "1E" --> 30   
+  CTextT<char>   toChars();  // conversion to UTF8 (ANSI)
     double       toDouble(bool& bOk) const;
     int          toInteger(bool& bOk) const;
    unsigned int  toUInteger(bool& bOk) const;

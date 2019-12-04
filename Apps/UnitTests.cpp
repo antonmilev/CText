@@ -1044,6 +1044,21 @@ int test_transform()
             unsigned int i = s.toBinaryNumber(bOk);
             if(!bOk || i != 33)
                 goto error;
+
+            s = _T("103001");
+            i = s.toBinaryNumber(bOk);
+            if(bOk)
+                goto error;
+
+            s = _T("1E");
+            i = s.toHexNumber(bOk);
+            if(!bOk || i != 30)
+                goto error;
+
+            s = _T("1E1E");
+            i = s.toHexNumber(bOk);
+            if(!bOk || i != 7710)
+                goto error;
         }
 
         printResult("test_transform()", true);
@@ -1912,8 +1927,6 @@ int test_convert()
             CText s = _T("1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9");
             vector<float> v;
             vector<float> v_target = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9};
-            bool bOk;
-
             if(!s.toArray<float>(v, _T(',')))
                 goto error;
             if(v != v_target)
@@ -1926,7 +1939,6 @@ int test_convert()
             CText s = _T("1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9");
             vector<double> v;
             vector<double> v_target = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9};
-            bool bOk;
 
             if(!s.toArray<double>(v, _T(',')))
                 goto error;

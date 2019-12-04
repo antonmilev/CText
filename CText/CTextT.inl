@@ -2518,6 +2518,18 @@ unsigned int CTextT<T>::toBinaryNumber(bool& bOk)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
+unsigned int CTextT<T>::toHexNumber(bool& bOk)
+{
+    unsigned int number;
+    std::basic_istringstream<T> iss(m_str);
+    iss >> std::hex >> number;
+    bOk = !iss.fail();
+    return number;
+}
+
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
 template<typename Num, typename C, typename Val, typename X>
 bool CTextT<T>::toArray(C& container, T sep) const
 {
