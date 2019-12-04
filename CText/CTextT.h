@@ -262,7 +262,6 @@ public:
     void         randomAlphaNumeric(size_t len); // generate text containing random alphanumeric upper and lower characters 
     void         randomNumber(size_t len);// generate text containing a random integer with the given length
     DefT bool    readFile(const CharT* path); // read a whole text file into our string, note: filepath can be Unicode or ANSI even if CText is defined as char template (CTextA)
-    bool         readLinesFromFile(const T* path, size_t lineStart, size_t lineEnd); // read only number of lines, can be used for very large files
     size_t       reduceChain(T c);  //reduces chains of some character to a single instances, for example: replace multiple spaces by one space
     CTextT&      reduceChainAny(const T* cList);
     void         reduceToNumber();  //strip text from non-numbers
@@ -330,8 +329,8 @@ public:
     double       toDouble(bool& bOk) const;
     int          toInteger(bool& bOk) const;
    unsigned int  toUInteger(bool& bOk) const;
-   ContN size_t  toArray(C& container, T sep, bool& bOk) const; // parse our string to integers array divided by the given separator, can be used to parse CSV of integers
-   ContN size_t  toMatrix(std::vector<C>& container, T sep, bool& bOk, const T* sepLine = EOL) const;  // parse to matrix
+   ContN bool    toArray(C& container, T sep) const; // parse our string to integers array divided by the given separator, can be used to parse CSV of integers
+   ContN bool    toMatrix(std::vector<C>& container, T sep,  const T* sepLine = EOL) const;  // parse to matrix
     CTextT&      toLower(); // conversion to lowercase (in place)  
     CTextT&      toUpper(); // conversion to uppercase (in place)
  CTextT<wchar_t> toWChars();  // conversion to Unicode

@@ -1853,57 +1853,58 @@ int test_convert()
             CText s = _T("1,2,3,4,5,6,7,8,9");
             vector<int> v;
             vector<int> v_target = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-            bool bOk;
 
-            s.toArray<int>(v, _T(','), bOk);
-            if(!bOk || v != v_target)
+            if(!s.toArray<int>(v, _T(',')))
+                goto error;
+
+            if(v != v_target)
                 goto error;
 
             s = _T("1,2,A,4,5,6,7,8,9");
-            s.toArray<int>(v, _T(','), bOk);
-            if(bOk)
+            if(s.toArray<int>(v, _T(',')))
                 goto error;
 
             s = _T("A,2,3,4,5,6,7,8,9");
-            s.toArray<int>(v, _T(','), bOk);
-            if(bOk)
+            if(s.toArray<int>(v, _T(',')))
                 goto error;
 
             s = _T("1|2,3,4,5,6,7,8,9");
-            s.toArray<int>(v, _T(','), bOk);
-            if(bOk)
+            if(s.toArray<int>(v, _T(',')))
                 goto error;
 
             s = _T("1|2|3|4|5|6|7|8|9");
-            s.toArray<int>(v, _T('|'), bOk);
-            if(!bOk || v != v_target)
+            if(!s.toArray<int>(v, _T('|')))
+                goto error;
+
+            if(v != v_target)
                 goto error;
 
             s = _T("1|2|3|4|5|6|7|8|9|");
-            s.toArray<int>(v, _T('|'), bOk);
-            if(bOk)
+            if(s.toArray<int>(v, _T('|')))
                 goto error;
 
             s = _T("|1|2|3|4|5|6|7|8|9");
-            s.toArray<int>(v, _T('|'), bOk);
-            if(bOk)
+            if(s.toArray<int>(v, _T('|')))
                 goto error;
 
             s = _T("1|2   |3|4  \t|5| \t 6|  \n  7|8|9");
-            s.toArray<int>(v, _T('|'), bOk);
-            if(!bOk || v != v_target)
+            if(!s.toArray<int>(v, _T('|')))
+                goto error;
+
+            if(v != v_target)
                 goto error;
 
             s = _T("1 2 3 4 5 6 7 8 9");
-            s.toArray<int>(v, _T(' '), bOk);
-            if(!bOk || v != v_target)
+            if(!s.toArray<int>(v, _T(' ')))
+                goto error;
+            if(v != v_target)
                 goto error;
 
             s = _T("1\n2\n3\n4\n5\n6\n7\n8\n9");
-            s.toArray<int>(v, _T('\n'), bOk);
-            if(!bOk || v != v_target)
+            if(!s.toArray<int>(v, _T('\n')))
                 goto error;
-
+            if(v != v_target)
+                goto error;
         }
 
         //test with other types
@@ -1913,8 +1914,9 @@ int test_convert()
             vector<float> v_target = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9};
             bool bOk;
 
-            s.toArray<float>(v, _T(','), bOk);
-            if(!bOk || v != v_target)
+            if(!s.toArray<float>(v, _T(',')))
+                goto error;
+            if(v != v_target)
                 goto error;
         }
 
@@ -1926,8 +1928,10 @@ int test_convert()
             vector<double> v_target = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9};
             bool bOk;
 
-            s.toArray<double>(v, _T(','), bOk);
-            if(!bOk || v != v_target)
+            if(!s.toArray<double>(v, _T(',')))
+                goto error;
+
+            if(v != v_target)
                 goto error;
         }
 
@@ -1936,42 +1940,42 @@ int test_convert()
             CText s = _T("a, b, c, d");
             vector<CText::Char> v;
             vector<CText::Char> v_target = {_T('a'), _T('b'), _T('c'), _T('d')};
-            bool bOk;
 
-            s.toArray<CText::Char>(v, _T(','), bOk);
-            if(!bOk || v != v_target)
+            if(!s.toArray<CText::Char>(v, _T(',')))
+                goto error;
+            if(v != v_target)
                 goto error;
         }
 
         // integers matrix
         {
-            bool bOk;
             std::vector<std::vector<int>> m;
             std::vector<std::vector<int>> m_target =
             {
                 {1, 2, 3},
-            {4, 5, 6},
-            {7, 8, 9},
+                {4, 5, 6},
+                {7, 8, 9},
             };
             CText s = _T("1 2 3\n4 5 6\n7 8 9");
-            s.toMatrix<int>(m, _T(' '), bOk);
-            if(!bOk || m != m_target)
+            if(!s.toMatrix<int>(m, _T(' ')))
+                goto error;
+            if(m != m_target)
                 goto error;
         }
 
         // floats matrix
         {
-            bool bOk;
             std::vector<std::vector<float>> m;
             std::vector<std::vector<float>> m_target =
             {
                 {1.0, 2.0, 3.0},
-            {4.0, 5.0, 6.0},
-            {7.0, 8.0, 9.0},
+                {4.0, 5.0, 6.0},
+                {7.0, 8.0, 9.0},
             };
             CText s = _T("1.0 2.0 3.0\n4.0 5.0 6.0\n7.0 8.0 9.0");
-            s.toMatrix<float>(m, _T(' '), bOk);
-            if(!bOk || m != m_target)
+            if(!s.toMatrix<float>(m, _T(' ')))
+                goto error;
+            if(m != m_target)
                 goto error;
         }
 

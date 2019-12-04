@@ -2519,8 +2519,9 @@ unsigned int CTextT<T>::toBinaryNumber(bool& bOk)
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 template<typename Num, typename C, typename Val, typename X>
-size_t CTextT<T>::toArray(C& container, T sep, bool& bOk) const
+bool CTextT<T>::toArray(C& container, T sep) const
 {
+    bool bOk = true;
     container.clear();
     Num num;
     std::basic_istringstream<T> iss(m_str);
@@ -2537,7 +2538,7 @@ size_t CTextT<T>::toArray(C& container, T sep, bool& bOk) const
     iss >> num;
     bOk = !iss.fail();
     if(!bOk || iss.eof())
-        return container.size();
+        return false;
 
     container.push_back(num);
 
@@ -2547,7 +2548,7 @@ size_t CTextT<T>::toArray(C& container, T sep, bool& bOk) const
         {
             bOk = (c == sep);
             if(!bOk)
-                return container.size();
+                return false;
 
             if(iss >> num)
                 container.push_back(num);
@@ -2561,13 +2562,13 @@ size_t CTextT<T>::toArray(C& container, T sep, bool& bOk) const
             container.push_back(num);
     }
 
-    return container.size();;
+    return bOk;
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 template<typename Num, typename C, typename Val, typename X>
-size_t CTextT<T>::toMatrix(std::vector<C>& container, T sep, bool& bOk, const T* sepLine) const
+bool CTextT<T>::toMatrix(std::vector<C>& container, T sep, const T* sepLine) const
 {
     size_t n = 0;
     std::vector<CTextT> lines;
@@ -2577,17 +2578,14 @@ size_t CTextT<T>::toMatrix(std::vector<C>& container, T sep, bool& bOk, const T*
     {
         std::vector<Num > v;
 
-        s.toArray<Num>(v, sep, bOk);
-
-        if(!bOk)
-            return n;
+        if(!s.toArray<Num>(v, sep))
+            return false;
 
         container.push_back(std::move(v));
-
         n += v.size();
     }
 
-    return n;
+    return true;
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -4272,11 +4270,4 @@ size_t  CTextT<T>::linesCount(const T* sep) const
         return 0;
 
     return count(sep);
-}
-
-//-----------------------------------------------------------------------------------------------------------
-template <typename T>
-bool CTextT<T>::readLinesFromFile(const T* path, size_t lineStart, size_t lineEnd)
-{
-    return ReadLinesFromFile(path, *this, lineStart, lineEnd);
 }

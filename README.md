@@ -265,8 +265,7 @@ or 1
 ```cpp
 CText s = _T("1,2,3,4,5,6,7,8,9");
 vector<int> v;
-bool bOk;
-s.toArray<int>(v, _T(','), bOk);
+s.toArray<int>(v, _T(','));
 ``` 
 
 Output:
@@ -277,8 +276,7 @@ Output:
 ```cpp
 CText s = _T("1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9");
 vector<double> v;
-bool bOk;
-s.toArray<double>(v, _T(','), bOk);
+s.toArray<double>(v, _T(','));
 ```
 
 Output:
@@ -288,10 +286,9 @@ Output:
 
 Parse numerical matrix:
 ```cpp
-bool bOk;
 std::vector<std::vector<int>> m;
 CText s = _T("1 2 3\n4 5 6\n7 8 9");
-s.toMatrix<int>(m, _T(' '), bOk);
+s.toMatrix<int>(m, _T(' '));
 ```
 
 Output:
