@@ -37,7 +37,7 @@ size_t  CTextA::Vsnprintf(char* str, size_t n, const char * fmt, va_list args)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextA::FromChars(const char* s, CTextA& res)
+bool CTextA::FromSingle(const char* s, CTextA& res)
 {
     res = s;
     return true;
@@ -45,14 +45,14 @@ bool CTextA::FromChars(const char* s, CTextA& res)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-CTextA CTextA::ToChars(const char* s)
+CTextA CTextA::ToSingle(const char* s)
 {
     return CTextA(s);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextA::FromWChars(const wchar_t* s, CTextA& res)
+bool CTextA::FromWide(const wchar_t* s, CTextA& res)
 {
     if(!s || !*s)
         return false;
@@ -63,7 +63,7 @@ bool CTextA::FromWChars(const wchar_t* s, CTextA& res)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-CTextT<wchar_t> CTextA::ToWChars(const char* s)
+CTextT<wchar_t> CTextA::ToWide(const char* s)
 {
     CTextT<wchar_t> res;
     if(!s || !*s)
@@ -121,7 +121,7 @@ bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
             wss << wif.rdbuf();
             ws = wss.str();
             wif.close();
-            res.fromWChars(ws.c_str());
+            res.fromWide(ws.c_str());
         }
     }
 

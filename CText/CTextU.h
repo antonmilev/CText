@@ -38,7 +38,7 @@ size_t CTextU::Vsnprintf(wchar_t * str, size_t n, const wchar_t * fmt, va_list a
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextU::FromChars(const char* s, CTextU& res)
+bool CTextU::FromSingle(const char* s, CTextU& res)
 {  
     if(!s || !*s)
         return false;
@@ -55,7 +55,7 @@ bool CTextU::FromChars(const char* s, CTextU& res)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-CTextT<char> CTextU::ToChars(const wchar_t* s)
+CTextT<char> CTextU::ToSingle(const wchar_t* s)
 {
     CTextT<char> res;    
     if(!s || !*s)
@@ -67,7 +67,7 @@ CTextT<char> CTextU::ToChars(const wchar_t* s)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextU::FromWChars(const wchar_t* s, CTextU& res)
+bool CTextU::FromWide(const wchar_t* s, CTextU& res)
 {
     res = s;
     return true;
@@ -75,7 +75,7 @@ bool CTextU::FromWChars(const wchar_t* s, CTextU& res)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-CTextT<wchar_t> CTextU::ToWChars(const wchar_t* s)
+CTextT<wchar_t> CTextU::ToWide(const wchar_t* s)
 {
     return CTextU(s);
 }
@@ -114,7 +114,7 @@ static bool CTextU::ReadFile(const CharT* filePath, CTextU& res)
 
     if(encoding == ENCODING_UTF8 || encoding == ENCODING_ASCII)
     {
-        FromChars(ss.str().c_str(), res);
+        FromSingle(ss.str().c_str(), res);
     }
 
     if(encoding == ENCODING_UTF16LE || encoding == ENCODING_UTF16BE)

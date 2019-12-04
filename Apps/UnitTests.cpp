@@ -2425,33 +2425,33 @@ int test_unicode()
         // test initialize from unicode strings
         {
             CText s;
-            CText::FromChars("Hello World", s);
+            CText::FromSingle("Hello World", s);
             if(s != _T("Hello World"))
                 goto error;
 
-            s.fromChars("Hello World");
+            s.fromSingle("Hello World");
             if(s != _T("Hello World"))
                 goto error;
 
-            CText::FromWChars(L"Hello World", s);
+            CText::FromWide(L"Hello World", s);
             if(s != _T("Hello World"))
                 goto error;
 
-            s.fromWChars(L"Hello World");
+            s.fromWide(L"Hello World");
             if(s != _T("Hello World"))
                 goto error;
         }
 
         {
             CText s(_T("Hello World"));
-            CTextT<char> s2 = s.toChars();
+            CTextT<char> s2 = s.toSingle();
             if(s2 != "Hello World")
                 goto error;
 #ifdef _UNICODE
             if(CText::IsWide())
             {
                 s = _T("Привет");
-                s2 = s.toChars();
+                s2 = s.toSingle();
                 if(s2 != u8"Привет")
                     goto error;
             }
@@ -2460,7 +2460,7 @@ int test_unicode()
 
         {
             CText s(_T("Hello World"));
-            CTextT<wchar_t> s2 = s.toWChars();
+            CTextT<wchar_t> s2 = s.toWide();
             if(s2 != L"Hello World")
                 goto error;
         }

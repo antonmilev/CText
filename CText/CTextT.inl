@@ -3449,38 +3449,38 @@ bool CTextT<T>::fromHex(Num i, bool hasBase, bool upper)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::fromChars(const char* s)
+bool CTextT<T>::fromSingle(const char* s)
 {
-    return FromChars(s, *this);
+    return FromSingle(s, *this);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::fromWChars(const wchar_t* s)
+bool CTextT<T>::fromWide(const wchar_t* s)
 {
-    return FromWChars(s, *this);
+    return FromWide(s, *this);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-CTextT<char> CTextT<T>::toChars()
+CTextT<char> CTextT<T>::toSingle()
 {
     CTextT<char> res;
     if(isEmpty())
         return res;
     
-    return ToChars(str());
+    return ToSingle(str());
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-CTextT<wchar_t> CTextT<T>::toWChars()
+CTextT<wchar_t> CTextT<T>::toWide()
 {
     std::basic_string<wchar_t> res;
     if(isEmpty())
         return res;
     
-    return ToWChars(str());
+    return ToWide(str());
 }
 
 

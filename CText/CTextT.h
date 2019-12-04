@@ -203,11 +203,11 @@ public:
     DefN bool    fromInteger(Num i, bool append = false);
     DefN bool    fromHex(Num i, bool hasBase = true, bool upper = false);    
     bool         fromDouble(double d, int precision = 6, bool fixed = true, bool append = false);
-    bool         fromChars(const char* s);  // init with single-char ANSI string, make string -> wstring convert if necessary
-    bool         fromWChars(const wchar_t* s);  // init with UNICODE string, make wstring -> string convert if necessary
     ContC void   fromArray(const C& container, const T* sep = EOL); // compose back the string using the gicen separator
     MapI  void   fromMap(const C& container, const T* sep = SPACE, const T* sepLine = EOL);
     void         fromMap(std::map<T, int>& container, const T* sep = SPACE, const T* sepLine = EOL);
+    bool         fromSingle(const char* s);  // init with single-char ANSI string, make string -> wstring convert if necessary
+    bool         fromWide(const wchar_t* s);  // init with UNICODE string, make wstring -> string convert if necessary
     size_t       indexOf(T c, size_t from = 0, bool bCase = true) const;    // finds the index of the first character starting at zero-based index and going right, return ch index or -1 if not found
     size_t       indexOf(const T* s, size_t from = 0, bool bCase = true) const; // finds the index of the first instance of the substring starting at zero-based index, return substring index or -1 if not found
     size_t       indexOfAny(const T* cList, size_t from = 0, bool bCase = true) const;
@@ -326,7 +326,6 @@ public:
     CTextT       substringLeft(size_t count) const;  // returns new string with count characters from left
   unsigned int   toBinaryNumber(bool& bOk); //if the string contains a binary number, convert it   
   unsigned int   toHexNumber(bool& bOk);  //if the string contains a hex number convert it , "1E" --> 30   
-  CTextT<char>   toChars();  // conversion to UTF8 (ANSI)
     double       toDouble(bool& bOk) const;
     int          toInteger(bool& bOk) const;
    unsigned int  toUInteger(bool& bOk) const;
@@ -334,7 +333,8 @@ public:
    ContN bool    toMatrix(std::vector<C>& container, T sep,  const T* sepLine = EOL) const;  // parse to matrix
     CTextT&      toLower(); // conversion to lowercase (in place)  
     CTextT&      toUpper(); // conversion to uppercase (in place)
- CTextT<wchar_t> toWChars();  // conversion to Unicode
+  CTextT<char>   toSingle();  // conversion to UTF8 (ANSI)
+ CTextT<wchar_t> toWide();  // conversion to Unicode
     CTextT&      trim(const T* cList = Separators);
     CTextT&      trimLeft(const T c); //// remove continuous occurrence of ch starting from left
     CTextT&      trimLeft(const T* cList = Separators);  // remove from left continuous occurrence of all characters from the provided list
@@ -359,11 +359,11 @@ public:
     static  void      Swap(CTextT& a, CTextT& b);  // exchanges the values of two strings
 
     // static functions overloads 
-    inline static bool       FromChars(const char* s, CTextT& res);
-    inline static bool       FromWChars(const wchar_t* s, CTextT& res);
+    inline static bool       FromSingle(const char* s, CTextT& res);
+    inline static bool       FromWide(const wchar_t* s, CTextT& res);
   DefT inline static bool    ReadFile(const CharT* filePath, CTextT& s);
-  inline static CTextT<char> ToChars(const T* s);
-inline static CTextT<wchar_t>ToWChars(const T* s);
+  inline static CTextT<char> ToSingle(const T* s);
+inline static CTextT<wchar_t>ToWide(const T* s);
   DefT inline static bool    WriteFile(const CharT* filePath, CTextT& s, EncodingType encoding = ENCODING_UTF8);
     inline static size_t     Vsnprintf(T* s, size_t n, const T * fmt, va_list args);  //encapsulate vsnprintf, return number of characters written
 
