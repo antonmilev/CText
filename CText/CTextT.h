@@ -200,6 +200,7 @@ public:
     T            first() const; //return first character or 0 if empty
     bool         format(const T* format, ...);
     DefN bool    fromBinary(Num i);  // create binary string from the number
+    ContN bool   fromChars(const C& container); // append back values in the container (interpret as characters type T)
     DefN bool    fromInteger(Num i, bool append = false);
     DefN bool    fromHex(Num i, bool hasBase = true, bool upper = false);    
     bool         fromDouble(double d, int precision = 6, bool fixed = true, bool append = false);
@@ -329,8 +330,9 @@ public:
     double       toDouble(bool& bOk) const;
     int          toInteger(bool& bOk) const;
    unsigned int  toUInteger(bool& bOk) const;
-   ContN bool    toArray(C& container, T sep) const; // parse our string to integers array divided by the given separator, can be used to parse CSV of integers
+   ContN bool    toArray(C& container, T sep = *SPACE, bool asHex = false) const; // parse our string to integers array divided by the given separator, can be used to parse CSV of integers
    ContN bool    toMatrix(std::vector<C>& container, T sep,  const T* sepLine = EOL) const;  // parse to matrix
+   ContN bool    toChars(C& container, bool asHex = false) const; // fill the container with single characters 
     CTextT&      toLower(); // conversion to lowercase (in place)  
     CTextT&      toUpper(); // conversion to uppercase (in place)
   CTextT<char>   toSingle();  // conversion to UTF8 (ANSI)
@@ -357,6 +359,7 @@ public:
  ContC static size_t  GeneratePermutations(C& container, CTextT& s);
     static bool       IsPalindrome(const T* s, bool bCase = true, size_t len = std::string::npos);
     static  void      Swap(CTextT& a, CTextT& b);  // exchanges the values of two strings
+    static int        ToHex(T c, bool& bOk);  // 'a' --> 10
 
     // static functions overloads 
     inline static bool       FromSingle(const char* s, CTextT& res);
@@ -400,10 +403,11 @@ inline static CTextT<wchar_t>ToWide(const T* s);
     static void     Strrev(T* begin, T* end);  //reverse inplace, ABC -> CBA
     static void     Swab(const T* src, T* dst, size_t len);
     static CTextT   Substring(const T* s, size_t from, size_t nCount = 0); // return count characters starting at zero-based offset, return new string
-  
+    
     static bool IsAlpha(T c);
     static bool IsAlphanumeric(T c);
     static bool IsDigit(T c);
+    static bool IsFormating(T c);  // return true if EOL, TAB or SPACE
     static bool IsHex(T c);
     static bool IsLower(T c);
     static bool IsSpace(T c);
@@ -432,7 +436,8 @@ public:
     static const T* SeparatorsLine;     // line separators (\r\n)
     static const T* SeparatorsSentence; // sentence separators (.?!)
     static const T* EOL;                // single character \n       
-    static const T  TAB;                // single character \t    
+    static const T* TAB;                // single character \t    
+    static const T* CR;                 // single character \r
     static const T* SeparatorsRow;      // row separators ( \t)
     static const T  HexDigits[16];      // the 16 hexagonal letters 
     static const T* SPACE;              // single character " " 

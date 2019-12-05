@@ -9,17 +9,18 @@
 #include <wchar.h>
 #include "CTextT.h"
 
-template<> const wchar_t CTextT<wchar_t>::CC = L'\\'; 
+template<> const wchar_t CTextT<wchar_t>::CC = L'\\';
 template<> const wchar_t* CTextT<wchar_t>::Slash = L"\\/";
-template<> const wchar_t* CTextT<wchar_t>::Separators  = L" \t\r\n";
+template<> const wchar_t* CTextT<wchar_t>::Separators = L" \t\r\n";
 template<> const wchar_t* CTextT<wchar_t>::SeparatorsWord = L" \t\r\n,;..!-?\"({[)}]";
-template<> const wchar_t* CTextT<wchar_t>::SeparatorsLine  = L"\r\n";
-template<> const wchar_t* CTextT<wchar_t>::SeparatorsSentence = L".?!"; 
-template<> const wchar_t* CTextT<wchar_t>::EOL =L"\n";
-template<> const wchar_t  CTextT<wchar_t>::TAB =L'\t';
+template<> const wchar_t* CTextT<wchar_t>::SeparatorsLine = L"\r\n";
+template<> const wchar_t* CTextT<wchar_t>::SeparatorsSentence = L".?!";
+template<> const wchar_t* CTextT<wchar_t>::EOL = L"\n";
+template<> const wchar_t* CTextT<wchar_t>::TAB = L"\t";
 template<> const wchar_t* CTextT<wchar_t>::SPACE = L" ";
+template<> const wchar_t* CTextT<wchar_t>::CR = L"\r";
 template<> const wchar_t* CTextT<wchar_t>::SeparatorsRow = L" \t";
-template<> const wchar_t  CTextT<wchar_t>::HexDigits[16] ={L'0',L'1',L'2',L'3',L'4',L'5',L'6',L'7',L'8',L'9',L'A',L'B',L'C',L'D',L'E',L'F'};
+template<> const wchar_t  CTextT<wchar_t>::HexDigits[16] = {L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9', L'A', L'B', L'C', L'D', L'E', L'F'};
 template<> const wchar_t  CTextT<wchar_t>::Literal = L'\"';
 template<> const wchar_t* CTextT<wchar_t>::Literals = L"\"\'";
 

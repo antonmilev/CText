@@ -230,7 +230,7 @@ int main()
 
     str.collectSentences(sentences);
 
-    str.compose(sentences, _T("\n\n") );
+    str.fromArray(sentences, _T("\n\n") );
 
     str.writeFile(pathOut.str(), CText::ENCODING_UTF8);
 
@@ -249,7 +249,7 @@ s.countChars(freq);
 CText s = _T("Nory was a Catholic because her mother was a Catholic, and Nory’s mother was a Catholic because her father was a Catholic, and her father was a Catholic because his mother was a Catholic, or had been.");
 std::multimap<int, CText, std::greater<int> > freq;
 s.countWordFrequencies(freq);
-s.compose(freq);
+s.fromMap(freq);
 cout << s;
 ```
 
@@ -273,6 +273,17 @@ or 1
 
 ### Conversion routines
 ```cpp
+CText s = _T("1 2 3 4 5 6 7 8 9");
+vector<int> v;
+s.toArray<int>(v);
+``` 
+
+Output:
+```
+{1,2,3,4,5,6,7,8,9}
+```
+
+```cpp
 CText s = _T("1,2,3,4,5,6,7,8,9");
 vector<int> v;
 s.toArray<int>(v, _T(','));
@@ -292,6 +303,54 @@ s.toArray<double>(v, _T(','));
 Output:
 ```
 {1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9}
+```
+
+From hexadecimal numbers array:
+```cpp
+CText s = _T("0A 1E 2A 1B");
+vector<int> v;
+s.toArray<int>(v, _T(' '), true);
+```
+
+Output:
+```
+{10, 30, 42, 27}
+```
+
+```cpp
+CText s = _T("1a:2b:3c:4d:5e:6f");
+vector<int> v;
+s.toArray<int>(v, _T(':'), true);
+```
+
+Output:
+```
+{26, 43, 60, 77, 94, 111}
+```
+
+Without separator:
+```cpp
+CText s = _T("0A1E2A1B");
+s.toArray<int>(v, 0, true);
+```
+
+Output:
+```
+{10, 30, 42, 27}
+```
+
+```cpp
+Convert hex to chars string 
+CText s = _T("48 65 6C 6C 6F 20 57 6F 72 6C 64");
+std::vector<int> bytes;
+s.toChars<int>(bytes, true);
+s.fromChars<int>(bytes);
+cout << s << endl;
+```
+
+Output:
+```
+Hello World
 ```
 
 Parse numerical matrix:

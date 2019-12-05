@@ -1910,7 +1910,7 @@ int test_convert()
                 goto error;
 
             s = _T("1 2 3 4 5 6 7 8 9");
-            if(!s.toArray<int>(v, _T(' ')))
+            if(!s.toArray<int>(v))
                 goto error;
             if(v != v_target)
                 goto error;
@@ -1956,6 +1956,61 @@ int test_convert()
             if(!s.toArray<CText::Char>(v, _T(',')))
                 goto error;
             if(v != v_target)
+                goto error;
+        }
+
+        {
+            CText s = _T("0A 1E 2A 1B");
+            vector<int> v;
+            vector<int> v_target = {10, 30, 42, 27};
+
+            if(!s.toArray<int>(v, _T(' '), true))
+                goto error;
+
+            if(v != v_target)
+                goto error;
+        }
+
+        {
+            CText s = _T("1a:2b:3c:4d:5e:6f");
+            vector<int> v;
+            if(!s.toArray<int>(v, _T(':'), true))
+                goto error;
+            vector<int> v_target = {26, 43, 60, 77, 94, 111};
+            if(v != v_target)
+                goto error;
+        }
+
+        // test without separator
+        {
+            CText s = _T("0A1E2A1B");
+            vector<int> v;
+            vector<int> v_target = {10, 30, 42, 27};
+
+            // interpret characters as hex (two bytes)
+            if(!s.toArray<int>(v, 0, true))
+                goto error;
+
+            if(v != v_target)
+                goto error;
+
+            // convert each character to one byte (the default)
+            if(!s.toArray<int>(v, _T('\0')))
+                goto error;
+
+            vector<int> v_target_2 = {48, 65, 49, 69, 50, 65, 49, 66};
+            if(v != v_target_2)
+                goto error;
+        }
+
+        // convert hex to chars string 
+        {
+            CText s = _T("48 65 6C 6C 6F 20 57 6F 72 6C 64");
+            std::vector<int> bytes;
+            if(!s.toChars<int>(bytes, true))
+                goto error;
+            s.fromChars<int>(bytes);
+            if(s != _T("Hello World"))
                 goto error;
         }
 

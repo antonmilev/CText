@@ -9,16 +9,17 @@
 #include "CTextT.h"
 
 template<> const char CTextT<char>::CC = '\\';
-template<> const char* CTextT<char>::Slash  = "\\/";
-template<> const char* CTextT<char>::Separators  = " \t\r\n\v\f";
+template<> const char* CTextT<char>::Slash = "\\/";
+template<> const char* CTextT<char>::Separators = " \t\r\n\v\f";
 template<> const char* CTextT<char>::SeparatorsWord = " \t\r\n,;..-!?({[)}]\"";
-template<> const char* CTextT<char>::SeparatorsLine  = "\r\n";  
-template<> const char* CTextT<char>::SeparatorsSentence = ".?!";  
-template<> const char* CTextT<char>::EOL ="\n";
-template<> const char CTextT<char>::TAB ='\t';
+template<> const char* CTextT<char>::SeparatorsLine = "\r\n";
+template<> const char* CTextT<char>::SeparatorsSentence = ".?!";
+template<> const char* CTextT<char>::EOL = "\n";
+template<> const char* CTextT<char>::TAB = "\t";
 template<> const char* CTextT<char>::SPACE = " ";
+template<> const char* CTextT<char>::CR = "\r";
 template<> const char* CTextT<char>::SeparatorsRow = " \t";
-template<> const char CTextT<char>::HexDigits[16] ={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+template<> const char CTextT<char>::HexDigits[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 template<> const char  CTextT<char>::Literal = '\"';
 template<> const char* CTextT<char>::Literals = "\"\'";
 

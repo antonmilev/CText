@@ -559,6 +559,13 @@ bool CTextT<T>::IsSpace(T c)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
+bool CTextT<T>::IsFormating(T c)
+{
+    return c == *SPACE || c == *TAB || c == *EOL || c == *CR;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
 T CTextT<T>::first() const
 {
     if(isEmpty())
@@ -2531,8 +2538,11 @@ unsigned int CTextT<T>::toHexNumber(bool& bOk)
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 template<typename Num, typename C, typename Val, typename X>
-bool CTextT<T>::toArray(C& container, T sep) const
+bool CTextT<T>::toArray(C& container, T sep, bool asHex) const
 {
+    if(!sep)
+        return toChars<Num, C>(container, asHex);
+
     bool bOk = true;
     container.clear();
     Num num;
@@ -2547,6 +2557,9 @@ bool CTextT<T>::toArray(C& container, T sep) const
     else if(sep == *EOL)
         hasEOL = true;
 
+    if(asHex)
+        iss >> std::hex;
+    
     iss >> num;
     bOk = !iss.fail();
     if(!bOk || iss.eof())
@@ -4282,4 +4295,79 @@ size_t  CTextT<T>::linesCount(const T* sep) const
         return 0;
 
     return count(sep);
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+int CTextT<T>::ToHex(T c, bool& bOk)  //TODO optimize
+{
+    bOk = true;
+
+    T chu = upper(c);
+
+    for(int k = 0; k < 16; k++)
+    {
+        if(chu == HexDigits[k])
+            return k;
+    }
+
+    bOk = false;
+    return 0;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+template<typename Num, typename C, typename Val, typename X>
+bool CTextT<T>::fromChars(const C& container)
+{
+    clear();
+    for(auto c : container)
+        append(T(c));
+    return true;
+}
+
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+template<typename Num, typename C, typename Val, typename X>
+bool CTextT<T>::toChars(C& container, bool asHex) const
+{
+    const T* ptr = str();
+    T c = *ptr++;
+    size_t nReaded = 0;
+    container.clear();
+
+    if(!asHex)
+    {
+        while(c)
+        {
+            container.push_back((Val)c);
+            c = *ptr++;
+        }
+    }
+    else
+    {
+        int h1 = 0, h2 = 0;
+        bool bOk = true;
+        while(c)
+        {
+            // skip spaces
+            if(!IsFormating(c))
+            {
+                h1 = ToHex(c, bOk);
+
+                if(!bOk)
+                    return std::string::npos;
+
+                if(nReaded++ % 2)
+                    container.push_back(static_cast<unsigned char>(h2 + h1));
+                else
+                    h2 = h1 << 4;
+            }
+
+            c = *ptr++;
+        }
+    }
+
+    return true;
 }
