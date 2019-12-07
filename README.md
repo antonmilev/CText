@@ -156,6 +156,55 @@ Output:
    one two three five
 ```  
 
+### File paths 
+```cpp
+CText filepath = _T("D:\\Folder\\SubFolder\\TEXT\\File.dat");
+cout << filepath.getExtension() << endl;
+cout << filepath.getFileName() << endl;
+cout << filepath.getDir() << endl;
+filepath.replaceExtension(_T(".bin"));
+cout << filepath << endl;
+filepath.removeExtension();
+cout << filepath << endl;
+filepath.replaceExtension(_T(".dat"));
+cout << filepath << endl;
+filepath.replaceFileName(_T("File2"));
+cout << filepath << endl;
+filepath.addToFileName(_T("_mask"));
+cout << filepath << endl;
+filepath.replaceLastFolder(_T("Temp"));
+cout << filepath << endl;
+filepath.removeAfterSlash();
+cout << filepath << endl;
+
+```
+
+Output
+```
+.dat
+File.dat
+D:\Folder\SubFolder\TEXT\
+D:\Folder\SubFolder\TEXT\File.bin
+D:\Folder\SubFolder\TEXT\File
+D:\Folder\SubFolder\TEXT\File.dat
+D:\Folder\SubFolder\TEXT\File2.dat
+D:\Folder\SubFolder\TEXT\File2_mask.dat
+D:\Folder\SubFolder\Temp\File2_mask.dat
+D:\Folder\SubFolder\Temp
+```
+
+```cpp
+CText path1(_T("C:\\Temp"));
+CText path2(_T("..\\Folder"));
+path1.pathCombine(path2.str());
+cout << path1 << endl;
+```
+
+Output
+```
+C:\\Folder
+```
+
 ### Split and collection routines
 ```cpp
     CText s = _T("The quick  brown fox jumps  over the lazy dog");

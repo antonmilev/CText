@@ -986,7 +986,7 @@ const T* CTextT<T>::find(const T c, bool bCase) const
 template <typename T>
 const T* CTextT<T>::reverseFind(const T* s, bool bCase) const
 {
-    size_t idx = lastIndexOf(s, bCase);
+    size_t idx = lastIndexOf(s, 0, bCase);
 
     if(idx == std::string::npos)
         return nullptr;
@@ -996,22 +996,22 @@ const T* CTextT<T>::reverseFind(const T* s, bool bCase) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-size_t CTextT<T>::lastIndexOf(T c, bool bCase) const
+size_t CTextT<T>::lastIndexOf(T c, size_t from, bool bCase) const
 {
-    if(isEmpty())
+    if(isEmpty() || from > length() - 1)
         return std::string::npos;
 
-    return LastIndexOf(str(), length(), c, bCase);
+    return LastIndexOf(str(from), length() - from, c, bCase);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-size_t CTextT<T>::lastIndexOf(const T* s, bool bCase) const
+size_t CTextT<T>::lastIndexOf(const T* s, size_t from, bool bCase) const
 {
-    if(EmptyOrNull(s))
+    if(EmptyOrNull(s) || from > length() - 1)
         return std::string::npos;
 
-    return LastIndexOf(str(), length(), s, bCase);
+    return LastIndexOf(str(from), length() - from, s, bCase);
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -1163,18 +1163,17 @@ size_t CTextT<T>::indexOfNot(T c, bool bCase) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-size_t  CTextT<T>::lastIndexOfAny(const T* cList, bool bCase) const
+size_t CTextT<T>::lastIndexOfAny(const T* cList, size_t from, bool bCase) const
 {
-    if(isEmpty())
+    if(isEmpty() || from >= length())
         return std::string::npos;
 
     // find last single character
-    const T* s = str(length() - 1);
+    const T* s = str(length() - 1 - from);
     while(s >= str())
     {
         if(IsOneOf(*s, cList, bCase))
             return ((size_t)(s - str()));
-
         s--;
     }
     // return -1 if not found, distance from beginning otherwise
@@ -1880,7 +1879,7 @@ bool CTextT<T>::cutAfterLast(T c, bool include)
 template <typename T>
 bool CTextT<T>::cutAfterLastOfAny(const T* chList, bool include, bool bCase)
 {
-    size_t idx = lastIndexOfAny(chList, bCase);
+    size_t idx = lastIndexOfAny(chList, 0, bCase);
 
     if(idx == std::string::npos)
         return false;
@@ -2892,7 +2891,7 @@ bool CTextT<T>::splitAtFirstOfAny(const T* cList, CTextT& first, CTextT& second,
 template <typename T>
 bool CTextT<T>::splitAtLastOfAny(const T* cList, CTextT& first, CTextT& second, bool exclude, bool bCase)
 {
-    size_t idx = lastIndexOfAny(cList, bCase);
+    size_t idx = lastIndexOfAny(cList, 0, bCase);
 
     if(idx == std::string::npos) //not found
         return false;
@@ -4356,4 +4355,360 @@ bool CTextT<T>::toChars(C& container, bool asHex) const
     }
 
     return true;
+}
+
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+const T* CTextT<T>::GetExtension(const T* path, size_t len)
+{
+    if(EmptyOrNull(path) || !len)
+        return nullptr;
+
+    const T* psz = path + len - 1;
+
+    size_t nRight = 0;
+    while(psz >= path)
+    {
+        nRight++;
+        psz--;
+        if(*psz == T('.'))
+            break;
+
+        if(IsOneOf(*psz, Slash))
+            return nullptr;  // path has no extension
+    }
+
+    //if no extension return 0 (not safe)
+    if(!nRight || len == nRight)
+        return nullptr;
+
+    return path + len - nRight - 1;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+const T* CTextT<T>::GetExtension(const T* path)
+{
+    if(EmptyOrNull(path))
+        return nullptr;
+
+    return GetExtension(path, Strlen(path));
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+const T* CTextT<T>::getExtension() const
+{
+    if(isEmpty())
+        return nullptr;
+
+    return GetExtension(str(), length());
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+const T* CTextT<T>::GetFileName(const T* path, size_t len)
+{
+    if(!len)
+        return nullptr;
+
+    const T* name = nullptr;
+    const T* psz = path + len - 1;
+
+    while(psz >= path)
+    {
+        if(IsOneOf(*psz, Slash))
+        {
+            name = psz + 1;
+            break;
+        }
+
+        psz--;
+    }
+
+    return name;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+const T* CTextT<T>::GetFileName(const T* path)
+{
+    if(EmptyOrNull(path))
+        return nullptr;
+
+    return GetFileName(path, Strlen(path));
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+const T* CTextT<T>::getFileName() const
+{
+    if(isEmpty())
+        return nullptr;
+
+    return GetFileName(str(), length());
+}
+
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::removeFileName(bool keepSlash)
+{
+    size_t i1 = lastIndexOf(T('.'));
+    size_t i2 = lastIndexOfAny(Slash);
+
+    if(i1 != std::string::npos && i2 != std::string::npos && i1 > i2)
+    {
+        if(length() > i2)
+            limit(keepSlash ? i2 + 1 : i2);
+        return true;
+    }
+
+    return false;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::removeExtension()
+{
+    size_t i = lastIndexOf(T('.'));
+
+    if(i == std::string::npos || length() <= i)
+        return false;
+
+    limit(i);
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+CTextT<T> CTextT<T>::GetDir(const T* path)
+{
+    CTextT<T> dir(path);
+    size_t i = dir.lastIndexOfAny(Slash);
+    if(i != std::string::npos && dir.length() > i)
+        dir.limit(i + 1);
+    return dir;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+// get a folder from full module path
+template <typename T>
+CTextT<T> CTextT<T>::getDir()
+{
+    return GetDir(str());
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::removeAfterSlash(bool bRetNoneEmpty)
+{
+    if(isEmpty())
+        return false;
+
+    size_t i = lastIndexOfAny(Slash);
+    bool ret = true;
+
+    if(i == std::string::npos)
+    {
+        if(bRetNoneEmpty)   return false;
+        else
+        {
+            i = 0;
+            ret = false;
+        }
+    }
+
+    if(i != std::string::npos && length() > i)
+        limit(i);
+
+    return ret;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::pathCombine(const T* path)
+{
+    while(*path == T('.'))
+    {
+        path++;
+        if(*path++ != T('.'))
+            return false;
+
+        if(!IsOneOf(*path, Slash))
+            return false;
+
+        path++;
+
+        if(!removeAfterSlash())
+            break;
+    }
+
+    if(!endsWithAny(Slash))
+    {
+        append(T('\\'));
+    }
+
+    if(IsOneOf(*path, Slash))
+        path++;
+
+    append(path);
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::replaceExtension(const T* newExt)
+{
+    if(removeExtension() || getFileName() != nullptr)
+    {
+        append(newExt);
+        return true;
+    }
+    return false;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::replaceFileName(const T* newFileName)
+{
+    CTextT<T> ext = getExtension();
+    if(removeFileName())
+    {
+        append(newFileName);
+        append(ext);
+        return true;
+    }
+    return false;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::addToFileName(const T* str)
+{
+    CTextT<T> ext = getExtension();
+    if(removeExtension())
+    {
+        append(str);
+        append(ext);
+        return true;
+    }
+
+    return false;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::replaceLastFolder(const T* newFolderName)
+{
+    if(isEmpty())
+        return false;
+
+    size_t i2 = lastIndexOfAny(Slash);
+
+    if(i2 == std::string::npos)
+        return false;
+
+    size_t offset = length() - i2;
+    size_t i1 = lastIndexOfAny(Slash, offset);
+
+    if(i1 == std::string::npos)
+    {
+        // insert at offset
+        insert(i2++, T('\\'));
+        insert(i2, newFolderName);
+    }
+    else
+    {
+        i1++;
+        if(i2 > i1)
+        {
+            RangeVector pos;
+            pos.push_back(std::make_pair(i1, i2 - 1));
+            replaceAt(pos, newFolderName);
+        }
+        else
+        {
+            insert(i1, newFolderName);
+        }
+    }
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+void CTextT<T>::terminatePath()
+{
+    trimRight();
+    if(!endsWithAny(Slash))
+        append('/');
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+void CTextT<T>::unterminatePath()
+{
+    trimRight();
+    while(endsWithAny(Slash))
+        removeLast();
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+void CTextT<T>::SplitPath(const T* path, CTextT& drv, CTextT& dir, CTextT& name, CTextT& ext)
+{
+    const T* end; // end of processed string
+    const T* p;   // search pointer 
+    const T* s;   // copy pointer
+
+    drv.clear();
+    // extract drive name 
+    if(path[0] && path[1] == T(':'))
+    {
+        drv.append(*path++);
+        drv.append(*path++);
+    }
+
+    //search for end of string or stream separator
+    for(end = path; *end && *end != T(':'); )
+        end++;
+
+    // search for begin of file extension */
+    for(p = end; p > path && *--p != '\\' && *p != '/'; )
+    {
+        if(*p == '.')
+        {
+            end = p;
+            break;
+        }
+    }
+
+    s = end;
+    ext.clear();
+    while(*s)
+        ext.append(*s++);
+
+    // search for end of directory name 
+    for(p = end; p > path; )
+    {
+        if(*--p == '\\' || *p == '/')
+        {
+            p++;
+            break;
+        }
+    }
+
+    name.clear();
+    s = p;
+    while(s < end)
+        name.append(*s++);
+
+    dir.clear();
+    s = path;
+    while(s < p)
+        dir.append(*s++);
 }

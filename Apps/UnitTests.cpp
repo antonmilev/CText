@@ -2719,6 +2719,288 @@ int test_file()
     }
 }
 
+int test_filepaths()
+{
+    try
+    {
+        {
+            CText filepath = _T("D:\\Folder\\SubFolder\\TEXT\\File.dat");
+
+            CText ext = filepath.getExtension();
+
+            if(ext != _T(".dat"))
+                goto error;
+
+            CText filename = filepath.getFileName();
+
+            if(filename != _T("File.dat"))
+                goto error;
+
+            filename = CText::GetFileName(_T("D:\\Folder\\SubFolder\\TEXT\\File.dat"));
+
+            if(filename != _T("File.dat"))
+                goto error;
+
+            if(!filename.removeExtension() || filename != _T("File"))
+                goto error;
+
+            CText path = filepath;
+            path.removeFileName();
+
+            if(path != _T("D:\\Folder\\SubFolder\\TEXT\\"))
+                goto error;
+
+            if(!filepath.removeExtension() || filepath != _T("D:\\Folder\\SubFolder\\TEXT\\File"))
+                goto error;
+
+            CText folder = filepath.getDir();
+
+            if(folder != _T("D:\\Folder\\SubFolder\\TEXT\\"))
+                goto error;
+
+            filepath = _T("/home/etc/File.txt");
+
+            ext = filepath.getExtension();
+
+            if(ext != _T(".txt"))
+                goto error;
+
+            filename = filepath.getFileName();
+
+            if(filename != _T("File.txt"))
+                goto error;
+
+            if(!filename.removeExtension() || filename != _T("File"))
+                goto error;
+
+            path = filepath;
+            path.removeFileName();
+
+            if(path != _T("/home/etc/"))
+                goto error;
+
+            folder = filepath.getDir();
+
+            if(folder != _T("/home/etc/"))
+                goto error;
+
+            if(!filepath.removeExtension() || filepath != _T("/home/etc/File"))
+                goto error;
+        }
+
+        {
+            CText filepath = _T("D:\\Folder\\SubFolder\\TEXT\\File.dat");
+
+            bool b;
+            b = filepath.removeAfterSlash();
+            if(!b || filepath != _T("D:\\Folder\\SubFolder\\TEXT"))
+                goto error;
+            b = filepath.removeAfterSlash();
+            if(!b || filepath != _T("D:\\Folder\\SubFolder"))
+                goto error;
+            b = filepath.removeAfterSlash();
+            if(!b || filepath != _T("D:\\Folder"))
+                goto error;
+            b = filepath.removeAfterSlash();
+            if(!b || filepath != _T("D:"))
+                goto error;
+            b = filepath.removeAfterSlash();
+            if(b || filepath != _T("D:"))
+                goto error;
+
+            filepath = _T("");
+            b = filepath.removeAfterSlash();
+            if(b || filepath != _T(""))
+                goto error;
+        }
+
+        // test with unix slash
+        {
+            CText filepath = _T("D:/Folder/SubFolder/TEXT/File.dat");
+
+            CText path = filepath;
+            path.removeFileName();
+
+            if(path != _T("D:/Folder/SubFolder/TEXT/"))
+                goto error;
+
+            CText filename = filepath.getFileName();
+
+            if(filename != _T("File.dat"))
+                goto error;
+
+            CText folder = filepath.getDir();
+            folder.getDir();
+
+            if(folder != _T("D:/Folder/SubFolder/TEXT/"))
+                goto error;
+
+            if(!filepath.removeExtension() || filepath != _T("D:/Folder/SubFolder/TEXT/File"))
+                goto error;
+
+            filename = filepath.getFileName();
+
+            if(filename != _T("File"))
+                goto error;
+
+            bool b;
+            b = filepath.removeAfterSlash();
+            if(!b || filepath != _T("D:/Folder/SubFolder/TEXT"))
+                goto error;
+            b = filepath.removeAfterSlash();
+            if(!b || filepath != _T("D:/Folder/SubFolder"))
+                goto error;
+            b = filepath.removeAfterSlash();
+            if(!b || filepath != _T("D:/Folder"))
+                goto error;
+            b = filepath.removeAfterSlash();
+            if(!b || filepath != _T("D:"))
+                goto error;
+            b = filepath.removeAfterSlash();
+            if(b || filepath != _T("D:"))
+                goto error;
+
+            filepath = _T("");
+            b = filepath.removeAfterSlash();
+            if(b || filepath != _T(""))
+                goto error;
+        }
+
+        // test pathCombine
+        {
+            CText path1(_T("C:\\Temp"));
+            CText path2(_T("..\\Folder"));
+            path1.pathCombine(path2.str());
+
+            if(path1 != _T("C:\\Folder"))
+                goto error;
+        }
+
+        {
+            CText path1(_T("C:\\Temp\\Temp2"));
+            CText path2(_T("File.txt"));
+            path1.pathCombine(path2.str());
+
+            if(path1 != _T("C:\\Temp\\Temp2\\File.txt"))
+                goto error;
+        }
+
+        {
+            CText path1(_T("C:\\Temp\\Temp2\\"));
+            CText path2(_T("\\Temp3\\Temp4\\File.txt"));
+            path1.pathCombine(path2.str());
+
+            if(path1 != _T("C:\\Temp\\Temp2\\Temp3\\Temp4\\File.txt"))
+                goto error;
+        }
+
+        {
+            CText filepath(_T("C:\\Temp\\Temp2\\File.dat"));
+
+            filepath.replaceExtension(_T(".bin"));
+
+            if(filepath != _T("C:\\Temp\\Temp2\\File.bin"))
+                goto error;
+        }
+
+        {
+            CText filepath(_T("C:\\Temp\\Temp2\\File1.dat"));
+
+            filepath.replaceFileName(_T("File2"));
+
+            if(filepath != _T("C:\\Temp\\Temp2\\File2.dat"))
+                goto error;
+        }
+
+        {
+            CText filepath(_T("C:\\Temp\\Temp2\\File.bmp"));
+
+            filepath.addToFileName(_T("_mask"));
+
+            if(filepath != _T("C:\\Temp\\Temp2\\File_mask.bmp"))
+                goto error;
+        }
+
+        {
+            CText s = _T("C:\\Temp\\Temp2\\File.bmp");
+
+            s.replaceLastFolder(_T("Temp3"));
+
+            if(s != _T("C:\\Temp\\Temp3\\File.bmp"))
+                goto error;
+
+            s = _T("C:\\F\\G\\File.bmp");
+
+            s.replaceLastFolder(_T("M"));
+
+            if(s != _T("C:\\F\\M\\File.bmp"))
+                goto error;
+
+            // test with empty folder
+            s = _T("C:\\Temp\\\\File.bmp");
+            s.replaceLastFolder(_T("Temp3"));
+
+            if(s != _T("C:\\Temp\\Temp3\\File.bmp"))
+                goto error;
+
+            // test without last folder
+            s = _T("C:\\File.bmp");
+            s.replaceLastFolder(_T("Temp3"));
+
+            if(s != _T("C:\\Temp3\\File.bmp"))
+                goto error;
+        }
+
+
+        {
+            CText filepath(_T("C:\\Temp\\Temp2"));
+            filepath.terminatePath();;
+
+            if(filepath != _T("C:\\Temp\\Temp2/"))
+                goto error;
+
+            filepath.unterminatePath();;
+
+            if(filepath != _T("C:\\Temp\\Temp2"))
+                goto error;
+        }
+
+        {
+            CText ext;
+            CText fname;
+            CText drv;
+            CText dir;
+
+            CText::SplitPath(_T("C:\\Temp\\Temp2\\File.bmp"), drv, dir, fname, ext);
+
+            if(ext != _T(".bmp"))
+                goto error;
+
+            if(dir != _T("\\Temp\\Temp2\\"))
+                goto error;
+
+            if(fname != _T("File"))
+                goto error;
+
+            if(drv != _T("C:"))
+                goto error;
+        }
+
+        printResult("test_filepaths()", true);
+        return 0;
+
+    error:
+        printResult("test_filepaths()", false);
+        return 1;
+    }
+    catch(...)
+    {
+        printResult("test_filepaths() [exception]", false);
+        return 1;
+    }
+}
+
+
 int unitTest()
 {
     int errors = 0;
@@ -2741,6 +3023,7 @@ int unitTest()
     errors += test_collect();
     errors += test_unicode();
     errors += test_edit_distances();
+    errors += test_filepaths();
     errors += test_file();
 
     return errors;

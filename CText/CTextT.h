@@ -133,6 +133,7 @@ public:
 
     typedef std::vector<std::pair<size_t, size_t>> RangeVector;
 
+    bool		 addToFileName(const T* s); //modifies the filename, adds the provided string but keeps extension and path
     bool         alloc(size_t len);
     CTextT&      append(const CTextT& s);
     CTextT&      append(const T* s); // append string
@@ -209,6 +210,9 @@ public:
     void         fromMap(std::map<T, int>& container, const T* sep = SPACE, const T* sepLine = EOL);
     bool         fromSingle(const char* s);  // init with single-char ANSI string, make string -> wstring convert if necessary
     bool         fromWide(const wchar_t* s);  // init with UNICODE string, make wstring -> string convert if necessary
+    CTextT		 getDir(); // get a folder from a full module path
+    const T*	 getExtension() const;   //if our string contains file path, return pointer to the extension, will return 0 if empty or extension not found!, dot is included
+    const T*	 getFileName() const;  //if our string contains file path, return pointer to the file name, will return 0 if empty or file name not found!!!!
     size_t       indexOf(T c, size_t from = 0, bool bCase = true) const;    // finds the index of the first character starting at zero-based index and going right, return ch index or -1 if not found
     size_t       indexOf(const T* s, size_t from = 0, bool bCase = true) const; // finds the index of the first instance of the substring starting at zero-based index, return substring index or -1 if not found
     size_t       indexOfAny(const T* cList, size_t from = 0, bool bCase = true) const;
@@ -234,9 +238,9 @@ public:
     size_t       keepLeft(size_t count);  // keeps count characters from left, returns number of deleted characters
     size_t       keepRight(size_t count); // keeps count characters from right, returns number of deleted characters
     T            last() const; //return last character or 0 if empty
-    size_t       lastIndexOf(T c, bool bCase = true) const; // find the first character position starting at right, where from is offset from end and the returned idx is from the beggining
-    size_t       lastIndexOf(const T* s, bool bCase = true) const; // find the first substring position starting at right, where the returned idx is from the beggining
-    size_t       lastIndexOfAny(const T* cList, bool bCase = true) const;   // find the character position starting at right, from - offset from the end to start the search
+    size_t       lastIndexOf(T c, size_t from = 0, bool bCase = true) const; // find the first character position starting at right, where from is offset from end and the returned idx is from the beggining
+    size_t       lastIndexOf(const T* s, size_t from = 0, bool bCase = true) const; // find the first substring position starting at right, where the returned idx is from the beggining
+    size_t       lastIndexOfAny(const T* cList, size_t from = 0, bool bCase = true) const;   // find the character position starting at right, from - offset from the end to start the search
     size_t       lastIndexOfNot(T c, bool bCase = true) const;
     CTextT       left(size_t count) const;  // return new string containing first count characters 
     size_t       length() const;  // returns the number of characters in our string
@@ -251,6 +255,7 @@ public:
     T            nextChar(size_t pos, const T* sep = Separators) const; // return next character starting at the given position and excluding characters in the list
     bool         nextExcluding(size_t& pos, size_t& start, size_t& count, bool appendSeparators = false, const T* cList = Separators) const; //find the next substring not containing any of the characters in the list, if appendSeparators is set the separators will be added at the end
     bool         nextIncluding(size_t& pos, size_t& start, size_t& count, const T* cList) const; //find the next substring containing only any of the characters in the list
+    bool		 pathCombine(const T* path);  //assumes that this contains path,  "C:\Temp" + "..\Folder" = "C:\Folder", no check if both paths are valid or absolute!
     CTextT&      push_back(T c);
     CTextT&      push_back(const T* s);
     CTextT&      push_front(T c);
@@ -274,6 +279,9 @@ public:
     size_t       removeAny(std::initializer_list<const T*> list, bool bCase = true);
     CTextT&      removeAt(const RangeVector& pos); //remove from the positions at the provided index arrays
     size_t       removeBlocks(const T* sepBegin, const T* sepEnd);  //removes any block from the strings begining and ending with the given separators
+    bool		 removeAfterSlash(bool keepEmpty = true);  //removes everything after the last slash (slash is also removed), if keepEmpty is false zeroes the string if it does not contain slash
+    bool		 removeExtension();  //remove the extension from a file path
+    bool		 removeFileName(bool keepSlash = true); // if our string contain file path, remove the file name, return true on success
     bool         removeLast();  // removes the last character, return true if not empty and sucessful
     size_t       replace(T cOld, T cNew);   // replace occurrences of the character cOld with cNew, return number of replaced characters
     size_t       replace(const T* what, const T* with, bool bCase = true);// replace all occurrences of substring "what" with substring "with", empty "with" removes all instances of "what", return number of replaced substrings
@@ -289,7 +297,10 @@ public:
     CTextT       replaceAt(const RangeVector& pos, const T* with) const;
    ContS CTextT& replaceAt(const RangeVector& pos, const std::vector<size_t>& indexes, const C& with);
    ContS CTextT  replaceAt(const RangeVector& pos, const std::vector<size_t>& indexes, const C& with) const;
-    CTextT&      replaceFirst(T c);
+   bool		     replaceExtension(const T* newExt); //will change the file name or file path extension
+   bool		     replaceFileName(const T* newFileName); //change the filename in a path but leaves the extension, our string must contain valid path 
+   bool          replaceLastFolder(const T* newFolderName); // having a file path like "c:/folder/file.txt" changes it to  "c:/folder2/file.txt", if there is no last folder like "c:/file.txt" again converts to "c:/folder2/file.txt"
+   CTextT&       replaceFirst(T c);
     CTextT&      replaceLast(T c);
     bool         resize(size_t newLen, T c = 0);
     CTextT&      reverse(); // reverse string right-to-left
@@ -325,6 +336,7 @@ public:
     CTextT       substringBetween(const T* sLeft, const T* sRight, bool include = false);
     CTextT       substringRight(size_t from) const; // return new string with all characters starting at a zero-based index and continuing to the end
     CTextT       substringLeft(size_t count) const;  // returns new string with count characters from left
+    void		 terminatePath(); //makes sure that path ends with slash
   unsigned int   toBinaryNumber(bool& bOk); //if the string contains a binary number, convert it   
   unsigned int   toHexNumber(bool& bOk);  //if the string contains a hex number convert it , "1E" --> 30   
     double       toDouble(bool& bOk) const;
@@ -343,6 +355,7 @@ public:
     CTextT&      trimRight(const T c); //// remove continuous occurrence of character c, starting from right
     CTextT&      trimRight(const T* cList = Separators); // remove from right continuous occurrence of all characters from the provided list  
     size_t       unenclose(T begin, T end); //opposite of enclose
+    void		 unterminatePath(); //makes sure that path do not ends with slash
     size_t       unquote();  //removes literal sign if ends with it
     size_t       wordsCapitalize(const T* sep = Separators);  // make all words in a text start with upper character
     CTextT&      wordsEnclose(const T* sBegin, const T* sEnd, const T* sep = SeparatorsWord);
@@ -356,8 +369,10 @@ public:
     static CTextT<T>  Add(const CTextT&, const T*);
     static CTextT<T>  Add(const CTextT&, T c);
     static bool       ArePermutation(const CTextT& a, const CTextT& b);
+    static CTextT<T>  GetDir(const T* path);
  ContC static size_t  GeneratePermutations(C& container, CTextT& s);
     static bool       IsPalindrome(const T* s, bool bCase = true, size_t len = std::string::npos);
+    static void       SplitPath(const T* path, CTextT& drv, CTextT& dir, CTextT& name, CTextT& ext);
     static  void      Swap(CTextT& a, CTextT& b);  // exchanges the values of two strings
     static int        ToHex(T c, bool& bOk);  // 'a' --> 10
 
@@ -373,6 +388,10 @@ inline static CTextT<wchar_t>ToWide(const T* s);
     // static string routines
     static bool     EmptyOrNull(const T* s) { return (s == 0 || *s == 0); }
     static bool     EndsWith(const T* text, const T* str, bool bCase = true, size_t len = std::string::npos);
+    static const T* GetExtension(const T* path);
+    static const T* GetExtension(const T* path, size_t len);  // if string contains file path return pointer to its extension (include dot), if no extension or empty string return nullptr 
+    static const T* GetFileName(const T* path); // if string contains file path return pointer to the file or last folder name, if no filename found return 0
+    static const T* GetFileName(const T* path, size_t len);
     static size_t   IndexOf(const T* s, T c, bool bCase = false);
     static bool     IsAlpha(const T* s);
     static bool     IsBinary(const T* s);
