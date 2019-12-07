@@ -249,8 +249,8 @@ public:
     CTextT&      makeUnique(T c);  // make sure that character c occurs only once, leaves the first one
     CTextT       mid(size_t count);  //leaves the middle characters, count characters are cut from both ends, returns new string
     T            nextChar(size_t pos, const T* sep = Separators) const; // return next character starting at the given position and excluding characters in the list
-    bool         nextExcluding(size_t& pos, CTextT& word, bool appendSeparators = false, const T* cList = Separators, size_t* posBegin = nullptr, size_t* posEnd = nullptr) const; //find the next substring not containing any of the characters in the list, if appendSeparators is set the separators will be added at the end
-    bool         nextIncluding(size_t& pos, CTextT<T>& substr, const T* cList, size_t* posBegin = nullptr, size_t* posEnd = nullptr) const; //find the next substring containing only any of the characters in the list
+    bool         nextExcluding(size_t& pos, size_t& start, size_t& count, bool appendSeparators = false, const T* cList = Separators) const; //find the next substring not containing any of the characters in the list, if appendSeparators is set the separators will be added at the end
+    bool         nextIncluding(size_t& pos, size_t& start, size_t& count, const T* cList) const; //find the next substring containing only any of the characters in the list
     CTextT&      push_back(T c);
     CTextT&      push_back(const T* s);
     CTextT&      push_front(T c);
@@ -270,8 +270,8 @@ public:
     size_t       remove(const T* s, bool bCase = true); // delete all occurences of the sub-string s, returns the number of the removed strings s (or 0 if nothing is removed)
     size_t       remove(std::initializer_list<T> cList);
     size_t       removeAny(const T* cList, bool bCase = true);  //delete all of provided in the list characters
-   ContS CTextT& removeAny(const C& container, bool bCase = true); //remove any from the provided in the list strings
-   CTextT&       removeAny(std::initializer_list<const T*> list, bool bCase = true); 
+   ContS size_t  removeAny(const C& container, bool bCase = true); //remove any from the provided in the list strings
+    size_t       removeAny(std::initializer_list<const T*> list, bool bCase = true);
     CTextT&      removeAt(const RangeVector& pos); //remove from the positions at the provided index arrays
     size_t       removeBlocks(const T* sepBegin, const T* sepEnd);  //removes any block from the strings begining and ending with the given separators
     bool         removeLast();  // removes the last character, return true if not empty and sucessful
@@ -392,7 +392,7 @@ inline static CTextT<wchar_t>ToWide(const T* s);
     static T*       Strcat(T *dst, const T *src); // (strcat)
     static T*       Strncat(T *dst, const T *src, size_t n); //(strncat)
     static int      Strcmp(const T* p1, const T* p2, bool bCase = true);
-    static const T* StrFind(const T* s, const T* text, bool bCase = true);  // (strstr) finds a pointer to the first occurence of text in str, return 0 pointer if not found
+    static const T* StrFind(const T* s, const T* text, bool bCase = true);  // (strstr) finds a const pointer to the first occurence of text in str, return 0 pointer if not found
     static const T* StrFindCh(const T* s, T c, bool bCase = true);  // (strchr) finds a pointer to the first occurence of a character in the passed string or returns 0 if not found
     static const T* StrFindChAny(const T* s, const T* chList, bool bCase = true); //same as StrFindCh but checks all the character from the list
     static const T* StrFindChNot(const T* s, const T* cList, bool bCase = true); // returns pointer to the first character in string s not contained in the list or 0 if all characters are contained, if list is empty return pointer to the beggining

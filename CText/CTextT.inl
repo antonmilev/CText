@@ -931,19 +931,19 @@ bool CTextT<T>::isEqual(const T* s, bool bCase) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-const T* CTextT<T>::StrFind(const T* str, const T* text, bool bCase)
+const T* CTextT<T>::StrFind(const T* s, const T* text, bool bCase)
 {
-    if(!str || !*str || !text || !*text)
+    if(!s || !*s || !text || !*text)
         return 0;
 
-    T cht = *str;
+    T cht = *s;
 
     while(cht)
     {
-        if(StartsWith(str, text, bCase))
-            return str;
+        if(StartsWith(s, text, bCase))
+            return s;
 
-        cht = *++str;
+        cht = *++s;
     }
 
     return nullptr;
@@ -1401,22 +1401,21 @@ size_t CTextT<T>::removeAny(const T* cList, bool bCase)
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 template<typename C, typename Val, typename X>
-CTextT<T>& CTextT<T>::removeAny(const C& list, bool bCase)
+size_t CTextT<T>::removeAny(const C& list, bool bCase)
 {
-    std::vector< std::pair <size_t, size_t> > v;
-    while(findPositions(list, v, bCase))
-        removeAt(v);
-    return *this;
+    RangeVector pos;
+    while(findPositions(list, pos, bCase))
+        removeAt(pos);
+    return pos.size();
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-CTextT<T>& CTextT<T>::removeAny(std::initializer_list<const T*> list, bool bCase)
+size_t CTextT<T>::removeAny(std::initializer_list<const T*> list, bool bCase)
 {
     std::vector<const T*> c;
     for(const T* v : list)
         c.push_back(v);
-
     return removeAny(c, bCase);
 }
 
@@ -1425,7 +1424,7 @@ template <typename T>
 size_t CTextT<T>::removeBlocks(const T* sepBegin, const T* sepEnd)
 {
     size_t nFound, nTotFound = 0;
-    std::vector< std::pair <size_t, size_t> > v;
+    RangeVector v;
     while((nFound = findBlockPositions(sepBegin, sepEnd, v)) > 0)
     {
         removeAt(v);
@@ -2161,7 +2160,7 @@ template <typename T>
 template<typename C, typename Val, typename X>
 CTextT<T>& CTextT<T>::reverseAny(const C& list, bool bCase)
 {
-    std::vector< std::pair <size_t, size_t> > v;
+    RangeVector v;
     while(findPositions(list, v, bCase))
         reverseAt(v);
     return *this;
@@ -2760,7 +2759,7 @@ CTextT<T>& CTextT<T>::wordsSort(const T* sep, const T* sepNew) // words sort in 
 template <typename T>
 CTextT<T>& CTextT<T>::wordsReverse(const T* sep) // reverse words
 {
-    std::vector< std::pair <size_t, size_t> > v;
+    RangeVector v;
     if(findWordPositions(v, sep))
         reverseAt(v);
     return *this;
@@ -2772,12 +2771,11 @@ size_t CTextT<T>::findWordPositions(RangeVector& pos, const T* sep) const
 {
     if(isEmpty())
         return 0;
-
     pos.clear();
-    size_t posNext = 0, posBegin, posEnd;
-    CTextT<T> word;
-    while(nextExcluding(posNext, word, false, sep, &posBegin, &posEnd))
-        pos.push_back(std::make_pair(posBegin, posEnd));
+    size_t posNext = 0, start, count;
+    size_t n = 0;
+    while(nextExcluding(posNext, start, count, false, sep))
+        pos.push_back(std::make_pair(start, start + count - 1));
     return pos.size();
 }
 
@@ -2830,10 +2828,9 @@ template<typename C, typename Val, typename X>
 size_t CTextT<T>::split(C& container, bool appendSeparators, const T* sep) const
 {
     container.clear();
-    size_t pos = 0;
-    CTextT<T> s;
-    while(nextExcluding(pos, s, appendSeparators, sep))
-        container.push_back(s.str());
+    size_t posNext = 0, start, count;
+    while(nextExcluding(posNext, start, count, appendSeparators, sep))
+        container.push_back(substring(start, count));
     return container.size();
 }
 
@@ -3011,17 +3008,18 @@ void CTextT<T>::fromMap(const C& container, const T* sep, const T* sepLine)
         }
     }
 }
+
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::nextExcluding(size_t& pos, CTextT<T>& substr, bool appendSeparators, const T* cList, size_t* posBegin, size_t* posEnd) const
+bool CTextT<T>::nextExcluding(size_t& pos, size_t& start, size_t& count, bool appendSeparators, const T* cList) const
 {
     if(isEmpty() || pos >= length())
         return false;
 
     const T* s1 = str(pos);
 
-    while(!IsOneOf(*s1, cList) && s1 > m_str)
-        s1--;
+    //    while(!IsOneOf(*s1, cList) && s1 > m_str)
+    //        s1--;
 
     while(IsOneOf(*s1, cList))
         s1++;
@@ -3031,10 +3029,7 @@ bool CTextT<T>::nextExcluding(size_t& pos, CTextT<T>& substr, bool appendSeparat
     while(*s2 && !IsOneOf(*s2, cList))
         s2++;
 
-    if(posBegin)
-        *posBegin = s1 - str();
-    if(posEnd)
-        *posEnd = s2 - str() - 1;
+    start = s1 - str();
 
     if(appendSeparators)
     {
@@ -3042,10 +3037,10 @@ bool CTextT<T>::nextExcluding(size_t& pos, CTextT<T>& substr, bool appendSeparat
             s2++;
     }
 
+    count = s2 - s1;
+
     if(s2 == s1) // it is empty
         return false;
-
-    substr = CTextT(s1, s2 - s1);
 
     // move iterator position for the next search
     while(IsOneOf(*s2, cList))
@@ -3057,7 +3052,7 @@ bool CTextT<T>::nextExcluding(size_t& pos, CTextT<T>& substr, bool appendSeparat
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::nextIncluding(size_t& pos, CTextT<T>& substr, const T* cList, size_t* posBegin, size_t* posEnd) const
+bool CTextT<T>::nextIncluding(size_t& pos, size_t& start, size_t& count, const T* cList) const
 {
     if(isEmpty() || pos >= length())
         return false;
@@ -3075,18 +3070,12 @@ bool CTextT<T>::nextIncluding(size_t& pos, CTextT<T>& substr, const T* cList, si
     while(*s2 && IsOneOf(*s2, cList))
         s2++;
 
-    if(posBegin)
-        *posBegin = s1 - str();
-
-    if(posBegin)
-        *posEnd = s2 - str();
-
-    substr = CTextT(s1, s2 - s1);
-
+    start = s1 - str();
+    count = s2 - s1;
     pos = s2 - str() + 1;
-
     return true;
 }
+
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
@@ -3212,13 +3201,13 @@ size_t CTextT<T>::countWords(const T* sep) const
 template <typename T>
 size_t CTextT<T>::countSubstrings(const T* sep) const
 {
-    size_t pos = 0;
+    size_t posNext = 0, start, count;
     size_t n = 0;
-    CTextT<T> word;
-    while(nextExcluding(pos, word, false, sep))
+    while(nextExcluding(posNext, start, count, false, sep))
         n++;
     return n;
 }
+
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
@@ -3226,11 +3215,11 @@ template<typename C, typename Value, typename X  >
 size_t CTextT<T>::countWordFrequencies(C& container, bool bCase, const T* sep) const
 {
     container.clear();
-    size_t pos = 0;
-    CTextT<T> word;
+    size_t posNext = 0, start, count;
     std::map<CTextT<T>, int> freq;
-    while(nextExcluding(pos, word, false, sep))
+    while(nextExcluding(posNext, start, count, false, sep))
     {
+        CTextT<T> word = substring(start, count);
         if(!bCase)
             word.toLower();
         freq[word]++;
@@ -3238,7 +3227,6 @@ size_t CTextT<T>::countWordFrequencies(C& container, bool bCase, const T* sep) c
 
     for(auto & v : freq)
         container.insert(std::make_pair(v.second, v.first));
-
     return container.size();
 }
 
@@ -3248,12 +3236,11 @@ size_t CTextT<T>::wordsCapitalize(const T* sep)
 {
     if(isEmpty())
         return 0;
-    size_t posNext = 0, posBegin, posEnd;
-    CTextT<T> word;
+    size_t posNext = 0, start, count;
     size_t n = 0;
-    while(nextExcluding(posNext, word, false, sep, &posBegin, &posEnd))
+    while(nextExcluding(posNext, start, count, false, sep))
     {
-        m_str[posBegin] = upper(m_str[posBegin]);
+        m_str[start] = upper(m_str[start]);
         n++;
     }
     return n;
@@ -3265,10 +3252,9 @@ template<typename C, typename Val, typename X>
 size_t CTextT<T>::collect(C& container, const T* cList) const
 {
     container.clear();
-    size_t pos = 0;
-    CTextT<T> word;
-    while(nextIncluding(pos, word, cList))
-        container.push_back(word.str());
+    size_t posNext = 0, start, count;
+    while(nextIncluding(posNext, start, count, cList))
+        container.push_back(substring(start, count).str());
     return container.size();
 }
 
@@ -3313,11 +3299,12 @@ template<typename C, typename Val, typename X>
 size_t CTextT<T>::collectSentences(C& container, const T* sep, const T* sepWords) const
 {
     container.clear();
-    size_t pos = 0, posBegin, posEnd;
+    size_t pos = 0, start, count;
     CTextT<T> sentence;
     CTextT<T> old;
-    while(nextExcluding(pos, sentence, true, sep, &posBegin, &posEnd))
+    while(nextExcluding(pos, start, count, true, sep))
     {
+        sentence = substring(start, count + 1);
         // check if the next character is Upper
         T c = nextChar(pos, sepWords);
         if(IsUpper(c) || !c)
@@ -3349,27 +3336,26 @@ size_t CTextT<T>::collectSentences(C& container, const T* sep, const T* sepWords
     return container.size();
 }
 
-
-
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 template<typename C, typename Val, typename X>
-size_t CTextT<T>::collectPositions(RangeVector& pos, const C* start, const C* end, const C* has, const T* sep) const
+size_t CTextT<T>::collectPositions(RangeVector& pos, const C* begin, const C* end, const C* has, const T* sep) const
 {
     if(isEmpty())
         return 0;
 
     pos.clear();
-    size_t posNext = 0, posBegin, posEnd;
+    size_t posNext = 0, start, count;
     CTextT<T> word;
-    while(nextExcluding(posNext, word, false, sep, &posBegin, &posEnd))
+    while(nextExcluding(posNext, start, count, false, sep))
     {
+        word = substring(start, count);
         // apply filter
-        if((start && word.startsWithAny(*start)) ||
+        if((begin && word.startsWithAny(*begin)) ||
             (end && word.endsWithAny(*end)) ||
             (has && word.containAny(*has)) ||
-            (!start && !end && !has))
-            pos.push_back(std::make_pair(posBegin, posEnd));
+            (!begin && !end && !has))
+            pos.push_back(std::make_pair(start, start + count - 1));
     }
     return pos.size();
 }
@@ -3729,7 +3715,7 @@ template <typename T>
 template<typename C, typename Val, typename X>
 CTextT<T>& CTextT<T>::replaceAny(const C& what, const T c, bool bCase)
 {
-    std::vector< std::pair <size_t, size_t> > v;
+    RangeVector v;
     while(findPositions(what, v, bCase))
         replaceAt(v, c);
     return *this;
@@ -3740,7 +3726,7 @@ template <typename T>
 template<typename C, typename Val, typename X>
 CTextT<T>& CTextT<T>::replaceAny(const C& container, const T* with, bool bCase)
 {
-    std::vector< std::pair <size_t, size_t> > v;
+    RangeVector v;
     while(findPositions(container, v, bCase))
         replaceAt(v, with);
     return *this;
@@ -3785,7 +3771,7 @@ template <typename T>
 template<typename C, typename Val, typename X>
 CTextT<T>& CTextT<T>::replaceAny(const C& what, const C& with, bool bCase)
 {
-    std::vector< std::pair <size_t, size_t> > v;
+    RangeVector v;
     std::vector<size_t> indexes;
     if(findPositions(what, v, bCase, &indexes))
         replaceAt(v, indexes, with);
