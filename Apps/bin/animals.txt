@@ -1,0 +1,11 @@
+Cat
+Dog
+Lion
+Llama
+Monkey
+Mouse
+Parrot
+Poodle
+Scorpion
+Snake
+Weasel
