@@ -1694,12 +1694,22 @@ a.wordsCount()
 
 <b>wordsEnclose</b>
 ```python
-a = text("The quick brown fox jumps over the lazy dog")
-a.wordsEnclose('[',']')
+s = text("The quick brown fox jumps over the lazy dog")
+s.wordsEnclose('[',']')
 ```
 
 ```
 [The] [quick] [brown] [fox] [jumps] [over] [the] [lazy] [dog]
+```
+
+<b>wordsReplaceAny</b>
+```python
+s = text("Replace the word a or the word e or the word o in a long text")
+s.wordsReplaceAny(["a","e","o"),"the"], "X")
+```
+
+```
+Replace X word X or X word X or X word X in X long text
 ```
 
 <b>wordsReverse</b>
