@@ -1709,6 +1709,7 @@ s.wordsReplaceAny(["a","e","o"),"the"], "X")
 ```
 
 ```
+# replace all whole words matching the list
 Replace X word X or X word X or X word X in X long text
 ```
 
