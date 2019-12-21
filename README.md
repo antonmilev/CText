@@ -1846,7 +1846,7 @@ words.txt Python reverse split-join took 130.286 ms
 words.txt Python reverse re.findall took 609.706 ms
 ```
 
-Test 2 - remove repeating lines
+Test 3 - remove repeating lines
 
 ```python
 from time import perf_counter
@@ -1886,6 +1886,52 @@ line.strip took 31.567 ms
 
 ![CText Performance](https://github.com/antonmilev/Test/blob/master/PerfChart.png)
 
+When comparing CText words list opperations with Python regular expressions difference in performance becomes much bigger. 
+For example below is compared CText wordsReplaceAny function with regex.sub. For managing large words lists, CText uses optimized character tries 
+and thus search time is a linear function from the words number. For replacing the 500th most common English words with a single fixed string in War and Peace book, by Leo Tolstoy (Gutenberg EBook), CText needs 27 times less time than the regular expessions, for 1000 words <b>CText becomes more than 50 times faster</b>!
+
+![CText replace words Performance](https://github.com/antonmilev/CText/blob/master/PerfWordsReplace.png)
+
+```python
+from time import perf_counter
+from ctextlib import CTextA as text
+import re
+import urllib.request
+
+url = 'https://gist.githubusercontent.com/deekayen/4148741/raw/98d35708fa344717d8eee15d11987de6c8e26d7d/1-1000.txt'
+urllib.request.urlretrieve(url, 'words1000.txt')
+
+with open('words1000.txt', 'r') as f:
+    words = f.read().split('\n')
+    
+print(words)
+    
+print("replace using CText.....")    
+a = text()
+if(a.readFile("2600-0.txt") == False):
+    print("error opening file")
+    exit()
+
+s = a.str()
+
+start = perf_counter()   
+a.wordsReplaceAny(words, "***")
+duration = perf_counter() - start
+print('{} took {:.3f} ms'.format("replace 1000 words with CText wordsReplaceAny", duration * 1000))
+
+start = perf_counter()  
+regex = re.compile(r'\b%s\b' % r'\b|\b'.join(map(re.escape, words)))   
+s_new = regex.sub("***", s)
+duration = perf_counter() - start
+print('{} took {:.3f} ms'.format("replace 1000 words with regex.sub", duration * 1000))
+
+```
+
+```
+replace 1000 words with CText wordsReplaceAny took 77.058 ms
+replace 1000 words with regex.sub took 4445.524 ms
+```
+
 ## TODO List
 * **More methods for words,lines,sentences and complex expressions**:  There are lots more methods that can be added to support diferent NLP and lexical tasks.
 * **Further improve containers abstraction**: CText needs more convertion routines to/from STL and other containers and generic data structures.
@@ -1893,7 +1939,6 @@ line.strip took 31.567 ms
 * **Other char types**: - Character types like char_32 can be also supported
 * **Mini Text Editor**: - This is a text editor based on CText that I plan to port on Modern C++.
 * **Export to Python**: - I want to export CText library to Python-3
-* **Performance Test**: - Add performance tests comparing with STL string.
-* **Use Trie for large keywords lists**: - This will greately optimize search in large lists of words 
+
 
 
