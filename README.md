@@ -1705,12 +1705,25 @@ s.wordsEnclose('[',']')
 <b>wordsReplaceAny</b>
 ```python
 s = text("Replace the word a or the word e or the word o in a long text")
-s.wordsReplaceAny(["a","e","o"),"the"], "X")
+s.wordsReplaceAny(["a","e","o","the"], "X")
 ```
 
 ```
 # replace all whole words matching the list
 Replace X word X or X word X or X word X in X long text
+```
+
+
+<b>wordsReplaceWithChar</b>
+```python
+from ctextlib import CTextA as text
+s = text("Replace the word a or the word e or the word o in a long text")
+s.wordsReplaceWithChar(["a","e","o","the"], "-")
+```
+
+```
+# replace all whole words from the list with single character
+Replace --- word - or --- word - or --- word - in - long text
 ```
 
 <b>wordsReverse</b>
@@ -1886,7 +1899,7 @@ line.strip took 31.567 ms
 
 ![CText Performance](https://github.com/antonmilev/Test/blob/master/PerfChart.png)
 
-When comparing CText words list opperations with Python regular expressions difference in performance becomes much bigger. 
+When comparing CText words list opperations with Python regular expressions difference in performance gap becomes much bigger. 
 For example below is compared CText wordsReplaceAny function with regex.sub. For managing large words lists, CText uses optimized character tries 
 and thus search time is a linear function from the words number. For replacing the 500th most common English words with a single fixed string in War and Peace book, by Leo Tolstoy (Gutenberg EBook), CText needs 27 times less time than the regular expessions, for 1000 words <b>CText becomes more than 50 times faster</b>!
 
@@ -1930,6 +1943,51 @@ print('{} took {:.3f} ms'.format("replace 1000 words with regex.sub", duration *
 ```
 replace 1000 words with CText wordsReplaceAny took 77.058 ms
 replace 1000 words with regex.sub took 4445.524 ms
+```
+
+Similarly, for wordsReplaceWithChar difference with re.sub is <b>more than 60 times</b>: 
+
+```python
+from time import perf_counter
+from ctextlib import CTextA as text
+import re
+import urllib.request
+
+url = 'https://gist.githubusercontent.com/deekayen/4148741/raw/98d35708fa344717d8eee15d11987de6c8e26d7d/1-1000.txt'
+urllib.request.urlretrieve(url, 'words1000.txt')
+
+with open('words1000.txt', 'r') as f:
+    words = f.read().split('\n')[:1000]
+    
+    
+print("replace using CText.....")    
+a = text()
+if(a.readFile("2600-0.txt") == False):
+    print("error opening file")
+    exit()
+
+s = a.str()
+
+start = perf_counter()   
+a.wordsReplaceWithChar(words, "-")
+duration = perf_counter() - start
+print('{} took {:.3f} ms'.format("replace 1000 words with CText wordsReplaceWithChar", duration * 1000))
+
+#print(a)
+
+def repl(m):
+    return '-' * len(m.group())
+
+start = perf_counter()  
+regex = re.compile(r'\b%s\b' % r'\b|\b'.join(map(re.escape, words)))   
+s_new = regex.sub(repl, s)
+duration = perf_counter() - start
+print('{} took {:.3f} ms'.format("replace 1000 words with regex.sub", duration * 1000))
+```
+
+```
+replace 1000 words with CText wordsReplaceWithChar took 69.136 ms
+replace 1000 words with regex.sub took 4225.293 ms
 ```
 
 ## TODO List
