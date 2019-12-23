@@ -1702,10 +1702,10 @@ s.wordsEnclose('[',']')
 [The] [quick] [brown] [fox] [jumps] [over] [the] [lazy] [dog]
 ```
 
-<b>wordsReplaceAny</b>
+<b>wordsReplace</b>
 ```python
 s = text("Replace the word a or the word e or the word o in a long text")
-s.wordsReplaceAny(["a","e","o","the"], "X")
+s.wordsReplace(["a","e","o","the"], "X")
 ```
 
 ```
@@ -1713,6 +1713,15 @@ s.wordsReplaceAny(["a","e","o","the"], "X")
 Replace X word X or X word X or X word X in X long text
 ```
 
+```python
+from ctextlib import CTextA as text
+s = text("The quick brown fox jumps over the lazy dog")
+s.wordsReplace(["quick","fox","dog"],["QUICK","FOX","DOG"])
+```
+
+```
+The QUICK brown FOX jumps over the lazy DOG
+```
 
 <b>wordsReplaceWithChar</b>
 ```python
@@ -1899,7 +1908,7 @@ line.strip took 31.567 ms
 
 ![CText Performance](https://github.com/antonmilev/Test/blob/master/PerfChart.png)
 
-When comparing CText words list opperations with Python regular expressions difference in performance gap becomes much bigger. 
+When comparing CText words list operations  with Python regular expressions difference in performance gap becomes much bigger. 
 For example below is compared CText wordsReplaceAny function with regex.sub. For managing large words lists, CText uses optimized character tries 
 and thus search time is a linear function from the words number. For replacing the 500th most common English words with a single fixed string in War and Peace book, by Leo Tolstoy (Gutenberg EBook), CText needs 27 times less time than the regular expessions, for 1000 words <b>CText becomes more than 50 times faster</b>!
 
@@ -1928,7 +1937,7 @@ if(a.readFile("2600-0.txt") == False):
 s = a.str()
 
 start = perf_counter()   
-a.wordsReplaceAny(words, "***")
+a.wordsReplace(words, "***")
 duration = perf_counter() - start
 print('{} took {:.3f} ms'.format("replace 1000 words with CText wordsReplaceAny", duration * 1000))
 
@@ -1941,13 +1950,14 @@ print('{} took {:.3f} ms'.format("replace 1000 words with regex.sub", duration *
 ```
 
 ```
-replace 1000 words with CText wordsReplaceAny took 77.058 ms
+replace 1000 words with CText wordsReplace took 77.058 ms
 replace 1000 words with regex.sub took 4445.524 ms
 ```
 
 Similarly, for wordsReplaceWithChar difference with re.sub is <b>more than 60 times</b>: 
 
 ```python
+# replaces words from the given list with a single character with same words length
 from time import perf_counter
 from ctextlib import CTextA as text
 import re
