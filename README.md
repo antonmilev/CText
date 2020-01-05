@@ -2000,6 +2000,20 @@ replace 1000 words with CText wordsReplaceWithChar took 69.136 ms
 replace 1000 words with regex.sub took 4225.293 ms
 ```
 
+## UNICODE for Python
+Python is using UTF8 as strings representation. When using Python texts containing non-English Unicode characters it is recommended to use the Unicode version of CText as demonstrated below:
+```python
+# demonstrate text processing of Swedish unicode text
+from ctextlib import CTextU as text
+s = text('Den snabbbruna räven hoppar över den lata hunden')
+>>> s.cutBeforeFirst('ö')
+```
+
+```
+över den lata hunden
+```
+ 
+
 ## TODO List
 * **More methods for words,lines,sentences and complex expressions**:  There are lots more methods that can be added to support diferent NLP and lexical tasks.
 * **Further improve containers abstraction**: CText needs more convertion routines to/from STL and other containers and generic data structures.
