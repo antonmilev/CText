@@ -2012,7 +2012,17 @@ s = text('Den snabbbruna räven hoppar över den lata hunden')
 ```
 över den lata hunden
 ```
+
+```python
+# demonstrate text processing of Armenian unicode text
+from ctextlib import CTextU as text
+s = text('Արագ շագանակագույն աղվեսը ցատկում է ծույլ շան վրա')
+s.cutBeforeFirst('է')
+```
  
+```
+է ծույլ շան վրա
+```'
 
 ## TODO List
 * **More methods for words,lines,sentences and complex expressions**:  There are lots more methods that can be added to support diferent NLP and lexical tasks.
