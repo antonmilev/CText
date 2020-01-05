@@ -2024,6 +2024,29 @@ s.cutAfterLast('ы')
 Быстрая коричневая лиса пр
 ```
 
+```python
+# demonstrate text processing of Czech unicode text
+from ctextlib import CTextU as text
+s = text('Rychlá hnědá liška skočí přes líného psa')
+s.cutAfterFirst('á', True)
+```
+
+```
+Rychlá
+```
+
+
+```python
+# demonstrate text processing of Greek unicode text
+from ctextlib import CTextU as text
+s = text('Η γρήγορη καφέ αλεπού πηδάει πάνω από το τεμπέλικο σκυλί')
+s.cutAfterFirst('έ', True)
+```
+
+```
+Η γρήγορη καφέ
+```
+
 
 ```python
 # demonstrate text processing of Armenian unicode text
@@ -2046,6 +2069,8 @@ s.cutBeforeFirst('მ')
 ```
 მელა გადაბმულია ზარმაცი ძაღლი
 ```
+
+
 
 
 ## TODO List
