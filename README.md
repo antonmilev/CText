@@ -2014,6 +2014,18 @@ s = text('Den snabbbruna räven hoppar över den lata hunden')
 ```
 
 ```python
+# demonstrate text processing of Russian unicode text
+from ctextlib import CTextU as text
+s = text('Быстрая коричневая лиса прыгает на ленивую собаку')
+s.cutAfterLast('ы')
+```
+
+```
+Быстрая коричневая лиса пр
+```
+
+
+```python
 # demonstrate text processing of Armenian unicode text
 from ctextlib import CTextU as text
 s = text('Արագ շագանակագույն աղվեսը ցատկում է ծույլ շան վրա')
@@ -2022,7 +2034,19 @@ s.cutBeforeFirst('է')
  
 ```
 է ծույլ շան վրա
-```'
+```
+
+```python
+# demonstrate text processing of Georgian unicode text
+from ctextlib import CTextU as text
+s = text('სწრაფი ყავისფერი მელა გადაბმულია ზარმაცი ძაღლი')
+s.cutBeforeFirst('მ')
+```
+
+```
+მელა გადაბმულია ზარმაცი ძაღლი
+```
+
 
 ## TODO List
 * **More methods for words,lines,sentences and complex expressions**:  There are lots more methods that can be added to support diferent NLP and lexical tasks.
