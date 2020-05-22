@@ -2,7 +2,7 @@
 # C++ Advanced text processing library
 
 ## About
-I have started to rewrite on Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are available on higher level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundreds of optimized text routines. The library can be used to quickly solve various pre-processing problems for different NLP and ML tasks or just to practice Modern C++. 
+I started to rewrite in Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are available on higher level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundreds of optimized text routines. The library can be used to quickly solve various pre-processing problems for different NLP and ML tasks or just to practice Modern C++. 
 
 Please feel free to contact me for any questions, requests or even critics.
 
