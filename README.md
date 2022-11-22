@@ -23,12 +23,22 @@ To install CText:
 pip install ctextlib
 ```
 
-To use CText in Python script:
+To test if CText is installed:
+
 ```python
-from ctextlib import CTextA as text
+import ctextlib
+a = ctextlib.Text("Hello World")
+print(a)
+```
+
+Or:
+
+```python
+from ctextlib import Text as text
 a = text("Hello World")
 print(a)
 ```
+
 
 Python methods reference:
 
@@ -161,7 +171,7 @@ a.count('the', False)
 
 <b>countWordFrequencies</b>
 ```python
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text("The quick brown fox jumps over the lazy dog")
 a.countWordFrequencies(False)
 ```
@@ -480,7 +490,7 @@ print(a)
 
 <b>fromMatrix</b>
 ```python
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 import numpy as np
 x = np.array([[10, 20, 30], [40, 50, 60]])
 a = text()
@@ -494,7 +504,7 @@ print(a)
 ```
 
 ```python
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 import numpy as np
 x = np.array([[10, 20, 30], [40, 50, 60]])
 a = text()
@@ -509,7 +519,7 @@ a.fromMatrix(x, ',')
 
 <b>fromMatrixAsHex</b>
 ```python
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 import numpy as np
 x = np.array([[10, 20, 30], [40, 50, 60]])
 a = text()
@@ -523,7 +533,7 @@ print(a)
 ```
 
 ```python
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 import numpy as np
 x = np.array([[1000, 2000, 3000], [4000, 5000, 6000]])
 a = text()
@@ -775,7 +785,7 @@ Several per line methods
 <br><b>linesTrim</b>
 <br>Example of opening a text file, sort all lines, and save it with another name
 ```python
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 s = text()
 s.readFile('Unordered.txt')
 s.linesSort()
@@ -827,7 +837,7 @@ lo Wo
 <b>nextLine</b>
 ```python
 # Example of iterating all lines
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text("Line1\nLine2\nLine3")
 line = text()
 pos = 0
@@ -845,7 +855,7 @@ Line3
 <b>nextWord</b>
 ```python
 # Example of iterating all words
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text('The quick brown fox jumps over the lazy dog')
 word = text()
 pos = 0
@@ -938,7 +948,7 @@ s.randomNumber(32)
 <b>readFile</b>
 ```python
 # demontrates how to read a whole text file
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text()
 a.readFile('test.txt')
 print(a)
@@ -980,7 +990,7 @@ Weasel
 
 ```python
 # collect all lines starting with given characters
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text()
 a.readFile("animals.txt")
 a.regexLines("^[A-G][a-z]+")
@@ -992,7 +1002,7 @@ a.regexLines("^[A-G][a-z]+")
 
 <b>regexReplace</b>    
 ```python
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text("there is sub-sequence in the sub-way string")
 a.regexReplace("\\b(sub)([^ ]*)", "sub-$2")
 ```
@@ -1004,7 +1014,7 @@ there is sub--sequence in the sub--way string
 <b>regexSearch</b>    
 ```python
 # collect all words using regex
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text("The quick brown fox jumps over the lazy dog")
 a.regexSearch("\\w+")
 ```
@@ -1016,7 +1026,7 @@ a.regexSearch("\\w+")
 <b>regexWords</b>    
 ```python
 # collect all words starting with given characters
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text("The quick brown fox jumps over the lazy dog")
 a.regexWords("^[a-n][a-z]+")
 ```
@@ -1039,7 +1049,7 @@ few happy few band of brothers
 
 <b>removeAny</b>
 ```python
-from ctextlib import CTextA as text
+from ctextlib import Text as text
 a = text('The quick brown fox jumps over the lazy dog')
 a.removeAny(['brown','quick','lazy'])
 a.reduceChain()
@@ -1209,6 +1219,18 @@ print(a)
 48 65 6C 6C 6F 20 57 6F 72 6C 64
 ```
 
+Using separator character. 
+
+```python
+a = text("Hello World")
+a.toHex(',')
+print(a)
+```
+
+```
+48,65,6C,6C,6F,20,57,6F,72,6C,64
+```
+
 <b>toHex</b>
 ```python
 bOk = False
@@ -1316,8 +1338,8 @@ The brown dog fox jumps lazy over quick the
 
 <b>writeFile</b>
 ```python
-# demontrates how to read a whole text file
-from ctextlib import CTextA as text
+# demontrates how to write to a text file
+from ctextlib import Text as text
 a = text("Hello World")
 a.writeFile('test.txt')
 print(a)
@@ -1328,7 +1350,7 @@ print(a)
 Python is using UTF8 as strings representation. When using Python texts containing non-English Unicode characters it is recommended to use the Unicode version of CText as demonstrated below:
 ```python
 # demonstrate text processing of Swedish unicode text
-from ctextlib import CTextU as text
+from ctextlib import TextU as text
 s = text('Den snabbbruna räven hoppar över den lata hunden')
 >>> s.cutBeforeFirst('ö')
 ```
@@ -1339,7 +1361,7 @@ s = text('Den snabbbruna räven hoppar över den lata hunden')
 
 ```python
 # demonstrate text processing of Russian unicode text
-from ctextlib import CTextU as text
+from ctextlib import TextU as text
 s = text('Быстрая коричневая лиса прыгает на ленивую собаку')
 s.cutAfterLast('ы')
 ```
@@ -1350,7 +1372,7 @@ s.cutAfterLast('ы')
 
 ```python
 # demonstrate text processing of Czech unicode text
-from ctextlib import CTextU as text
+from ctextlib import TextU as text
 s = text('Rychlá hnědá liška skočí přes líného psa')
 s.cutAfterFirst('á', True)
 ```
@@ -1362,7 +1384,7 @@ Rychlá
 
 ```python
 # demonstrate text processing of Greek unicode text
-from ctextlib import CTextU as text
+from ctextlib import TextU as text
 s = text('Η γρήγορη καφέ αλεπού πηδάει πάνω από το τεμπέλικο σκυλί')
 s.cutAfterFirst('έ', True)
 ```
@@ -1374,7 +1396,7 @@ s.cutAfterFirst('έ', True)
 
 ```python
 # demonstrate text processing of Armenian unicode text
-from ctextlib import CTextU as text
+from ctextlib import TextU as text
 s = text('Արագ շագանակագույն աղվեսը ցատկում է ծույլ շան վրա')
 s.cutBeforeFirst('է')
 ```
@@ -1385,7 +1407,7 @@ s.cutBeforeFirst('է')
 
 ```python
 # demonstrate text processing of Georgian unicode text
-from ctextlib import CTextU as text
+from ctextlib import TextU as text
 s = text('სწრაფი ყავისფერი მელა გადაბმულია ზარმაცი ძაღლი')
 s.cutBeforeFirst('მ')
 ```
