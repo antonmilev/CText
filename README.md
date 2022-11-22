@@ -1,435 +1,21 @@
 # CText
-# C++ Advanced text processing library
+# Advanced text processing library in C++ and Python 
 
 ## About
-I started to rewrite in Modern C++ some text processing routines and this is the result so far. CText can solve many complicated tasks that otherwise are taking too much time in C++, some of these like lines and words splitting are available on higher level languages like C#, Java and Python but not and in C++. But C++ gives much more control and except supporting the missing text functions CText also implements hundreds of optimized text routines. The library can be used to quickly solve various pre-processing problems for different NLP and ML tasks or just to practice Modern C++. 
+A Modern C++ library with many useful text processing routines. CText can solve some complicated text processing tasks that otherwise are taking too much time in C++ and Python, some of these like managing lines and words are available on higher level languages like C#, Java and Python but not in C++. But C++ gives more low-level control, except supporting the missing text functions CText implements optimized text routines. Library is very flexible and scalale, it is easy to add quickly custom text processing routnes, can be used to make  pre-processing problems for different NLP and ML tasks or just to practice Modern C++. 
 
-Please feel free to contact me for any questions, requests or even critics.
-
-## Features
+## Main Features
 * **Modern C++ Template library**: You only need to include one header, very simple to use.
-* **Unicode Support**: - you can have both UNICODE and ANSI in the project.
-* **Hundreds of optimized text processing methods**: - Many standard and non-standard text processing operations are covered. 
-* **Clean and easy to understand code**: - You can use CText to quickly start even more complicated text processing tasks.
-* **Portable**:  I am using CText with VS2015/VS2017/VS2019 and GCC 7.4 but it can easily be ported to other platforms.
-* **Stand alone**:  CText do not depends from any other libraries, the only requirments are C++11 and STL
-* **Scalable**:  All text routines are easily to be extended further for all supported char types and platforms. 
-
-## To Build CText Unit Test and Demo projects
-
-<br>To build the UnitTest project and the demos with CMake and Visual Studio:
-<br> open terminal in the folder \Apps and type
-<br>cmake .
-<br>Alternatively, you can load in VS2017 or later \Apps\CMakeLists.txt from File->Open->CMake.., after generates cache is completed, choose CMake->Build All
-
-<br>To compile with GCC in Debug or Rlease:
-<br>cmake -D CMAKE_BUILD_TYPE=Release .
-<br>cmake -D CMAKE_BUILD_TYPE=Debug .
-<br>
-<br>This will build a console application that runs the Unit Tests.
-<br>
-<br> Also there is a Visual Studio solution (CText.sln) with all projects. Run UnitTests project first to see if all tests pass.
-<br>
-## Examples
-
-For all examples how to use CText please see the Unit Test project.
-
-### Sort lines in a text file
-
-```cpp
-// this example reads a text file and sorts all lines in alphabeta order.
-#include <iostream>
-#include "../CTEXT/CText.h"
-#include "tchar_utils.h"
-
-int main()
-{    
-    const char* input_name = "/Unsorted.txt";
-    const char* output_name = "/Sorted.txt";
-
-    CText pathIn = getcwd(0, 0);
-    CText pathOut = pathIn;
-    pathIn += input_name;
-    pathOut += output_name;
-    
-    CText str;
-    if(!str.readFile(pathIn.str()))
-    {
-        std::cerr << "Error, can not open file: " << pathIn << std::endl;
-        return 0;
-    }
-    str.linesSort();
-    str.writeFile(pathOut.str(), CText::ENCODING_ASCII);
-
-    return 0;
-}
-```
-
-### Replace words
-```cpp
-    CText s = _T("The quick brown fox jumps over the lazy dog");
-    s.replace(_T("brown"), _T("red"));
-    cout << s << endl;
-```
-Output:
-```
-   The quick red fox jumps over the lazy dog 
-```  
-
-```cpp
-    CText s = _T("The quick brown fox jumps over the lazy dog");
-    const CText::Char* words[] = {_T("quick"), _T("fox"), _T("dog")};
-    s.replaceAny(words, 3, _T('-'));
-    cout << s << endl;
-```
-
-Output:
-```
-   The ----- brown --- jumps over the lazy ---     
-```  
-
-```cpp
-    CText s = _T("The quick brown fox jumps over the lazy dog");
-    s.replaceAny({_T("fox"), _T("dog")}, {_T("dog"), _T("fox")});
-    cout << s << endl;
-```
-
-```cpp
-    CText s = _T("The quick brown Fox jumps over the lazy Dog");
-    s.replaceAny({_T("fox"), _T("dog")}, {_T("dog"), _T("fox")}, false);
-    cout << s << endl;
-```
-
-Output:
-```
-   The quick brown dog jumps over the lazy fox   
-```  
-
-```cpp
-   CText s = _T("The quick brown fox jumps over the lazy dog");
-   const CText::Char* words[] = {_T("quick"), _T("fox"), _T("dog")};
-   s.replaceAny(words, 3, _T("****"));
-   cout << s << endl;
-```
-
-Output:
-```
-   The **** brown **** jumps over the lazy ****  
-```  
-
-### Remove words, blocks and characters
-```cpp
-   CText s = _T("This is a monkey job!");
-   s.remove(_T("monkey"));
-   s.reduceChain(' ');
-   cout << s << endl;
-```
-
-Output:
-```
-   This is a job!
-```  
-
-```cpp
-   CText s = _T("Text containing <several> [blocks] separated by {brackets}");
-   s.removeBlocks(_T("<[{"), _T(">]}"));
-   s.reduceChain(' ');
-   s.trim()
-   cout << s << endl;
-```
-
-Output:
-```
-   Text containing separated by
-```  
-
-```cpp
-   s = _T("one and two or three and five");
-   s.removeAny({_T("or"), _T("and")});
-   s.reduceChain(' ');
-   cout << s << endl;
-```
-
-Output:
-```
-   one two three five
-```  
-
-### File paths 
-```cpp
-CText filepath = _T("D:\\Folder\\SubFolder\\TEXT\\File.dat");
-cout << filepath.getExtension() << endl;
-cout << filepath.getFileName() << endl;
-cout << filepath.getDir() << endl;
-filepath.replaceExtension(_T(".bin"));
-cout << filepath << endl;
-filepath.removeExtension();
-cout << filepath << endl;
-filepath.replaceExtension(_T(".dat"));
-cout << filepath << endl;
-filepath.replaceFileName(_T("File2"));
-cout << filepath << endl;
-filepath.addToFileName(_T("_mask"));
-cout << filepath << endl;
-filepath.replaceLastFolder(_T("Temp"));
-cout << filepath << endl;
-filepath.removeAfterSlash();
-cout << filepath << endl;
-
-```
-
-Output
-```
-.dat
-File.dat
-D:\Folder\SubFolder\TEXT\
-D:\Folder\SubFolder\TEXT\File.bin
-D:\Folder\SubFolder\TEXT\File
-D:\Folder\SubFolder\TEXT\File.dat
-D:\Folder\SubFolder\TEXT\File2.dat
-D:\Folder\SubFolder\TEXT\File2_mask.dat
-D:\Folder\SubFolder\Temp\File2_mask.dat
-D:\Folder\SubFolder\Temp
-```
-
-```cpp
-CText path1(_T("C:\\Temp"));
-CText path2(_T("..\\Folder"));
-path1.pathCombine(path2.str());
-cout << path1 << endl;
-```
-
-Output
-```
-C:\\Folder
-```
-
-### Split and collection routines
-```cpp
-    CText s = _T("The quick  brown fox jumps  over the lazy dog");
-    vector<CText> words;
-    if(s.split(words) < 9)
-        cout << "Error!" << endl ;
-    for(auto& s : words)
-        cout << s << endl;
-```
-
-```cpp
-   CText s = _T("The,quick,brown,fox,jumps,over,the,lazy,dog");
-   vector<std::string> words;
-   if(s.split(words,false,_T(",")) != 9)
-      cout << "Error!" << endl ;
-   for(auto& s : words)
-      cout << s << endl;
-```
-
- Output:
-```
-The
-quick
-brown
-fox
-jumps
-over
-the
-lazy
-dog
-```
-
-```cpp
-    CText s = "Line 1\r\nLine 2\n\nLine 3\n";
-    vector<std::string> lines;
-    s.collectLines(lines);
-    for(auto& s : lines)
-      cout << s << endl;
-```
-
- Output:
-```
-Line 1
-Line 2
-Line 3
-```
+* **Unicode Support**: - you can have both UNICODE and ANSI in one project.
+* **Hundreds of optimized text processing methods**: - Many standard and non-standard text processing operations are covered. I have a long TODO list with much more to add. 
+* **Clean and easy to understand code**: - You can use CText to quickly start more complicated text processing applications and abstracting from the too many lower level details and optimizations.
+* **Portable**:  I am using CText with VS2017/VS2019 and GCC 7.4 but it easily can be ported to other platforms.
+* **Stand alone**:  CText do not depends on any other libraries, the only requirements are C++11 and STL
+* **Scalable**:  All text routines are easily to be further extended for all commonly supported char types and platforms. 
+* **Python**:  Support of all Python versions 
 
 
-### Read sentences from text file
-```cpp
-#include <iostream>
-#include "../CTEXT/CText.h"
-#include "tchar_utils.h"
-
-int main()
-{    
-    const char* input_name = "/Columbus.txt";
-    const char* output_name = "/Columbus_Sentences.txt";
-
-    CText pathIn = getcwd(0, 0);
-    CText pathOut = pathIn;
-    pathIn += input_name;
-    pathOut += output_name;
-    
-    CText str;
-    if(!str.readFile(pathIn.str()))
-    {
-        std::cerr << "Error, can not open file: " << pathIn << std::endl;
-        return 0;
-    }
-    std::vector<CText> sentences;
-
-    str.collectSentences(sentences);
-
-    str.fromArray(sentences, _T("\n\n") );
-
-    str.writeFile(pathOut.str(), CText::ENCODING_UTF8);
-
-    return 0;
-}
-```
-
-### Count characters and words
-```cpp
-CText s = _T("12345678909678543213");
-map<CText::Char, int> freq;
-s.countChars(freq);
-```
-
-```cpp
-CText s = _T("Nory was a Catholic because her mother was a Catholic, and Nory’s mother was a Catholic because her father was a Catholic, and her father was a Catholic because his mother was a Catholic, or had been.");
-std::multimap<int, CText, std::greater<int> > freq;
-s.countWordFrequencies(freq);
-s.fromMap(freq);
-cout << s;
-```
-
-Output:
-```
-Catholic 6
-a 6
-was 6
-because 3
-her 3
-mother 3
-and 2
-father 2
-Nory 1
-Nory's 1
-been 1
-had 1
-his 1
-or 1
-```
-
-### Conversion routines
-```cpp
-CText s = _T("1 2 3 4 5 6 7 8 9");
-vector<int> v;
-s.toArray<int>(v);
-``` 
-
-Output:
-```
-{1,2,3,4,5,6,7,8,9}
-```
-
-```cpp
-CText s = _T("1,2,3,4,5,6,7,8,9");
-vector<int> v;
-s.toArray<int>(v, _T(','));
-``` 
-
-Output:
-```
-{1,2,3,4,5,6,7,8,9}
-```
-
-```cpp
-CText s = _T("1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9");
-vector<double> v;
-s.toArray<double>(v, _T(','));
-```
-
-Output:
-```
-{1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9}
-```
-
-From hexadecimal numbers array:
-```cpp
-CText s = _T("0A 1E 2A 1B");
-vector<int> v;
-s.toArray<int>(v, _T(' '), true);
-```
-
-Output:
-```
-{10, 30, 42, 27}
-```
-
-```cpp
-CText s = _T("1a:2b:3c:4d:5e:6f");
-vector<int> v;
-s.toArray<int>(v, _T(':'), true);
-```
-
-Output:
-```
-{26, 43, 60, 77, 94, 111}
-```
-
-Without separator:
-```cpp
-CText s = _T("0A1E2A1B");
-s.toArray<int>(v, 0, true);
-```
-
-Output:
-```
-{10, 30, 42, 27}
-```
-
-```cpp
-Convert hex to chars string 
-CText s = _T("48 65 6C 6C 6F 20 57 6F 72 6C 64");
-std::vector<int> bytes;
-s.toChars<int>(bytes, true);
-s.fromChars<int>(bytes);
-cout << s << endl;
-```
-
-Output:
-```
-Hello World
-```
-
-Parse numerical matrix:
-```cpp
-std::vector<std::vector<int>> m;
-CText s = _T("1 2 3\n4 5 6\n7 8 9");
-s.toMatrix<int>(m, _T(' '));
-```
-
-Output:
-```
-{
-    {1, 2, 3},
-    {4, 5, 6},
-    {7, 8, 9},
-};
-```
-
-### Highlight words
-
-Following will make bold all words starting with "Col", "Spa","Isa", ending to "an"), "as" or containing "pe" or "sea":
-
-```cpp
-vector<CText> start = {_T("Col"), _T("Spa"), _T("Isa")};
-vector<CText> end = {_T("an"), _T("as")};
-vector<CText> contain = {_T("pe"), _T("sea")};
-str.wordsEnclose(_T("<b>"), _T("</b>"), &start, &end, &contain);
-```   
-     
-Portugal had been the main <b>European</b> power interested in pursuing trade routes <b>overseas</b>. Their next-door neighbors, Castile (predecessor of <b>Spain</b>) had been somewhat slower to begin exploring the Atlantic <b>because</b> of the bigger land area it had to re-conquer (the Reconquista) from the Moors. It <b>was</b> not until the late 15th century, following the dynastic union of the Crowns of Castile and Aragon and the completion of the Reconquista, that the unified crowns of what would become <b>Spain</b> (although countries still legally existing) emerged and became fully committed to looking for new trade routes and colonies <b>overseas</b>. In 1492 the joint rulers conquered the Moorish kingdom of Granada, which had been providing Castile with <b>African</b> goods through tribute. <b>Columbus</b> had previously failed to convince King John II of Portugal to fund his exploration of a western route, but the new king and queen of the re-conquered <b>Spain</b> decided to fund <b>Columbus's</b> expedition in hopes of bypassing Portugal's lock on Africa and the <b>Indian</b> <b>Ocean</b>, reaching Asia by traveling west
-<b>Columbus</b> <b>was</b> granted <b>an</b> audience with them; on May 1, 1489, he <b>presented</b> his plans to Queen <b>Isabella</b>, who referred them to a committee. They pronounced the idea impractical, and <b>advised</b> the monarchs not to support the <b>proposed</b> venture
+Please feel free to contact me for questions or suggestions.
 
 ### Python
 To install CText:
@@ -562,17 +148,6 @@ a = text('4365767')
 a.containOnly('0123456789')
 True
 ```
-     
-<b>convertToHex</b>
-```python
-a = text("Hello World")
-a.convertToHex()
-print(a)
-```
-
-```
-48 65 6C 6C 6F 20 57 6F 72 6C 64
-```
 
 <b>count</b>
 ```python
@@ -660,10 +235,12 @@ Hello
 ```python
 a = text("Hello World")
 a.enclose('<','>')
+a.enclose('"')
 ```
 
 ```
 <Hello World>
+"Hello World"
 ```
 
 <b>endsWith</b>
@@ -881,11 +458,13 @@ a.fromDouble(3.333338478, 10)
 a = text()
 a.fromHex(1234567)
 a.fromHex('a')
+a.fromHex("48 65 6C 6C 6F 20 57 6F 72 6C 64")
 ```
 
 ```
 0012D687
 61
+Hello World
 ```
 
 <b>fromInteger</b>
@@ -1615,15 +1194,26 @@ a.split(",. ")
 ```python
 bOk = False
 a = text("100001")
-a.toBinaryNumber(bOk)
+a.toBinary(bOk)
 33
 ```
 
-<b>toHexNumber</b>
+<b>toHex</b>
+```python
+a = text("Hello World")
+a.toHex()
+print(a)
+```
+
+```
+48 65 6C 6C 6F 20 57 6F 72 6C 64
+```
+
+<b>toHex</b>
 ```python
 bOk = False
 a = text("1E1E")
-a.toHexNumber(bOk)
+a.toHex(bOk)
 7710
 ```
 
@@ -1694,45 +1284,12 @@ a.wordsCount()
 
 <b>wordsEnclose</b>
 ```python
-s = text("The quick brown fox jumps over the lazy dog")
-s.wordsEnclose('[',']')
+a = text("The quick brown fox jumps over the lazy dog")
+a.wordsEnclose('[',']')
 ```
 
 ```
 [The] [quick] [brown] [fox] [jumps] [over] [the] [lazy] [dog]
-```
-
-<b>wordsReplace</b>
-```python
-s = text("Replace the word a or the word e or the word o in a long text")
-s.wordsReplace(["a","e","o","the"], "X")
-```
-
-```
-# replace all whole words matching the list
-Replace X word X or X word X or X word X in X long text
-```
-
-```python
-from ctextlib import CTextA as text
-s = text("The quick brown fox jumps over the lazy dog")
-s.wordsReplace(["quick","fox","dog"],["QUICK","FOX","DOG"])
-```
-
-```
-The QUICK brown FOX jumps over the lazy DOG
-```
-
-<b>wordsReplaceWithChar</b>
-```python
-from ctextlib import CTextA as text
-s = text("Replace the word a or the word e or the word o in a long text")
-s.wordsReplaceWithChar(["a","e","o","the"], "-")
-```
-
-```
-# replace all whole words from the list with single character
-Replace --- word - or --- word - or --- word - in - long text
 ```
 
 <b>wordsReverse</b>
@@ -1766,239 +1323,6 @@ a.writeFile('test.txt')
 print(a)
 ```
 
-For the full list type help(ctextlib).
-
-## Performance Tests
-
-Comparing to built-in Python text library, in many cases CText methods are faster, sometimes 2-3 times faster. When using Python regular epressions difference is even bigger.
-
-Below are given several Python performance tests and obtained results.
-
-Test 1 - words enclose
-```python
-from time import perf_counter
-from ctextlib import CTextA as text
-import re
-import urllib.request
-
-# download words.txt from https://github.com/dwyl/english-words
-print("download words.txt.....")
-url = 'https://github.com/dwyl/english-words/raw/master/words.txt'
-urllib.request.urlretrieve(url, 'words.txt')
-
-a = text()
-if(a.readFile("words.txt") == False):
-    print("error openning file")
-    exit()
-start = perf_counter()
-a.wordsEnclose('[',']')
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("words.txt CText wordsEnclose", duration * 1000))
-
-if(a.readFile("words.txt") == False):
-    print("error openning file")
-    exit()
-  
-s = a.str()
-
-start = perf_counter()
-b = ' '.join('[{}]'.format(word) for word in s.split('\n'))
-duration = perf_counter() - start
-
-print('{} took {:.3f} ms'.format("words.txt Python split-join", duration * 1000))
-
-s = a.str()
-
-start = perf_counter()
-s = re.sub(r'(\w+)',r'[\1]',s)
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("words.txt Python re.sub", duration * 1000))
-```
-
-Output
-```
-words.txt CText wordsEnclose took 92.083 ms
-words.txt Python split-join took 186.377 ms
-words.txt Python re.sub took 601.214 ms
-```
-
-Test 2 - words reverse
-
-```python
-from time import perf_counter
-from ctextlib import CTextA as text
-import re
-import urllib.request
-
-# download words.txt from https://github.com/dwyl/english-words
-print("download words.txt.....")
-url = 'https://github.com/dwyl/english-words/raw/master/words.txt'
-urllib.request.urlretrieve(url, 'words.txt')
-
-a = text()
-if(a.readFile("words.txt") == False):
-    print("error openning file")
-    exit()
-start = perf_counter()
-a.wordsReverse()
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("words.txt CText wordsReverse", duration * 1000))
-
-if(a.readFile("words.txt") == False):
-    print("error openning file")
-    exit()
-  
-s = a.str()
-
-start = perf_counter()
-b = ' '.join( word[::-1] for word in (s.split('\n')))
-duration = perf_counter() - start
-
-print('{} took {:.3f} ms'.format("words.txt Python reverse split-join", duration * 1000))
-
-start = perf_counter()
-words = ' '.join( word[::-1] for word in ( re.findall('\w+|[:;,.!?]', s)))
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("words.txt Python reverse re.findall", duration * 1000))
-```
-
-```
-words.txt CText wordsReverse took 78.501 ms
-words.txt Python reverse split-join took 130.286 ms
-words.txt Python reverse re.findall took 609.706 ms
-```
-
-Test 3 - remove repeating lines
-
-```python
-from time import perf_counter
-from ctextlib import CTextA as text
-import re
-import urllib.request
-
-# download from https://www.gutenberg.org/files/2600/2600-0.txt
-print("download 2600-0.txt.....")
-url = 'https://www.gutenberg.org/files/2600/2600-0.txt'
-urllib.request.urlretrieve(url, '2600-0.txt')
-
-a = text()
-if(a.readFile("2600-0.txt") == False):
-    print("error opening file")
-    exit()
-    
-s = a.str()
-
-start = perf_counter()
-a.linesRemoveEmpty()
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("linesRemoveEmpty", duration * 1000))
-#print(a)
-
-start = perf_counter()    
-b = '\n'.join(line for line in s.split('\n') if line.strip() != '')
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("line.strip 18362.txt", duration * 1000))
-```
-
-
-```
-linesRemoveEmpty took 11.599 ms
-line.strip took 31.567 ms
-```
-
-![CText Performance](https://github.com/antonmilev/Test/blob/master/PerfChart.png)
-
-When comparing CText words list operations  with Python regular expressions difference in performance gap becomes much bigger. 
-For example below is compared CText wordsReplaceAny function with regex.sub. For managing large words lists, CText uses optimized character tries 
-and thus search time is a linear function from the words number. For replacing the 500th most common English words with a single fixed string in War and Peace book, by Leo Tolstoy (Gutenberg EBook), CText needs 27 times less time than the regular expessions, for 1000 words <b>CText becomes more than 50 times faster</b>!
-
-![CText replace words Performance](https://github.com/antonmilev/CText/blob/master/PerfWordsReplace.png)
-
-```python
-from time import perf_counter
-from ctextlib import CTextA as text
-import re
-import urllib.request
-
-url = 'https://gist.githubusercontent.com/deekayen/4148741/raw/98d35708fa344717d8eee15d11987de6c8e26d7d/1-1000.txt'
-urllib.request.urlretrieve(url, 'words1000.txt')
-
-with open('words1000.txt', 'r') as f:
-    words = f.read().split('\n')
-    
-print(words)
-    
-print("replace using CText.....")    
-a = text()
-if(a.readFile("2600-0.txt") == False):
-    print("error opening file")
-    exit()
-
-s = a.str()
-
-start = perf_counter()   
-a.wordsReplace(words, "***")
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("replace 1000 words with CText wordsReplaceAny", duration * 1000))
-
-start = perf_counter()  
-regex = re.compile(r'\b%s\b' % r'\b|\b'.join(map(re.escape, words)))   
-s_new = regex.sub("***", s)
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("replace 1000 words with regex.sub", duration * 1000))
-
-```
-
-```
-replace 1000 words with CText wordsReplace took 77.058 ms
-replace 1000 words with regex.sub took 4445.524 ms
-```
-
-Similarly, for wordsReplaceWithChar difference with re.sub is <b>more than 60 times</b>: 
-
-```python
-# replaces words from the given list with a single character with same words length
-from time import perf_counter
-from ctextlib import CTextA as text
-import re
-import urllib.request
-
-url = 'https://gist.githubusercontent.com/deekayen/4148741/raw/98d35708fa344717d8eee15d11987de6c8e26d7d/1-1000.txt'
-urllib.request.urlretrieve(url, 'words1000.txt')
-
-with open('words1000.txt', 'r') as f:
-    words = f.read().split('\n')[:1000]
-    
-    
-print("replace using CText.....")    
-a = text()
-if(a.readFile("2600-0.txt") == False):
-    print("error opening file")
-    exit()
-
-s = a.str()
-
-start = perf_counter()   
-a.wordsReplaceWithChar(words, "-")
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("replace 1000 words with CText wordsReplaceWithChar", duration * 1000))
-
-#print(a)
-
-def repl(m):
-    return '-' * len(m.group())
-
-start = perf_counter()  
-regex = re.compile(r'\b%s\b' % r'\b|\b'.join(map(re.escape, words)))   
-s_new = regex.sub(repl, s)
-duration = perf_counter() - start
-print('{} took {:.3f} ms'.format("replace 1000 words with regex.sub", duration * 1000))
-```
-
-```
-replace 1000 words with CText wordsReplaceWithChar took 69.136 ms
-replace 1000 words with regex.sub took 4225.293 ms
-```
 
 ## UNICODE for Python
 Python is using UTF8 as strings representation. When using Python texts containing non-English Unicode characters it is recommended to use the Unicode version of CText as demonstrated below:
@@ -2070,8 +1394,426 @@ s.cutBeforeFirst('მ')
 მელა გადაბმულია ზარმაცი ძაღლი
 ```
 
+For the full info type help(text).
 
 
+## Build CText Unit Test and Demo projects
+
+<br>To build the UnitTest project and the demos with CMake and Visual Studio:
+<br> open terminal in the folder \Apps and type
+<br>cmake .
+<br>Alternatively, you can load in VS2017 or later \Apps\CMakeLists.txt from File->Open->CMake.., after generates cache is completed, choose CMake->Build All
+
+<br>To compile with GCC in Debug or Release:
+<br>cmake -D CMAKE_BUILD_TYPE=Release .
+<br>cmake -D CMAKE_BUILD_TYPE=Debug .
+<br>
+<br>This will build a console application that runs the Unit Tests.
+<br>
+<br> Also there is a Visual Studio solution (CText.sln) with all projects. Run UnitTests project first to see if all tests pass.
+
+
+<br>
+## C++ Examples
+
+For all examples how to use CText please see the Unit Test project.
+
+### Sort all lines in a text file
+
+```cpp
+// this example reads a text file and sorts all lines in alphabeta order.
+#include <iostream>
+#include "../CTEXT/CText.h"
+#include "tchar_utils.h"
+
+int main()
+{    
+    const char* input_name = "/Unsorted.txt";
+    const char* output_name = "/Sorted.txt";
+
+    CText pathIn = getcwd(0, 0);
+    CText pathOut = pathIn;
+    pathIn += input_name;
+    pathOut += output_name;
+    
+    CText str;
+    if(!str.readFile(pathIn.str()))
+    {
+        std::cerr << "Error, can not open file: " << pathIn << std::endl;
+        return 0;
+    }
+    str.linesSort();
+    str.writeFile(pathOut.str(), CText::ENCODING_ASCII);
+
+    return 0;
+}
+```
+
+### Replace words
+```cpp
+    CText s = _T("The quick brown fox jumps over the lazy dog");
+    s.replace(_T("brown"), _T("red"));
+    cout << s << endl;
+```
+Output:
+```
+   The quick red fox jumps over the lazy dog 
+```  
+
+```cpp
+    CText s = _T("The quick brown fox jumps over the lazy dog");
+    const CText::Char* words[] = {_T("quick"), _T("fox"), _T("dog")};
+    s.replaceAny(words, 3, _T('-'));
+    cout << s << endl;
+```
+
+Output:
+```
+   The ----- brown --- jumps over the lazy ---     
+```  
+
+```cpp
+    CText s = _T("The quick brown fox jumps over the lazy dog");
+    s.replaceAny({_T("fox"), _T("dog")}, {_T("dog"), _T("fox")});
+    cout << s << endl;
+```
+
+```cpp
+    CText s = _T("The quick brown Fox jumps over the lazy Dog");
+    s.replaceAny({_T("fox"), _T("dog")}, {_T("dog"), _T("fox")}, false);
+    cout << s << endl;
+```
+
+Output:
+```
+   The quick brown dog jumps over the lazy fox   
+```  
+
+```cpp
+   CText s = _T("The quick brown fox jumps over the lazy dog");
+   const CText::Char* words[] = {_T("quick"), _T("fox"), _T("dog")};
+   s.replaceAny(words, 3, _T("****"));
+   cout << s << endl;
+```
+
+Output:
+```
+   The **** brown **** jumps over the lazy ****  
+```  
+
+### Remove words, blocks and characters
+```cpp
+   CText s = _T("This is a monkey job!");
+   s.remove(_T("monkey"));
+   s.reduceChain(' ');
+   cout << s << endl;
+```
+
+Output:
+```
+   This is a job!
+```  
+
+```cpp
+   CText s = _T("Text containing <several> [blocks] separated by {brackets}");
+   s.removeBlocks(_T("<[{"), _T(">]}"));
+   s.reduceChain(' ');
+   s.trim()
+   cout << s << endl;
+```
+
+Output:
+```
+   Text containing separated by
+```  
+
+```cpp
+   s = _T("one and two or three and five");
+   s.removeAny({_T("or"), _T("and")});
+   s.reduceChain(' ');
+   cout << s << endl;
+```
+
+Output:
+```
+   one two three five
+```  
+
+### File paths 
+```cpp
+CText filepath = _T("D:\\Folder\\SubFolder\\TEXT\\File.dat");
+cout << filepath.getExtension() << endl;
+cout << filepath.getFileName() << endl;
+cout << filepath.getDir() << endl;
+filepath.replaceExtension(_T(".bin"));
+cout << filepath << endl;
+filepath.removeExtension();
+cout << filepath << endl;
+filepath.replaceExtension(_T(".dat"));
+cout << filepath << endl;
+filepath.replaceFileName(_T("File2"));
+cout << filepath << endl;
+filepath.addToFileName(_T("_mask"));
+cout << filepath << endl;
+filepath.replaceLastFolder(_T("Temp"));
+cout << filepath << endl;
+filepath.removeAfterSlash();
+cout << filepath << endl;
+
+```
+
+Output
+```
+.dat
+File.dat
+D:\Folder\SubFolder\TEXT\
+D:\Folder\SubFolder\TEXT\File.bin
+D:\Folder\SubFolder\TEXT\File
+D:\Folder\SubFolder\TEXT\File.dat
+D:\Folder\SubFolder\TEXT\File2.dat
+D:\Folder\SubFolder\TEXT\File2_mask.dat
+D:\Folder\SubFolder\Temp\File2_mask.dat
+D:\Folder\SubFolder\Temp
+```
+
+```cpp
+CText path1(_T("C:\\Temp"));
+CText path2(_T("..\\Folder"));
+path1.pathCombine(path2.str());
+cout << path1 << endl;
+```
+
+Output
+```
+C:\\Folder
+```
+
+### Split and collection routines
+```cpp
+    CText s = _T("The quick  brown fox jumps  over the lazy dog");
+    vector<CText> words;
+    if(s.split(words) < 9)
+        cout << "Error!" << endl ;
+    for(auto& s : words)
+        cout << s << endl;
+```
+
+```cpp
+   CText s = _T("The,quick,brown,fox,jumps,over,the,lazy,dog");
+   vector<std::string> words;
+   if(s.split(words,false,_T(",")) != 9)
+      cout << "Error!" << endl ;
+   for(auto& s : words)
+      cout << s << endl;
+```
+
+ Output:
+```
+The
+quick
+brown
+fox
+jumps
+over
+the
+lazy
+dog
+```
+
+```cpp
+    CText s = "Line 1\r\nLine 2\n\nLine 3\n";
+    vector<std::string> lines;
+    s.collectLines(lines);
+    for(auto& s : lines)
+      cout << s << endl;
+```
+
+ Output:
+```
+Line 1
+Line 2
+Line 3
+```
+
+
+### Read sentences from text file
+```cpp
+#include <iostream>
+#include "../CTEXT/CText.h"
+#include "tchar_utils.h"
+
+int main()
+{    
+    const char* input_name = "/Columbus.txt";
+    const char* output_name = "/Columbus_Sentences.txt";
+
+    CText pathIn = getcwd(0, 0);
+    CText pathOut = pathIn;
+    pathIn += input_name;
+    pathOut += output_name;
+    
+    CText str;
+    if(!str.readFile(pathIn.str()))
+    {
+        std::cerr << "Error, can not open file: " << pathIn << std::endl;
+        return 0;
+    }
+    std::vector<CText> sentences;
+
+    str.collectSentences(sentences);
+
+    str.fromArray(sentences, _T("\n\n") );
+
+    str.writeFile(pathOut.str(), CText::ENCODING_UTF8);
+
+    return 0;
+}
+```
+
+### Count characters and words
+```cpp
+CText s = _T("12345678909678543213");
+map<CText::Char, int> freq;
+s.countChars(freq);
+```
+
+```cpp
+CText s = _T("Nory was a Catholic because her mother was a Catholic, and Nory’s mother was a Catholic because her father was a Catholic, and her father was a Catholic because his mother was a Catholic, or had been.");
+std::multimap<int, CText, std::greater<int> > freq;
+s.countWordFrequencies(freq);
+s.fromMap(freq);
+cout << s;
+```
+
+Output:
+```
+Catholic 6
+a 6
+was 6
+because 3
+her 3
+mother 3
+and 2
+father 2
+Nory 1
+Nory's 1
+been 1
+had 1
+his 1
+or 1
+```
+
+### Conversion routines
+```cpp
+CText s = _T("1 2 3 4 5 6 7 8 9");
+vector<int> v;
+s.toArray<int>(v);
+``` 
+
+Output:
+```
+{1,2,3,4,5,6,7,8,9}
+```
+
+```cpp
+CText s = _T("1,2,3,4,5,6,7,8,9");
+vector<int> v;
+s.toArray<int>(v, _T(','));
+``` 
+
+Output:
+```
+{1,2,3,4,5,6,7,8,9}
+```
+
+```cpp
+CText s = _T("1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9");
+vector<double> v;
+s.toArray<double>(v, _T(','));
+```
+
+Output:
+```
+{1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9}
+```
+
+From hexadecimal numbers array:
+```cpp
+CText s = _T("0A 1E 2A 1B");
+vector<int> v;
+s.toArray<int>(v, _T(' '), true);
+```
+
+Output:
+```
+{10, 30, 42, 27}
+```
+
+```cpp
+CText s = _T("1a:2b:3c:4d:5e:6f");
+vector<int> v;
+s.toArray<int>(v, _T(':'), true);
+```
+
+Output:
+```
+{26, 43, 60, 77, 94, 111}
+```
+
+Without separator:
+```cpp
+CText s = _T("0A1E2A1B");
+s.toArray<int>(v, 0, true);
+```
+
+Output:
+```
+{10, 30, 42, 27}
+```
+
+```cpp
+Convert hex to chars string 
+CText s = _T("48 65 6C 6C 6F 20 57 6F 72 6C 64");
+std::vector<int> bytes;
+s.toChars<int>(bytes, true);
+s.fromChars<int>(bytes);
+cout << s << endl;
+```
+
+Output:
+```
+Hello World
+```
+
+Parse numerical matrix:
+```cpp
+std::vector<std::vector<int>> m;
+CText s = _T("1 2 3\n4 5 6\n7 8 9");
+s.toMatrix<int>(m, _T(' '));
+```
+
+Output:
+```
+{
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9},
+};
+```
+
+### Highlight words
+
+Following will make bold all words starting with "Col", "Spa","Isa", ending to "an"), "as" or containing "pe" or "sea":
+
+```cpp
+vector<CText> start = {_T("Col"), _T("Spa"), _T("Isa")};
+vector<CText> end = {_T("an"), _T("as")};
+vector<CText> contain = {_T("pe"), _T("sea")};
+str.wordsEnclose(_T("<b>"), _T("</b>"), &start, &end, &contain);
+```   
+     
+Portugal had been the main <b>European</b> power interested in pursuing trade routes <b>overseas</b>. Their next-door neighbors, Castile (predecessor of <b>Spain</b>) had been somewhat slower to begin exploring the Atlantic <b>because</b> of the bigger land area it had to re-conquer (the Reconquista) from the Moors. It <b>was</b> not until the late 15th century, following the dynastic union of the Crowns of Castile and Aragon and the completion of the Reconquista, that the unified crowns of what would become <b>Spain</b> (although countries still legally existing) emerged and became fully committed to looking for new trade routes and colonies <b>overseas</b>. In 1492 the joint rulers conquered the Moorish kingdom of Granada, which had been providing Castile with <b>African</b> goods through tribute. <b>Columbus</b> had previously failed to convince King John II of Portugal to fund his exploration of a western route, but the new king and queen of the re-conquered <b>Spain</b> decided to fund <b>Columbus's</b> expedition in hopes of bypassing Portugal's lock on Africa and the <b>Indian</b> <b>Ocean</b>, reaching Asia by traveling west
+<b>Columbus</b> <b>was</b> granted <b>an</b> audience with them; on May 1, 1489, he <b>presented</b> his plans to Queen <b>Isabella</b>, who referred them to a committee. They pronounced the idea impractical, and <b>advised</b> the monarchs not to support the <b>proposed</b> venture
 
 ## TODO List
 * **More methods for words,lines,sentences and complex expressions**:  There are lots more methods that can be added to support diferent NLP and lexical tasks.
@@ -2080,6 +1822,4 @@ s.cutBeforeFirst('მ')
 * **Other char types**: - Character types like char_32 can be also supported
 * **Mini Text Editor**: - This is a text editor based on CText that I plan to port on Modern C++.
 * **Export to Python**: - I want to export CText library to Python-3
-
-
-
+* **Performance Test**: - Add performance tests comparing with STL string.
