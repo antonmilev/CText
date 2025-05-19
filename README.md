@@ -2,20 +2,21 @@
 # Advanced text processing library in C++ and Python 
 
 ## About
-A Modern C++ library with many useful text processing routines. CText can solve some complicated text processing tasks that otherwise are taking too much time in C++ and Python, some of these like managing lines and words are available on higher level languages like C#, Java and Python but not in C++. But C++ gives more low-level control, except supporting the missing text functions CText implements optimized text routines. Library is very flexible and scalale, it is easy to add quickly custom text processing routnes, can be used to make  pre-processing problems for different NLP and ML tasks or just to practice Modern C++. 
+
+CText is a Modern C++ library that offers a wide range of text processing routines. It addresses many complex tasks that can be time-consuming in both C++ and Python. While features like line and word manipulation are readily available in higher-level languages such as C#, Java, and Python, they are often lacking in C++. CText fills this gap by providing those missing capabilities while preserving the low-level control that C++ offers. In addition to essential functions, it includes numerous optimized routines for efficient text handling. The library is highly flexible and scalable, making it easy to extend with custom processing routines. It’s well-suited for tackling preprocessing challenges in NLP and machine learning tasks, or simply for honing your Modern C++ skills.
+
 
 ## Main Features
-* **Modern C++ Template library**: You only need to include one header, very simple to use.
-* **Unicode Support**: - you can have both UNICODE and ANSI in one project.
-* **Hundreds of optimized text processing methods**: - Many standard and non-standard text processing operations are covered. I have a long TODO list with much more to add. 
-* **Clean and easy to understand code**: - You can use CText to quickly start more complicated text processing applications and abstracting from the too many lower level details and optimizations.
-* **Portable**:  I am using CText with VS2017/VS2019 and GCC 7.4 but it easily can be ported to other platforms.
-* **Stand alone**:  CText do not depends on any other libraries, the only requirements are C++11 and STL
-* **Scalable**:  All text routines are easily to be further extended for all commonly supported char types and platforms. 
-* **Python**:  Support of all Python versions 
+* **Modern C++ Template library**: Simple to use, just include a single header file.
+* **Unicode Support**: - Seamlessly handle both UNICODE and ANSI in the same project.
+* **Extensive Text Processing Features**: - Includes hundreds of optimized methods for both standard and advanced operations, with many more planned.
+* **Clean and Readable Codebase**: - Designed to help you build complex text-processing applications quickly, abstracting away low-level details and optimizations.
+* **Cross-Platform Compatibility**:  Tested with Visual Studio and GCC 7.4, easily portable to other environments.
+* **No External Dependencies**:  CText do not depends on any other libraries, the only requirements are C++11 and STL
+* **Easily Extensible**:  Text routines are designed to be scalable and adaptable across character types and platforms.
+* **Python Integration**:  Compatible with all versions of Python 
 
-
-Please feel free to contact me for questions or suggestions.
+Have questions or suggestions? Feel free to reach out: [email](mailto:amil@abv.bg).
 
 ### Python
 To install CText:

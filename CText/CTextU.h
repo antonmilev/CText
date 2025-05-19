@@ -5,44 +5,45 @@
  * @version 1.0
  * @date November, 2019
  */
-
+#pragma once 
 #include <wchar.h>
 #include "CTextT.h"
 
-template<> const wchar_t CTextT<wchar_t>::CC = L'\\';
-template<> const wchar_t* CTextT<wchar_t>::Slash = L"\\/";
-template<> const wchar_t* CTextT<wchar_t>::Separators = L" \t\r\n";
-template<> const wchar_t* CTextT<wchar_t>::SeparatorsWord = L" \t\r\n,;..!-?\"({[)}]";
-template<> const wchar_t* CTextT<wchar_t>::SeparatorsLine = L"\r\n";
-template<> const wchar_t* CTextT<wchar_t>::SeparatorsSentence = L".?!";
-template<> const wchar_t* CTextT<wchar_t>::EOL = L"\n";
-template<> const wchar_t* CTextT<wchar_t>::TAB = L"\t";
-template<> const wchar_t* CTextT<wchar_t>::SPACE = L" ";
-template<> const wchar_t* CTextT<wchar_t>::CR = L"\r";
-template<> const wchar_t* CTextT<wchar_t>::SeparatorsRow = L" \t";
-template<> const wchar_t  CTextT<wchar_t>::HexDigits[16] = {L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9', L'A', L'B', L'C', L'D', L'E', L'F'};
-template<> const wchar_t  CTextT<wchar_t>::Literal = L'\"';
-template<> const wchar_t* CTextT<wchar_t>::Literals = L"\"\'";
+template<> inline_t const wchar_t CTextT<wchar_t>::CC = L'\\';
+template<> inline_t const wchar_t* CTextT<wchar_t>::Slash = L"\\/";
+template<> inline_t const wchar_t* CTextT<wchar_t>::Separators  = L" \t\r\n";
+template<> inline_t const wchar_t* CTextT<wchar_t>::SeparatorsWord = L" \t\r\n,;..!-?\"({[)}]";
+template<> inline_t const wchar_t* CTextT<wchar_t>::SeparatorsLine  = L"\r\n";
+template<> inline_t const wchar_t* CTextT<wchar_t>::SeparatorsSentence = L".?!";
+template<> inline_t const wchar_t* CTextT<wchar_t>::EOL =L"\n";
+template<> inline_t const wchar_t* CTextT<wchar_t>::TAB =L"\t";
+template<> inline_t const wchar_t* CTextT<wchar_t>::SPACE = L" ";
+template<> inline_t const wchar_t* CTextT<wchar_t>::CR = L"\r";
+template<> inline_t const wchar_t* CTextT<wchar_t>::SeparatorsRow = L" \t";
+template<> inline_t const wchar_t  CTextT<wchar_t>::HexDigits[16] ={L'0',L'1',L'2',L'3',L'4',L'5',L'6',L'7',L'8',L'9',L'A',L'B',L'C',L'D',L'E',L'F'};
+template<> inline_t const wchar_t  CTextT<wchar_t>::Literal = L'\"';
+template<> inline_t const wchar_t* CTextT<wchar_t>::Literals = L"\"\'";
 
 typedef CTextT<wchar_t> CTextU;
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-size_t CTextU::Vsnprintf(wchar_t * str, size_t n, const wchar_t * fmt, va_list args)
+inline size_t CTextU::Vsnprintf(wchar_t * str, size_t n, const wchar_t * fmt, va_list args)
 {
 #ifdef _WIN32
     return _vsnwprintf(str, n, fmt, args);
 #else
-    return vsnwprintf(str, n, fmt, args);
+    return vswprintf(str, n, fmt, args);
 #endif
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextU::FromSingle(const char* s, CTextU& res)
+inline CTextU CTextU::FromSingle(const char* s)
 {  
-    if(!s || !*s)
-        return false;
+    CTextU res;
+    if(CTextT<char>::EmptyOrNull(s))
+        return res;
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
     res.m_str = myconv.from_bytes(s);
 
@@ -51,12 +52,12 @@ bool CTextU::FromSingle(const char* s, CTextU& res)
     //size_t len = mbstowcs(NULL, s, 0) + 1;
     //res.resize(len);
     //res.resize(std::mbstowcs(res.str(), s, len));
-    return true;
+    return res;
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-CTextT<char> CTextU::ToSingle(const wchar_t* s)
+inline CTextT<char> CTextU::ToSingle(const wchar_t* s)
 {
     CTextT<char> res;    
     if(!s || !*s)
@@ -68,15 +69,14 @@ CTextT<char> CTextU::ToSingle(const wchar_t* s)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextU::FromWide(const wchar_t* s, CTextU& res)
+inline CTextU CTextU::FromWide(const wchar_t* s)
 {
-    res = s;
-    return true;
+    return CTextU(s);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-CTextT<wchar_t> CTextU::ToWide(const wchar_t* s)
+inline CTextT<wchar_t> CTextU::ToWide(const wchar_t* s)
 {
     return CTextU(s);
 }
@@ -84,7 +84,7 @@ CTextT<wchar_t> CTextU::ToWide(const wchar_t* s)
 //-----------------------------------------------------------------------------------------------------------
 template<>
 template <typename CharT, typename X>
-static bool CTextU::ReadFile(const CharT* filePath, CTextU& res)
+inline bool CTextU::ReadFile(const CharT* filePath, CTextU& res)
 {
     std::ifstream ifs(filePath, std::ios::binary);
     EncodingType encoding = ENCODING_ASCII;
@@ -115,9 +115,9 @@ static bool CTextU::ReadFile(const CharT* filePath, CTextU& res)
 
     if(encoding == ENCODING_UTF8 || encoding == ENCODING_ASCII)
     {
-        FromSingle(ss.str().c_str(), res);
+        res = FromSingle(ss.str().c_str());
     }
-
+#ifdef _WIN32
     if(encoding == ENCODING_UTF16LE || encoding == ENCODING_UTF16BE)
     {
         std::wifstream wif(filePath, std::ios::binary);
@@ -131,13 +131,13 @@ static bool CTextU::ReadFile(const CharT* filePath, CTextU& res)
             wif.close();
         }
     }
-
+#endif
     return true;
 }
 
 template<>
 template <typename CharT, typename X>
-static bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType encoding)
+inline bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType encoding)
 {
     std::ofstream file(filePath);
 
@@ -153,7 +153,7 @@ static bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType enc
         std::string u8str = myconv.to_bytes(s.str());
         file << u8str;
     }
-
+#ifdef _WIN32
     else if(encoding == ENCODING_UTF16LE)
     {
         unsigned char bom[] = {0xFF, 0xFE};
@@ -175,7 +175,7 @@ static bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType enc
         CTextT<char>::Swab(&src[0u], &dst[0u], src.size());
         file << dst;
     }
-
+#endif
     else  //write UTF8 without BOM
     {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
@@ -187,4 +187,6 @@ static bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType enc
 
     return true;
 }
+
+
 

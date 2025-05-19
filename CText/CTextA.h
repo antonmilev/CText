@@ -5,29 +5,29 @@
  * @version 1.0
  * @date November, 2019
  */
-
+#pragma once 
 #include "CTextT.h"
 
-template<> const char CTextT<char>::CC = '\\';
-template<> const char* CTextT<char>::Slash = "\\/";
-template<> const char* CTextT<char>::Separators = " \t\r\n\v\f";
-template<> const char* CTextT<char>::SeparatorsWord = " \t\r\n,;..-!?({[)}]\"";
-template<> const char* CTextT<char>::SeparatorsLine = "\r\n";
-template<> const char* CTextT<char>::SeparatorsSentence = ".?!";
-template<> const char* CTextT<char>::EOL = "\n";
-template<> const char* CTextT<char>::TAB = "\t";
-template<> const char* CTextT<char>::SPACE = " ";
-template<> const char* CTextT<char>::CR = "\r";
-template<> const char* CTextT<char>::SeparatorsRow = " \t";
-template<> const char CTextT<char>::HexDigits[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-template<> const char  CTextT<char>::Literal = '\"';
-template<> const char* CTextT<char>::Literals = "\"\'";
+template<> inline_t const char CTextT<char>::CC = '\\';
+template<> inline_t const char* CTextT<char>::Slash  = "\\/";
+template<> inline_t const char* CTextT<char>::Separators  = " \t\r\n\v\f";
+template<> inline_t const char* CTextT<char>::SeparatorsWord = " \t\r\n,;..-!?({[)}]\"";
+template<> inline_t const char* CTextT<char>::SeparatorsLine  = "\r\n";
+template<> inline_t const char* CTextT<char>::SeparatorsSentence = ".?!";
+template<> inline_t const char* CTextT<char>::EOL ="\n";
+template<> inline_t const char* CTextT<char>::TAB ="\t";
+template<> inline_t const char* CTextT<char>::SPACE = " ";
+template<> inline_t const char* CTextT<char>::CR = "\r";
+template<> inline_t const char* CTextT<char>::SeparatorsRow = " \t";
+template<> inline_t const char CTextT<char>::HexDigits[16] ={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+template<> inline_t const char  CTextT<char>::Literal = '\"';
+template<> inline_t const char* CTextT<char>::Literals = "\"\'";
 
 typedef CTextT<char> CTextA;
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-size_t  CTextA::Vsnprintf(char* str, size_t n, const char * fmt, va_list args)
+inline size_t CTextA::Vsnprintf(char* str, size_t n, const char * fmt, va_list args)
 {
 #ifdef _WIN32
     return _vsnprintf(str, n, fmt, args);
@@ -38,33 +38,33 @@ size_t  CTextA::Vsnprintf(char* str, size_t n, const char * fmt, va_list args)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextA::FromSingle(const char* s, CTextA& res)
-{
-    res = s;
-    return true;
-}
-
-//-----------------------------------------------------------------------------------------------------------
-template<>
-CTextA CTextA::ToSingle(const char* s)
+inline CTextA CTextA::FromSingle(const char* s)
 {
     return CTextA(s);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-bool CTextA::FromWide(const wchar_t* s, CTextA& res)
+inline CTextA CTextA::ToSingle(const char* s)
 {
-    if(!s || !*s)
-        return false;
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
-    res.m_str = myconv.to_bytes(s);
-    return true;
+    return CTextA(s);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-CTextT<wchar_t> CTextA::ToWide(const char* s)
+inline CTextA CTextA::FromWide(const wchar_t* s)
+{
+    CTextA res;
+    if(!s || !*s)
+        return res;
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
+    res.m_str = myconv.to_bytes(s);
+    return res;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template<>
+inline CTextT<wchar_t> CTextA::ToWide(const char* s)
 {
     CTextT<wchar_t> res;
     if(!s || !*s)
@@ -77,7 +77,7 @@ CTextT<wchar_t> CTextA::ToWide(const char* s)
 //-----------------------------------------------------------------------------------------------------------
 template<>
 template <typename CharT, typename X>
-bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
+inline bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
 {
     std::ifstream ifs(filePath, std::ios::binary);   
     if(!ifs.is_open() || ifs.eof())// Unable to read file
@@ -131,8 +131,37 @@ bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
+inline bool CTextA::ReadLinesFromFile(const char* path, CTextA& res, size_t lineStart, size_t lineEnd)
+{
+    res.clear();
+    size_t num = 0;
+    std::string tmpString;
+    std::ifstream txtFile(path);
+    if(txtFile.is_open())
+    {
+        while(txtFile.good() && num < lineStart)
+        {
+            num++;
+            std::getline(txtFile, tmpString);
+        }
+
+        while(txtFile.good() && num < lineEnd)
+        {
+            num++;
+            std::getline(txtFile, tmpString);
+            res += tmpString;
+            res += EOL;
+        }
+        txtFile.close();
+    }
+
+    return num;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template<>
 template <typename CharT, typename X>
-bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType encoding)
+inline bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType encoding)
 {
     std::ofstream file(filePath);
 
@@ -176,6 +205,7 @@ bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType encoding)
     }
 
     file.close();
+
     return true;
 }
 
