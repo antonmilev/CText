@@ -1,5 +1,5 @@
 # CText
-# Advanced text processing library in C++ and Python 
+# Advanced text processing library for C++ & Python 
 
 ## About
 
@@ -1344,6 +1344,77 @@ from ctextlib import Text as text
 a = text("Hello World")
 a.writeFile('test.txt')
 print(a)
+```
+
+## Static methods
+
+<b>ReadFile</b>
+
+```python
+import ctextlib as CText
+str = CText.ReadFile('test.txt')
+print(str)
+```
+
+Output
+```
+The quick brown fox jumps over the lazy dog
+```
+
+Or to import to global space:
+
+```python
+from ctextlib import *
+str = ReadFile('test.txt')
+print(str)
+```
+
+Output
+```
+The quick brown fox jumps over the lazy dog
+```
+
+<b>ReadWords</b>
+
+```python
+import ctextlib as CText
+words = CText.ReadWords('test.txt')
+print(words)
+```
+
+Output
+```
+The quick brown fox jumps over the lazy dog
+```
+
+<b>ReadLines</b>
+
+```Lines.txt
+Line1
+Line2
+Line3
+```
+
+```python
+# demontrates how to read all lines from a text file
+import ctextlib as text
+lines = text.ReadLines("Lines.txt")
+```
+
+Output
+```
+['Line1', 'Line2', 'Line3']
+```
+
+<b>WriteFile</b>
+
+```python
+import ctextlib as CText
+CText.WriteFile('test.txt','The quick brown fox jumps over the lazy dog')
+```
+Output
+```
+test.txt
 ```
 
 

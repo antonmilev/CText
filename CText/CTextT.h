@@ -51,13 +51,14 @@
 
 #define ContS template<typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T*>::value || std::is_constructible<Val, const T*>::value >  >
 #define ContC template<typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_same<Val, T>::value || std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T* >::value || std::is_constructible<Val, const T*>::value  >>
+#define ContST template <typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T*>::value || std::is_constructible<Val, const T*>::value >, typename CharT = std::enable_if_t< (std::is_same<CharT, char>::value || std::is_same<CharT, wchar_t>::value)>  >
 #define ContN template<typename Num, typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_convertible<Val, Num>::value && (std::is_integral<Num>::value || std::is_floating_point<Num>::value) >  >
 #define ContB template<typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_same<Val, T>::value || std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T* >::value || std::is_constructible<Val, const T*>::value || std::is_integral<Val>::value || std::is_floating_point<Val>::value >  >
 #define MapI template<typename C, typename Value = typename C::value_type, typename X = std::enable_if_t < std::is_convertible<Value, std::pair<int,CTextT<T>>>::value ||  std::is_convertible<Value, std::pair<int,std::basic_string<T>>>::value, int > >
 #define DefN template <typename Num, typename X = std::enable_if_t< std::is_integral<Num>::value || std::is_floating_point<Num>::value>>
 #define DefI template <typename Num, typename X = std::enable_if_t< std::is_integral<Num>::value >>
 #define DefS template <typename S, typename X = std::enable_if_t < std::is_convertible<std::remove_const_t<std::remove_reference_t<S>>, const T* >::value || std::is_constructible<std::remove_const_t<std::remove_reference_t<S>>, const T*>::value ||  std::is_convertible<S, std::basic_string<T> >::value>>
-#define DefT template <typename CharT, typename X = std::enable_if_t< (std::is_same<CharT, char>::value || std::is_same<CharT, wchar_t>::value)>>
+#define DefT template <typename CharT = std::enable_if_t< (std::is_same<CharT, char>::value || std::is_same<CharT, wchar_t>::value)>>
 
 template <typename T>
 class CTextT
@@ -243,6 +244,7 @@ public:
  ContS CTextT&   fromArray(const C& container, const T* sep = SPACE); // compose back the string using the given separator, if asHex is set will convert values in the array to hex strings
  ContN CTextT&   fromArray(const C& container, bool asHex = false, size_t wHex = 2, const T* sep = SPACE); // compose a string from array using the given separator, if asHex is set will convert values in the array to hex strings
   DefI CTextT&   fromArray(const Num* buf, size_t len, bool asHex = false, size_t w = 2, const T* sep = SPACE);   //  array {1,2,3} will create text filled with  "1 2 3", if hex flag is set, {10,20,30} will be converted as "A 14 1E"
+  DefI CTextT&   fromBytes(const Num* buf, size_t len, int lineSize = 0, bool asHex = false, size_t wHex = 2, const T* sep = SPACE);   //  array {1,2,3} will create text filled with "1 2 3", if hex flag is set, {10,20,30} will be converted as "A 14 1E", lineSize - if >0 then the text will be multiline with the given max line size
  ContN CTextT&   fromChars(const C& container); // append back values in the container (interpret as characters type T)
   MapI CTextT&   fromMap(const C& container, const T* sep = SPACE, const T* sepLine = EOL);
   CTextT&        fromMap(std::map<T, int>& container, const T* sep = SPACE, const T* sepLine = EOL);
@@ -459,6 +461,7 @@ inline const T*  str(size_t from = 0) const; //return pointer to modifiable buff
     ContC static size_t  GeneratePermutations(C& container, CTextT& s);
     static bool       IsPalindrome(const T* s, bool bCase = true, size_t len = std::string::npos);
     static void       SplitPath(const T* path, CTextT& drv, CTextT& dir, CTextT& name, CTextT& ext);
+    static const T*   SkipSpaces(const T* str, const T* sep = Separators);
     static  void      Swap(CTextT& a, CTextT& b);  // exchanges the values of two strings
   DefT static bool    ReadFileAsHex(const CharT* filePath, CTextT& s);
     static int        ToHex(T c, bool& bOk);  // 'a' --> 10
@@ -469,15 +472,16 @@ inline const T*  str(size_t from = 0) const; //return pointer to modifiable buff
     inline static CTextT     FromSingle(const char* s);
     inline static CTextT     FromWide(const wchar_t* s);
   DefT inline static bool    ReadFile(const CharT* filePath, CTextT& s);
-    inline static bool       ReadLinesFromFile(const T* path, CTextT& res, size_t lineStart, size_t lineEnd);
+ ContST static size_t        ReadLinesFromFile(const CharT* filePath, C& container, const T* sep = SeparatorsLine);  // read lines from a text file into a container
 inline static CTextT<char>   ToSingle(const T* s);
 inline static CTextT<wchar_t>ToWide(const T* s);
-  DefT inline static bool    WriteFile(const CharT* filePath, CTextT& s, EncodingType encoding = ENCODING_UTF8);
+   DefT static bool          WriteFile(const CharT* filePath, const T* s, EncodingType encoding = ENCODING_UTF8);
     inline static size_t     Vsnprintf(T* s, size_t n, const T * fmt, va_list args);  //encapsulate vsnprintf, return number of characters written
            static size_t     Vsscanf(const T*&  buf, const T *s, va_list ap);
 
     // static string routines
     static bool	    atoi(int* vp, const T *str, int base);
+    static bool     Contain(const T* text, const T* str, bool bCase = true);
     static bool     EmptyOrNull(const std::basic_string<T>& s) { return s.length() == 0 ; }
     static bool     EmptyOrNull(const T* s) { return (s == 0 || *s == 0); }
     static bool     EndsWith(const T* text, const T* str, bool bCase = true, size_t len = std::string::npos);
@@ -491,6 +495,7 @@ inline static CTextT<wchar_t>ToWide(const T* s);
     static bool     IsAlpha(const T* s);
     static bool     IsBinary(const T* s);
     static bool     IsLower(const T* s, bool strict = false);
+    static bool     IsDouble(const T* str, bool allowTrim = true, const T* sep = Separators);
     static bool     IsHexNumber(const T* s);
     static bool     IsNumber(const T* s, bool allowSign = true);
     static bool     IsOneOf(T c, const T* list, bool bCase = true, size_t* idx = nullptr); //return true if c occurs in the provided 0-terminated characters list, otherwise returns false, idx - optional position in the list
@@ -498,7 +503,7 @@ inline static CTextT<wchar_t>ToWide(const T* s);
     static size_t   LastIndexOf(const T* str, size_t len, T c, bool bCase = true);
     static size_t   LastIndexOf(const T* str, size_t len, const T* s, bool bCase = true);
     static size_t   Levenshtein(const T *s1, const T *s2);  //calculate Levenshtein distance
-    static size_t   HammingDistance(const T *s1, const T *s2);
+    static size_t   HammingDistance(const T *s1, const T *s2);  //calculate Hamming distance
     static size_t	Sscanf(const T* & buf, const T *fmt, ...);
     static bool     StartsWith(const T* str, const T* s, bool bCase = true, size_t max_len = 0, size_t* count = nullptr); //return true if string str starts with the string s,  max_len - max number of chars to check, if count is different than 0 will provide the length of the search text 
 DefS static size_t  Strlen(const S& s) { return s.length();  }

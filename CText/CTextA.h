@@ -76,8 +76,8 @@ inline CTextT<wchar_t> CTextA::ToWide(const char* s)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-template <typename CharT, typename X>
-inline bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
+template <typename CharT>
+bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
 {
     std::ifstream ifs(filePath, std::ios::binary);   
     if(!ifs.is_open() || ifs.eof())// Unable to read file
@@ -98,8 +98,12 @@ inline bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
             encoding = ENCODING_UTF8;
     }
 
-    if(encoding == ENCODING_ASCII)  // The file does not have BOM
-        ifs.seekg(0);
+	if (encoding == ENCODING_ASCII)  // The file does not have BOM
+	{
+		if(ifs.eof())
+			ifs.clear();
+		ifs.seekg(0, std::ios::beg);
+	}
 
     if(encoding == ENCODING_UTF8 || encoding == ENCODING_ASCII)
     {
@@ -128,40 +132,10 @@ inline bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
 
     return true;
 }
-
 //-----------------------------------------------------------------------------------------------------------
 template<>
-inline bool CTextA::ReadLinesFromFile(const char* path, CTextA& res, size_t lineStart, size_t lineEnd)
-{
-    res.clear();
-    size_t num = 0;
-    std::string tmpString;
-    std::ifstream txtFile(path);
-    if(txtFile.is_open())
-    {
-        while(txtFile.good() && num < lineStart)
-        {
-            num++;
-            std::getline(txtFile, tmpString);
-        }
-
-        while(txtFile.good() && num < lineEnd)
-        {
-            num++;
-            std::getline(txtFile, tmpString);
-            res += tmpString;
-            res += EOL;
-        }
-        txtFile.close();
-    }
-
-    return num;
-}
-
-//-----------------------------------------------------------------------------------------------------------
-template<>
-template <typename CharT, typename X>
-inline bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType encoding)
+template <typename CharT>
+bool CTextA::WriteFile(const CharT* filePath, const char* s, EncodingType encoding)
 {
     std::ofstream file(filePath);
 
@@ -175,8 +149,8 @@ inline bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType enc
 
     else if(encoding == ENCODING_UTF8)
     {
-        unsigned char bom[] = {0xEF, 0xBB, 0xBF};
-        file.write((char*)bom, sizeof(bom));
+        const unsigned char bom[] = {0xEF, 0xBB, 0xBF};
+        file.write((const char*)bom, sizeof(bom));
         file << s;
     }
     else if(encoding == ENCODING_UTF16LE)
@@ -184,7 +158,7 @@ inline bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType enc
         unsigned char bom[] = {0xFF, 0xFE};
         file.write((char*)bom, sizeof(bom));
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
-        std::wstring res = myconv.from_bytes(s.str());
+        std::wstring res = myconv.from_bytes(s);
         std::wstring_convert<std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>> conv2;
         std::string u16str = conv2.to_bytes(res);
         file << u16str;
@@ -195,7 +169,7 @@ inline bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType enc
         unsigned char bom[] = {0xFE, 0xFF};
         file.write((char*)bom, sizeof(bom));
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
-        std::wstring res = myconv.from_bytes(s.str());
+        std::wstring res = myconv.from_bytes(s);
         std::wstring_convert<std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>> conv2;
         std::string src = conv2.to_bytes(res);
         std::string dst ;
@@ -208,4 +182,5 @@ inline bool CTextA::WriteFile(const CharT* filePath, CTextA& s, EncodingType enc
 
     return true;
 }
+
 

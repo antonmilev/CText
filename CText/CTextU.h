@@ -83,7 +83,7 @@ inline CTextT<wchar_t> CTextU::ToWide(const wchar_t* s)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-template <typename CharT, typename X>
+template <typename CharT>
 inline bool CTextU::ReadFile(const CharT* filePath, CTextU& res)
 {
     std::ifstream ifs(filePath, std::ios::binary);
@@ -134,10 +134,9 @@ inline bool CTextU::ReadFile(const CharT* filePath, CTextU& res)
 #endif
     return true;
 }
-
 template<>
-template <typename CharT, typename X>
-inline bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType encoding)
+template <typename CharT>
+inline bool CTextU::WriteFile(const CharT* filePath, const wchar_t* s, EncodingType encoding)
 {
     std::ofstream file(filePath);
 
@@ -150,7 +149,7 @@ inline bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType enc
         file.write((char*)bom, sizeof(bom));
 
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
-        std::string u8str = myconv.to_bytes(s.str());
+        std::string u8str = myconv.to_bytes(s);
         file << u8str;
     }
 #ifdef _WIN32
@@ -160,7 +159,7 @@ inline bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType enc
         file.write((char*)bom, sizeof(bom));
 
         std::wstring_convert<std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>> conv2;
-        std::string u16str = conv2.to_bytes(s.str());
+        std::string u16str = conv2.to_bytes(s);
         file << u16str;
     }
 
@@ -169,7 +168,7 @@ inline bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType enc
         unsigned char bom[] = {0xFE, 0xFF};
         file.write((char*)bom, sizeof(bom));
         std::wstring_convert<std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>> conv2;
-        std::string src = conv2.to_bytes(s.str());
+        std::string src = conv2.to_bytes(s);
         std::string dst;
         dst.resize(src.size() + 1);
         CTextT<char>::Swab(&src[0u], &dst[0u], src.size());
@@ -179,7 +178,7 @@ inline bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType enc
     else  //write UTF8 without BOM
     {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> myconv;
-        std::string u8str = myconv.to_bytes(s.str());
+        std::string u8str = myconv.to_bytes(s);
         file << u8str;
     }
 
@@ -187,6 +186,5 @@ inline bool CTextU::WriteFile(const CharT* filePath, CTextU& s, EncodingType enc
 
     return true;
 }
-
 
 

@@ -1063,6 +1063,16 @@ const T* CTextT<T>::StrFind(const T* str, const T* text, bool bCase)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
+bool CTextT<T>::Contain(const T* text, const T* str, bool bCase) 
+{
+    if(EmptyOrNull(text) || EmptyOrNull(str))
+        return false;
+
+    return StrFind(text, str, bCase) != nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
 const T* CTextT<T>::StrFindCh(const T* s, T c, bool bCase)
 {
     if(!bCase) c = upper(c);
@@ -1817,7 +1827,7 @@ void CTextT<T>::Strrev(T* begin, T* end)
 template <typename T>
 T* CTextT<T>::Strrev(T *str)
 {
-    int n = Strlen(str);
+    size_t n = Strlen((const T *)str);
     if(n < 2)
         return str;
 
@@ -3377,6 +3387,16 @@ void CTextT<T>::Swap(CTextT& a, CTextT& b)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
+const T* CTextT<T>::SkipSpaces(const T* str, const T* sep)
+{
+    while(IsOneOf(*str, sep))
+        str++;
+
+    return str;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
 CTextT<T>& CTextT<T>::wordsSort(const T* sep, const T* sepNew) // words sort in ascending order
 {
     std::vector<CTextT> words;
@@ -3946,6 +3966,38 @@ CTextT<T>& CTextT<T>::fromArray(const Num* buf, size_t len, bool asHex, size_t w
             ss << std::hex << std::uppercase << std::setfill(T('0')) << std::setw(wHex);
 
         ss << ((sizeof(Num) == 1) ? *buf++ : (int)*buf++);
+    }
+
+    m_str = ss.str();
+    return *this;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+template <typename Num, typename X>
+CTextT<T>& CTextT<T>::fromBytes(const Num* buf, size_t len, int lineSize, bool asHex, size_t wHex, const T* sep)
+{
+    clear();
+    std::basic_stringstream<T> ss; 
+
+    bool first = false;
+    for(size_t k = 0; k < len; k++)
+    {
+        if(!EmptyOrNull(sep))
+        {
+            if(first)
+                ss << sep;
+            else
+                first = true;
+        }
+
+        if(asHex)
+            ss << std::hex << std::uppercase << std::setfill(T('0')) << std::setw(wHex);
+
+        ss << ((sizeof(Num) == 1) ? *buf++ : (int)*buf++);
+
+        if(lineSize && ((k + 1) % lineSize == 0))
+            ss << *EOL;
     }
 
     m_str = ss.str();
@@ -4623,6 +4675,70 @@ bool CTextT<T>::IsNumber(const T* s, bool allowSign)
 
     return true;
 }
+
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+bool CTextT<T>::IsDouble(const T* str, bool allowTrim, const T* sep)
+{
+    if(allowTrim)
+        str = SkipSpaces(str, sep);
+
+    int n = 0;
+    bool dot = false, power = false, sign = false;
+    T ch = *str;
+
+    if(ch == '-' || ch == '+')  // first char allowed to be sign
+        str++;
+
+    while((ch = *str++))
+    {
+        if(!(ch >= '0' && ch <= '9'))
+        {
+            if(ch == '.' || ch == ',')
+            {
+                if(dot)
+                    return false;
+
+                dot = true;
+                continue;
+            }
+
+            if(ch == 'E' || ch == 'e')
+            {
+                if(power)
+                    return false;
+
+                power = true;
+                continue;
+            }
+
+            if(ch == '-' || ch == '+')  // sign allowed once after e
+            {
+                if(!power || sign)
+                    return false;
+
+                sign = true;
+
+                continue;
+            }
+
+            // if this flag is set we allow trailing spaces
+            if(allowTrim)
+            {
+                str = SkipSpaces(str, sep);
+
+                if(!*str)
+                    return n ? true : false;
+            }
+
+
+            return false;
+        }
+        n++;
+    }
+    return true;
+}
+
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
@@ -5429,20 +5545,21 @@ bool CTextT<T>::checkBalance(const T* sepBegin, const T* sepEnd)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename CharT, typename X>
+template <typename CharT>
 bool CTextT<T>::writeFile(const CharT* filePath, int encoding, bool asHex)
 {
-    return asHex ? WriteFileAsHex(filePath, *this) : WriteFile <CharT, X> (filePath, *this, (EncodingType)encoding);
+    return asHex ? WriteFileAsHex(filePath, *this) : WriteFile <CharT> (filePath, str(), (EncodingType)encoding);
 }
+
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename CharT, typename X>
+template <typename CharT>
 bool CTextT<T>::readFile(const CharT* path, bool asHex)
 {
     clear();
 
-    return asHex ? ReadFileAsHex<CharT, X> (path, *this) : ReadFile<CharT, X>(path, *this);
+    return asHex ? ReadFileAsHex<CharT> (path, *this) : ReadFile<CharT>(path, *this);
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -5536,9 +5653,14 @@ size_t  CTextT<T>::linesCount(const T* sep) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-bool CTextT<T>::readLinesFromFile(const T* path, size_t lineStart, size_t lineEnd)
+template <typename C, typename Val, typename X, typename CharT>  
+size_t CTextT<T>::ReadLinesFromFile(const CharT* filePath, C& container, const T* sep)
 {
-    return ReadLinesFromFile(path, *this, lineStart, lineEnd);
+    CTextT<T> s;
+    if (!s.readFile(filePath))
+        return 0;
+
+    return s.collectLines(container);
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -5999,7 +6121,7 @@ size_t CTextT<T>::ToByteArrayFromHexString(const T* s, unsigned char* arr, size_
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename CharT, typename X>
+template <typename CharT>
 bool CTextT<T>::ReadFileAsHex(const CharT* filePath, CTextT& s)
 {
     //open file
@@ -6024,13 +6146,13 @@ bool CTextT<T>::ReadFileAsHex(const CharT* filePath, CTextT& s)
     //read file
     ifs.read((char*)buf, len);
     ifs.close();
-    s.fromArray(buf, len, true, 2);
+    s.fromBytes(buf, len, 0, true, 2);
     return true;
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename CharT, typename X>
+template <typename CharT>
 bool CTextT<T>::WriteFileAsHex(const CharT* filePath, CTextT& s)
 {
     //open file
