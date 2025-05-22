@@ -122,7 +122,6 @@ a = text("Hello World")
 print(a)
 ```
 
-
 ### Python methods reference:
 
 <b>addToFileName</b>
