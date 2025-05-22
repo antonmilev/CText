@@ -18,6 +18,88 @@ CText is a Modern C++ library that offers a wide range of text processing routin
 
 Have questions or suggestions? Feel free to reach out: [email](mailto:amil@abv.bg).
 
+---
+
+### 🔹 **Overview**
+
+
+- `ctextlib` brings the powerful C++ CText library to Python.
+- It offers **hundreds of optimized, extensible text manipulation routines** for NLP, machine learning, and general-purpose use.
+- Install via pip:
+
+  ```bash
+  pip install ctextlib
+  ```
+
+- Basic usage:
+
+  ```python
+  from ctextlib import Text as text
+  a = text("Hello World")
+  print(a)
+  ```
+
+---
+
+### 🔹 **Core Features in Python**
+
+#### 🛠️ String Construction & Conversion
+
+- `append`, `appendRange`: Concatenate strings or character ranges.
+- `fromArray`, `fromMatrix`, `fromBinary`, `fromDouble`, `fromHex`, `fromInteger`: Convert arrays/numbers into text.
+- `fromArrayAsHex`, `fromMatrixAsHex`: Hexadecimal formatting for array/matrix data.
+
+#### 📁 File & Path Operations
+
+- `readFile`, `writeFile`: Load and save files.
+- `getDir`, `getFileName`, `getExtension`, `pathCombine`: Path manipulation.
+- `removeFileName`, `removeExtension`: Modify file paths.
+
+#### 🔍 Search & Analysis
+
+- `contain`, `containAny`, `containOnly`, `count`, `countWordFrequencies`: Check for presence and frequency of substrings/words.
+- `indexOf`, `indexOfAny`, `lastIndexOf`, `find`: Locate substrings.
+- `regexMatch`, `regexSearch`, `regexReplace`, `regexLines`, `regexWords`: Regex utilities.
+
+#### ✂️ Cutting & Slicing
+
+- `cutAfterFirst/Last`, `cutBeforeFirst`, `cutEnds`, `cutLeft`, `cutRight`: Trim text from specific positions.
+- `keep`, `keepLeft`, `keepRight`, `limit`, `mid`: Keep specific parts of the text.
+
+#### ✏️ Modification & Mutation
+
+- `insert`, `insertAtBegin`, `insertAtEnd`: Insert text.
+- `replace`, `replaceAny`, `remove`, `removeAny`, `erase`: Modify content.
+- `enclose`, `quote`: Wrap content with characters.
+- `trim`, `trimLeft`, `trimRight`: Remove leading/trailing characters.
+
+#### 🔁 Transformations
+
+- `lower`, `upper`, `reverse`, `rotateLeft`, `rotateRight`, `makeUnique`, `sort`, `shuffle`: Alter casing or order.
+- `random`, `randomAlpha`, `randomNumber`: Generate random strings/numbers.
+
+#### 📏 Checks & Tests
+
+- `isAlpha`, `isBinary`, `isNumber`, `isHexNumber`, `isPalindrome`, `isEmpty`, `isLower`, `isUpper`: Type and pattern validation.
+
+#### 🧠 Advanced Utilities
+
+- `split`, `words`, `lines`, `linesRemoveEmpty`, `linesSort`: Line and word processing.
+- `nextLine`, `nextWord`: Iterator-like access to lines or words.
+- `toBinary`, `toHex`: Format conversion.
+
+---
+
+### 🔹 **Ideal For**
+
+- 🧠 **Natural Language Processing (NLP)** preprocessing  
+- 🤖 **Machine Learning** text cleaning  
+- 🗃️ **File & Data** transformation tasks  
+- ⚡ **High-performance** and **extensible** Python applications requiring fine-grained text control
+
+---
+
+
 ### Python
 To install CText:
 ```
@@ -1174,7 +1256,7 @@ a.rotateLeft(2)
 a.rotateRight(4)
 ```
 
-Output
+#### 💡 Output:
 ```
 llo WorldHe
 ldHello Wor
@@ -1332,7 +1414,7 @@ a = text('The quick brown fox jumps over the lazy dog')
 a.wordsSort()
 ```
 
-Output
+#### 💡 Output:
 ```
 The brown dog fox jumps lazy over quick the
 ```
@@ -1356,7 +1438,7 @@ str = CText.ReadFile('test.txt')
 print(str)
 ```
 
-Output
+#### 💡 Output:
 ```
 The quick brown fox jumps over the lazy dog
 ```
@@ -1369,7 +1451,7 @@ str = ReadFile('test.txt')
 print(str)
 ```
 
-Output
+#### 💡 Output:
 ```
 The quick brown fox jumps over the lazy dog
 ```
@@ -1382,7 +1464,7 @@ words = CText.ReadWords('test.txt')
 print(words)
 ```
 
-Output
+#### 💡 Output:
 ```
 ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog']
 ```
@@ -1401,7 +1483,7 @@ import ctextlib as text
 lines = text.ReadLines("Lines.txt")
 ```
 
-Output
+#### 💡 Output:
 ```
 ['Line1', 'Line2', 'Line3']
 ```
@@ -1412,7 +1494,7 @@ Output
 import ctextlib as CText
 CText.WriteFile('test.txt','The quick brown fox jumps over the lazy dog')
 ```
-Output
+#### 💡 Output:
 ```
 test.txt
 ```
@@ -1549,7 +1631,7 @@ int main()
     s.replace(_T("brown"), _T("red"));
     cout << s << endl;
 ```
-Output:
+#### 💡 Output:
 ```
    The quick red fox jumps over the lazy dog 
 ```  
@@ -1561,7 +1643,7 @@ Output:
     cout << s << endl;
 ```
 
-Output:
+#### 💡 Output:
 ```
    The ----- brown --- jumps over the lazy ---     
 ```  
@@ -1578,7 +1660,7 @@ Output:
     cout << s << endl;
 ```
 
-Output:
+#### 💡 Output:
 ```
    The quick brown dog jumps over the lazy fox   
 ```  
@@ -1590,7 +1672,7 @@ Output:
    cout << s << endl;
 ```
 
-Output:
+#### 💡 Output:
 ```
    The **** brown **** jumps over the lazy ****  
 ```  
@@ -1603,7 +1685,7 @@ Output:
    cout << s << endl;
 ```
 
-Output:
+#### 💡 Output:
 ```
    This is a job!
 ```  
@@ -1616,7 +1698,7 @@ Output:
    cout << s << endl;
 ```
 
-Output:
+#### 💡 Output:
 ```
    Text containing separated by
 ```  
@@ -1628,7 +1710,7 @@ Output:
    cout << s << endl;
 ```
 
-Output:
+#### 💡 Output:
 ```
    one two three five
 ```  
@@ -1656,7 +1738,7 @@ cout << filepath << endl;
 
 ```
 
-Output
+#### 💡 Output:
 ```
 .dat
 File.dat
@@ -1677,7 +1759,7 @@ path1.pathCombine(path2.str());
 cout << path1 << endl;
 ```
 
-Output
+#### 💡 Output:
 ```
 C:\\Folder
 ```
@@ -1701,7 +1783,7 @@ C:\\Folder
       cout << s << endl;
 ```
 
- Output:
+#### 💡 Output:
 ```
 The
 quick
@@ -1722,7 +1804,7 @@ dog
       cout << s << endl;
 ```
 
- Output:
+#### 💡 Output:
 ```
 Line 1
 Line 2
@@ -1779,7 +1861,7 @@ s.fromMap(freq);
 cout << s;
 ```
 
-Output:
+#### 💡 Output:
 ```
 Catholic 6
 a 6
@@ -1804,7 +1886,7 @@ vector<int> v;
 s.toArray<int>(v);
 ``` 
 
-Output:
+#### 💡 Output:
 ```
 {1,2,3,4,5,6,7,8,9}
 ```
@@ -1815,7 +1897,7 @@ vector<int> v;
 s.toArray<int>(v, _T(','));
 ``` 
 
-Output:
+#### 💡 Output:
 ```
 {1,2,3,4,5,6,7,8,9}
 ```
@@ -1826,7 +1908,7 @@ vector<double> v;
 s.toArray<double>(v, _T(','));
 ```
 
-Output:
+#### 💡 Output:
 ```
 {1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9}
 ```
@@ -1838,7 +1920,7 @@ vector<int> v;
 s.toArray<int>(v, _T(' '), true);
 ```
 
-Output:
+#### 💡 Output:
 ```
 {10, 30, 42, 27}
 ```
@@ -1849,7 +1931,7 @@ vector<int> v;
 s.toArray<int>(v, _T(':'), true);
 ```
 
-Output:
+#### 💡 Output:
 ```
 {26, 43, 60, 77, 94, 111}
 ```
@@ -1860,7 +1942,7 @@ CText s = _T("0A1E2A1B");
 s.toArray<int>(v, 0, true);
 ```
 
-Output:
+#### 💡 Output:
 ```
 {10, 30, 42, 27}
 ```
@@ -1874,7 +1956,7 @@ s.fromChars<int>(bytes);
 cout << s << endl;
 ```
 
-Output:
+#### 💡 Output:
 ```
 Hello World
 ```
@@ -1886,7 +1968,7 @@ CText s = _T("1 2 3\n4 5 6\n7 8 9");
 s.toMatrix<int>(m, _T(' '));
 ```
 
-Output:
+#### 💡 Output:
 ```
 {
     {1, 2, 3},
