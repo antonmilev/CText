@@ -123,7 +123,7 @@ print(a)
 ```
 
 
-Python methods reference:
+### Python methods reference:
 
 <b>addToFileName</b>
 ```python
