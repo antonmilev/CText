@@ -51,14 +51,14 @@
 
 #define ContS template<typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T*>::value || std::is_constructible<Val, const T*>::value >  >
 #define ContC template<typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_same<Val, T>::value || std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T* >::value || std::is_constructible<Val, const T*>::value  >>
-#define ContST template <typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T*>::value || std::is_constructible<Val, const T*>::value >, typename CharT = std::enable_if_t< (std::is_same<CharT, char>::value || std::is_same<CharT, wchar_t>::value)>  >
+#define ContST template <typename C, typename Val = typename C::value_type, typename CharT, typename X = std::enable_if_t< std::is_convertible<Val, std::basic_string<T>>::value || std::is_convertible<Val, const T*>::value || std::is_constructible<Val, const T*>::value>, typename Enable = std::enable_if_t< std::is_same<CharT, char>::value || std::is_same<CharT, wchar_t>::value>>
 #define ContN template<typename Num, typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_convertible<Val, Num>::value && (std::is_integral<Num>::value || std::is_floating_point<Num>::value) >  >
 #define ContB template<typename C, typename Val = typename C::value_type, typename X = std::enable_if_t<std::is_same<Val, T>::value || std::is_convertible<Val, std::basic_string<T> >::value || std::is_convertible<Val, const T* >::value || std::is_constructible<Val, const T*>::value || std::is_integral<Val>::value || std::is_floating_point<Val>::value >  >
 #define MapI template<typename C, typename Value = typename C::value_type, typename X = std::enable_if_t < std::is_convertible<Value, std::pair<int,CTextT<T>>>::value ||  std::is_convertible<Value, std::pair<int,std::basic_string<T>>>::value, int > >
 #define DefN template <typename Num, typename X = std::enable_if_t< std::is_integral<Num>::value || std::is_floating_point<Num>::value>>
 #define DefI template <typename Num, typename X = std::enable_if_t< std::is_integral<Num>::value >>
 #define DefS template <typename S, typename X = std::enable_if_t < std::is_convertible<std::remove_const_t<std::remove_reference_t<S>>, const T* >::value || std::is_constructible<std::remove_const_t<std::remove_reference_t<S>>, const T*>::value ||  std::is_convertible<S, std::basic_string<T> >::value>>
-#define DefT template <typename CharT = std::enable_if_t< (std::is_same<CharT, char>::value || std::is_same<CharT, wchar_t>::value)>>
+#define DefT template <typename CharT, typename X = std::enable_if_t< std::is_same<CharT, char>::value || std::is_same<CharT, wchar_t>::value>>
 
 template <typename T>
 class CTextT

@@ -5545,21 +5545,21 @@ bool CTextT<T>::checkBalance(const T* sepBegin, const T* sepEnd)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename CharT>
+template <typename CharT, typename>
 bool CTextT<T>::writeFile(const CharT* filePath, int encoding, bool asHex)
 {
-    return asHex ? WriteFileAsHex(filePath, *this) : WriteFile <CharT> (filePath, str(), (EncodingType)encoding);
+    return asHex ? WriteFileAsHex(filePath, *this) : WriteFile <CharT, void> (filePath, str(), (EncodingType)encoding);
 }
 
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename CharT>
+template <typename CharT, typename>
 bool CTextT<T>::readFile(const CharT* path, bool asHex)
 {
     clear();
 
-    return asHex ? ReadFileAsHex<CharT> (path, *this) : ReadFile<CharT>(path, *this);
+    return asHex ? ReadFileAsHex<CharT> (path, *this) : ReadFile<CharT, void>(path, *this);
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -5653,7 +5653,7 @@ size_t  CTextT<T>::linesCount(const T* sep) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename C, typename Val, typename X, typename CharT>  
+template <typename C, typename Val, typename CharT, typename X, typename Enable>  
 size_t CTextT<T>::ReadLinesFromFile(const CharT* filePath, C& container, const T* sep)
 {
     CTextT<T> s;
@@ -6121,7 +6121,7 @@ size_t CTextT<T>::ToByteArrayFromHexString(const T* s, unsigned char* arr, size_
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename CharT>
+template <typename CharT, typename>
 bool CTextT<T>::ReadFileAsHex(const CharT* filePath, CTextT& s)
 {
     //open file
@@ -6152,7 +6152,7 @@ bool CTextT<T>::ReadFileAsHex(const CharT* filePath, CTextT& s)
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-template <typename CharT>
+template <typename CharT, typename>
 bool CTextT<T>::WriteFileAsHex(const CharT* filePath, CTextT& s)
 {
     //open file

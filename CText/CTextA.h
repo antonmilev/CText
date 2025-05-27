@@ -76,7 +76,7 @@ inline CTextT<wchar_t> CTextA::ToWide(const char* s)
 
 //-----------------------------------------------------------------------------------------------------------
 template<>
-template <typename CharT>
+template <typename CharT, typename>
 bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
 {
     std::ifstream ifs(filePath, std::ios::binary);   
@@ -132,9 +132,10 @@ bool CTextA::ReadFile(const CharT* filePath, CTextA& res)
 
     return true;
 }
+
 //-----------------------------------------------------------------------------------------------------------
 template<>
-template <typename CharT>
+template <typename CharT, typename Enable>
 bool CTextA::WriteFile(const CharT* filePath, const char* s, EncodingType encoding)
 {
     std::ofstream file(filePath);
